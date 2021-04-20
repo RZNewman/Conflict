@@ -20,6 +20,7 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
     //selected unit for actions
     Unit unitCurrent;
     List<Tile> tilesSelected =  new List<Tile>();
+
     Card cardCurrent;
     OrdSqUI abilityCurrent;
 
@@ -442,12 +443,13 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
                 if (hoverUnitCurrent)
                 {
                     hoverUnitCurrent = null;
-                    if (inspecting)
-                    {
-                        inspecting = false;
-                        inspect.uninspect();
-                    }
+                    
 
+                }
+                if (inspecting)
+                {
+                    inspecting = false;
+                    inspect.uninspect();
                 }
 
 
@@ -498,12 +500,33 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
         if (abilityCurrent != null)
         {
             abilityCurrent.setSelection(false);
+            foreach (Tile t in tilesSelected)
+            {
+                t.deselect();
+            }
         }
         if (sq != null)
         {
             sq.setSelection(true);
         }
         abilityCurrent = sq;
+        if(abilityCurrent == null)
+		{
+            tilesSelected = unitCurrent.loc.select();
+        }
+		else
+		{
+            foreach (Tile t in tilesSelected)
+            {
+                t.deselect();
+            }
+            tilesSelected = abilityCurrent.ability.GetComponent<Targeting>().evaluateTargets(teamIndex, unitCurrent.loc);
+            foreach (Tile t in tilesSelected)
+            {
+                t.selectAbility();
+            }
+
+        }
     }
     [Command]
     void CmdPawnMove(uint unitID, uint tileID)

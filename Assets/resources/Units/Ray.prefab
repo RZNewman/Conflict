@@ -94,6 +94,7 @@ GameObject:
   - component: {fileID: 6603587795642526233}
   - component: {fileID: 2335857413800063057}
   - component: {fileID: 2444567298577113478}
+  - component: {fileID: 1927855832321410779}
   m_Layer: 7
   m_Name: Ray
   m_TagString: Untagged
@@ -150,6 +151,8 @@ MonoBehaviour:
   type: 1
   loc: {fileID: 0}
   teamIndex: 0
+  abilitiesPre: []
+  abilities: []
 --- !u!114 &2335857413800063057
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -192,6 +195,24 @@ MonoBehaviour:
   visible: 0
   m_AssetId: 
   hasSpawned: 0
+--- !u!114 &1927855832321410779
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3673668441739062560}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineMode: 1
+  outlineColor: {r: 0, g: 1, b: 0.0062048435, a: 1}
+  outlineWidth: 6
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1 &6807270767473344768
 GameObject:
   m_ObjectHideFlags: 0

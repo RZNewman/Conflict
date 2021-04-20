@@ -11,6 +11,7 @@ public class Unit : NetworkBehaviour, TeamOwnership, Cardmaker
     public Sprite cardArt;
     Collider col;
     GameManager gm;
+    [SyncVar]
     public string unitName = "";
 
     public enum unitType
@@ -83,6 +84,18 @@ public class Unit : NetworkBehaviour, TeamOwnership, Cardmaker
 	{
         transform.rotation = Quaternion.LookRotation(GameManager.dirs[teamIndex]);
     }
+    void teamColor()
+    {
+        Outline o = GetComponent<Outline>();
+        if(teamIndex == gm.clientTeam)
+		{
+            o.OutlineColor = GameColors.ally;
+		}
+		else
+		{
+            o.OutlineColor = GameColors.enemy;
+        }
+    }
     [Server]
     public void initialize(int team, string nameGiven = "")
 	{
@@ -108,7 +121,9 @@ public class Unit : NetworkBehaviour, TeamOwnership, Cardmaker
         currentCasts = 0;
         gm.teamUnitUpstreamStats(st, teamIndex);
         teamRotation();
-		if (st.getBool(StatType.charge))
+        teamColor();
+
+        if (st.getBool(StatType.charge))
 		{
             refresh();
         }

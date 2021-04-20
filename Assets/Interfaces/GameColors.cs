@@ -21,7 +21,11 @@ public static class GameColors
 	public static Color activeSelect = new Color(0, 1, 0);
 	public static Color moveSelect = new Color(1, 1, 0);
 	public static Color attackSelect = new Color(1, 0, 0);
+	public static Color abilitySelect = new Color(1, 0, 1);
 
 	public static Color UIEnhanced = new Color(0.3f, 1, 0, 1f);
 
+
+	public static Color ally = new Color(0.3f, 0, 1, 1f);
+	public static Color enemy = new Color(1f, 0.3f, 0, 1f);
 }

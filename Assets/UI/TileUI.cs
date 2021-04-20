@@ -66,7 +66,8 @@ public class TileUI : MonoBehaviour
 	{
 		active,
 		move,
-		attack
+		attack,
+		ability
 	}
 	public void select(SelectType type)
 	{
@@ -81,6 +82,9 @@ public class TileUI : MonoBehaviour
 				break;
 			case SelectType.attack:
 				selection.GetComponent<SpriteRenderer>().color = GameColors.attackSelect;
+				break;
+			case SelectType.ability:
+				selection.GetComponent<SpriteRenderer>().color = GameColors.abilitySelect;
 				break;
 		}
 	}

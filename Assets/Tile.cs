@@ -347,6 +347,10 @@ public class Tile : NetworkBehaviour, TeamOwnership
 		}
         return selected;
     }
+    public void selectAbility()
+	{
+        unitUI.select(TileUI.SelectType.ability);
+	}
     public void deselect()
 	{
         unitUI.deselect();

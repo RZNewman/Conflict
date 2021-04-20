@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 139743070195799981}
   - component: {fileID: 1912627563771565748}
   - component: {fileID: 6247676399809486883}
+  - component: {fileID: -4970897890305532079}
   m_Layer: 7
   m_Name: Wasp
   m_TagString: Untagged
@@ -123,6 +124,8 @@ MonoBehaviour:
   type: 3
   loc: {fileID: 0}
   teamIndex: 0
+  abilitiesPre: []
+  abilities: []
 --- !u!114 &1912627563771565748
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -163,6 +166,24 @@ MonoBehaviour:
   visible: 0
   m_AssetId: 
   hasSpawned: 0
+--- !u!114 &-4970897890305532079
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4675587079186190858}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineMode: 1
+  outlineColor: {r: 0, g: 1, b: 0.0062048435, a: 1}
+  outlineWidth: 6
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1 &5326667273702845203
 GameObject:
   m_ObjectHideFlags: 0
