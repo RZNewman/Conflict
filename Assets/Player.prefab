@@ -65,8 +65,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 0}
   click: 0
+  cancel: 0
   pan: {x: 0, y: 0, z: 0}
-  panStrength: 8
+  panStrength: 2.8
+  zoom: 0
+  zoomStrength: 1
   endTurn: 0
 --- !u!114 &9077523745701863651
 MonoBehaviour:
@@ -103,6 +106,6 @@ MonoBehaviour:
   - type: 10
     value: 1
   - type: 11
-    value: 1
+    value: 6
   - type: 13
     value: 1

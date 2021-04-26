@@ -121,9 +121,11 @@ public class Tile : NetworkBehaviour, TeamOwnership
         Unit u = NetworkIdentity.spawned[unitID].GetComponent<Unit>();
         //Debug.Log("assingd");
         assignUnit(u);
+        u.teamColor();
 		if (onBoard)
 		{
             alignOcc();
+            
 		}
     }
     

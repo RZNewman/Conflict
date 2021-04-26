@@ -71,9 +71,9 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
         
 
 	}
-    public void cardInspect(GameObject body, CardInspector.inspectType type)
+    public void cardInspect(GameObject body, CardInspector.inspectType type, Dictionary<StatType, float> stats = null)
 	{
-        inspect.inspect(body,type);
+        inspect.inspect(body,type, stats);
 	}
     public void cardUnInspect()
     {
@@ -224,7 +224,9 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
                 foreach(GameObject c in loadedDeck.main)
 				{
                     MainDeck.Add(c);
-				}
+                    //double cards
+                    MainDeck.Add(c);
+                }
                 foreach (GameObject c in loadedDeck.structures)
                 {
                     Structures.Add(c);
@@ -404,6 +406,27 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
                         break;
                 }
             }
+            else if (inp.cancel)
+			{
+				switch (state)
+				{
+                    case targetState.Free:
+                        //do nothing
+                        break;
+                    case targetState.Unit:
+                        state = targetState.Free;
+                        setTargetUnit(null);
+                        break;
+                    case targetState.Card:
+                        state = targetState.Free;
+                        setTargetCard(null);
+                        break;
+                    case targetState.Ability:
+                        state = targetState.Unit;
+                        setTargetAbility(null);
+                        break;
+                }
+			}
             
         }
         
@@ -459,7 +482,8 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
 
 
 
-        transform.position += transform.right*inp.pan.x +transform.forward*inp.pan.y;
+        transform.position += (transform.right*inp.pan.x +transform.forward*inp.pan.y) * transform.position.y;
+        transform.position += transform.GetChild(0).forward * inp.zoom;
     }
     void setTargetUnit(Unit u)
 	{

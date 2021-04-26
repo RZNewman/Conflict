@@ -115,9 +115,36 @@ public class GameManager : NetworkBehaviour
     public int card_rate = 2;
     //public int max_income_rate = 4;
     //public int max_cap_rate = 2;
-    public static bool[] maxIncome = new bool[]        { false, false, true, false, false,  false, true, false, false,  false, true, false };
-    public static bool[] maxCapacity = new bool[]      { true, true,true,true, true, true, true, true, true, true, true};
-    public static bool[] maxSpendLimit = new bool[]    {  false, true, false, true, false, true, false, true, false, true, false };
+    public static bool[] maxIncome = new bool[]        
+    { 
+        false, true,
+        false, true,
+        false, true,
+        false, true,
+        false, true,
+    };
+    public static bool[] maxCapacity = new bool[]      
+    { 
+        false, true, 
+        false, true, 
+        false, true, 
+        false, true, 
+        false, true, 
+        false, true,
+        false, true,
+        false, true,
+        false, true,
+        false, true,
+    };
+    public static bool[] maxSpendLimit = new bool[]    
+    {   
+        false, true,
+        false, false, true, 
+        false, false, true, 
+        false, false, true, 
+        false, false, true, 
+        false, false, true, 
+    };
     void roundEndActions(PlayerGhost p)
 	{
         int roundInd = roundCounter - 1;

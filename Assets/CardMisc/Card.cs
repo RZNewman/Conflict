@@ -13,7 +13,7 @@ public abstract class Card : NetworkBehaviour, IPointerEnterHandler, IPointerExi
     [SyncVar]
     public int team;
 
-    GameManager gm;
+    protected GameManager gm;
     [SyncVar]
     public string targetHand = "PlayerHand";
 
@@ -68,7 +68,7 @@ public abstract class Card : NetworkBehaviour, IPointerEnterHandler, IPointerExi
                 currentTime = GameConstants.hoverInspectTime;
 				if (!inspecting)
 				{
-                    gm.clientPlayer.cardInspect(cardBody, CardInspector.inspectType.card);
+                    inspect();
                     inspecting = true;
 
                 }
@@ -96,7 +96,10 @@ public abstract class Card : NetworkBehaviour, IPointerEnterHandler, IPointerExi
         
     }
 
-
+    protected virtual void inspect()
+	{
+        gm.clientPlayer.cardInspect(cardBody, CardInspector.inspectType.card);
+    }
 	public void OnPointerEnter(PointerEventData eventData)
 	{
         hovered = true;

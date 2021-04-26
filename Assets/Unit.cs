@@ -64,6 +64,8 @@ public class Unit : NetworkBehaviour, TeamOwnership, Cardmaker
             reUI = refreshUI;
             st.addRefresh(reUI);
             teamRotation();
+            
+            //teamColor();
         }
         
         //Debug.Log("started");
@@ -84,9 +86,11 @@ public class Unit : NetworkBehaviour, TeamOwnership, Cardmaker
 	{
         transform.rotation = Quaternion.LookRotation(GameManager.dirs[teamIndex]);
     }
-    void teamColor()
+    public void teamColor()
     {
+        gm = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameManager>();
         Outline o = GetComponent<Outline>();
+        o.enabled = true;
         if(teamIndex == gm.clientTeam)
 		{
             o.OutlineColor = GameColors.ally;
@@ -113,6 +117,8 @@ public class Unit : NetworkBehaviour, TeamOwnership, Cardmaker
 		}
 		st = GetComponent<StatHandler>();
 		st.initialize();
+
+        
         gm = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameManager>();
         
         currentHealth=stat.getStat(StatType.health);
@@ -121,7 +127,7 @@ public class Unit : NetworkBehaviour, TeamOwnership, Cardmaker
         currentCasts = 0;
         gm.teamUnitUpstreamStats(st, teamIndex);
         teamRotation();
-        teamColor();
+        //teamColor();
 
         if (st.getBool(StatType.charge))
 		{

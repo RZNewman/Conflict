@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
 public static class RuntimePreviewGenerator
@@ -231,14 +232,16 @@ public static class RuntimePreviewGenerator
 		{
 			previewObject = (Transform) Object.Instantiate( model, null, false );
 			previewObject.gameObject.hideFlags = HideFlags.HideAndDontSave;
+
 		}
 		else
 		{
 			previewObject = model;
-
+			
 			layersList.Clear();
 			GetLayerRecursively( previewObject );
 		}
+
 
 		bool isStatic = IsStatic( model );
 		bool wasActive = previewObject.gameObject.activeSelf;
@@ -387,12 +390,12 @@ public static class RuntimePreviewGenerator
 
 			boundsDebugCubes.Clear();
 #endif
-
-			if( shouldCloneModel )
+			if ( shouldCloneModel )
 				Object.DestroyImmediate( previewObject.gameObject );
 			else
 			{
-				if( !wasActive )
+				
+				if ( !wasActive )
 					previewObject.gameObject.SetActive( false );
 
 				if( !isStatic )

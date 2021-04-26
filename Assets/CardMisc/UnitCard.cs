@@ -43,7 +43,11 @@ public class UnitCard : Card
         cardVis.modifyForStructure(prefabUnitScript.isStructure);
 
 	}
-    [Server]
+	protected override void inspect()
+	{
+        gm.clientPlayer.cardInspect(cardBody, CardInspector.inspectType.card, unitPre.GetComponent<StatHandler>().prefabStats());
+    }
+	[Server]
     public void setUnitPre(Unit u)
 	{
         string name = u.name;

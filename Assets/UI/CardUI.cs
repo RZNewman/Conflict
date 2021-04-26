@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,7 +13,7 @@ public abstract class CardUI : MonoBehaviour
     public Text cardTitle;
     public Text cardCost;
     public Image cardBG;
-    public Text cardBody;
+    public TextMeshProUGUI cardBody;
     public GameObject selection;
     // Start is called before the first frame update
     void Start()
@@ -61,7 +62,7 @@ public abstract class CardUI : MonoBehaviour
     public void populateCost(string cost)
     {
         cardCost.text = cost;
-        cardCost.transform.parent.GetComponent<Image>().color = GameColors.resources;
+        //cardCost.transform.parent.GetComponent<Image>().color = GameColors.resources;
     }
     public void select(bool isSelected)
 	{
@@ -95,7 +96,7 @@ public abstract class CardUI : MonoBehaviour
                     line = "+{0} Max Resources";
                     break;
                 case StatType.resourceIncome:
-                    line = "+{0} Resource Income";
+                    line = "+{0}<sprite index= 1> Resource Income";
                     break;
                 case StatType.armor:
                     line = "Armor {0}";
@@ -143,7 +144,7 @@ public abstract class CardUI : MonoBehaviour
                     line = "Add-On";
                     break;
                 case StatType.resourceSpend:
-                    line = "+{0} Resource Limit";
+                    line = "+{0}<sprite index= 0> Resource Limit";
                     break;
                 default:
                     line = "";

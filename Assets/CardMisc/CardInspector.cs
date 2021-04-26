@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using static StatBlock;
@@ -7,6 +8,10 @@ public class CardInspector : MonoBehaviour
     UnitCardUI visualsUnit;
     OrdCardUI visualsAbility;
     GameObject handSample;
+
+    public GameObject keywordHolder;
+    public GameObject keywordPre;
+    List<GameObject> keywordInstances = new List<GameObject>();
     // Start is called before the first frame update
     void Start()
     {
@@ -22,12 +27,16 @@ public class CardInspector : MonoBehaviour
         ability
 	}
     // Update is called once per frame
-    public void inspect(GameObject obj, inspectType type)
+    public void inspect(GameObject obj, inspectType type, Dictionary<StatType, float> stats = null)
 	{
         if (type == inspectType.card)
         {
             handSample = Instantiate(obj, transform);
             handSample.transform.localPosition = Vector3.zero;
+			if (stats != null)
+			{
+                generateKeywordDesc(stats);
+			}
         }
         else if(type == inspectType.unit)
         {
@@ -52,7 +61,7 @@ public class CardInspector : MonoBehaviour
             visualsUnit.populateBody(u.stat.export(),true,u.abilities.Select(x => x.GetComponent<Ability>()).ToArray());
             visualsUnit.modifyForStructure(u.isStructure);
 
-
+            generateKeywordDesc(u.stat.export());
 
             visualsUnit.gameObject.SetActive(true);
         }
@@ -88,11 +97,32 @@ public class CardInspector : MonoBehaviour
             visualsUnit.gameObject.SetActive(false);
             visualsAbility.gameObject.SetActive(false);
         }
-        
-	}
-    void generateKeywordDesc()
-	{
+        //List<GameObject> toRemove = new List<GameObject>();
+        foreach(GameObject o in keywordInstances)
+		{
+            //toRemove.Add(o);
+            Destroy(o);
+		}
+        //foreach (GameObject o in keywordInstances)
 
+
+
+    }
+    void generateKeywordDesc(Dictionary<StatType, float> stats)
+	{
+        foreach(StatType type in stats.Keys)
+		{
+            string[] values = keywordDesc(type, (int)stats[type]);
+            if(values[0].Length > 0)
+			{
+                GameObject o = Instantiate(keywordPre, keywordHolder.transform);
+                keywordInstances.Add(o);
+                KeywordUI kui = o.GetComponent<KeywordUI>();
+                kui.title.text = values[0];
+                kui.desc.text = values[1];
+            }
+            
+        }
 	}
     string[] keywordDesc(StatType type, int value)
 	{

@@ -27,4 +27,10 @@ public class NetInterface : MonoBehaviour
         tutorial.SetActive(true);
         next.SetActive(true);
 	}
+    public void endTutorial()
+	{
+        main.SetActive(true);
+        tutorial.SetActive(false);
+        next.SetActive(false);
+    }
 }

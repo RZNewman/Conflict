@@ -9,7 +9,7 @@ public class TutorialUI : MonoBehaviour
 
 	private void OnEnable()
 	{
-        changePanelDelta(0);
+		switchToPanel(0);
 	}
 	public void changePanelDelta(int delta)
 	{
@@ -19,16 +19,21 @@ public class TutorialUI : MonoBehaviour
 	{
         if(panel >= 0 && panel < transform.childCount)
 		{
-            GameObject p = transform.GetChild(childPanelIndex).gameObject;
-            p.GetComponent<TutorialPanel>().activate(false);
-            p.SetActive(false);
+			switchPanel(false);
             childPanelIndex = panel;
-            p = transform.GetChild(childPanelIndex).gameObject;          
-            p.SetActive(true);
-            p.GetComponent<TutorialPanel>().activate(true);
+			switchPanel(true);
 
         }
 	}
-
+	void switchPanel(bool isOn)
+	{
+		GameObject p = transform.GetChild(childPanelIndex).gameObject;
+		p.GetComponent<TutorialPanel>().activate(isOn);
+		p.SetActive(isOn);
+	}
+	private void OnDisable()
+	{
+		switchPanel(false);
+	}
 
 }
