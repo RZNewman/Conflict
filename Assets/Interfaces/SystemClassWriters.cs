@@ -14,9 +14,12 @@ public static class SystemClassWriters
     {
         writer.WriteByte((byte)stat);
     }
+    public static void WriteViewEvent(this NetworkWriter writer, ViewPipeline.ViewType view)
+    {
+        writer.WriteByte((byte)view);
+    }
 
-      
-    
+
 
 
 }

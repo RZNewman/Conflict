@@ -3,10 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Ordnance : MonoBehaviour, Cardmaker, TeamOwnership
+public class Ordnance : Cardmaker, TeamOwnership, PseudoDestroy
 {
-    public int resourceCost;
-    public Sprite cardArt;
+
     public string nameString;
 	#region unitAbility
 	public Unit caster;
@@ -37,7 +36,7 @@ public class Ordnance : MonoBehaviour, Cardmaker, TeamOwnership
             
         }
     }
-    private void OnDestroy()
+    public void PDestroy()
 	{
 		if (caster)
 		{
@@ -45,14 +44,14 @@ public class Ordnance : MonoBehaviour, Cardmaker, TeamOwnership
 		}
 	}
 	#endregion
-	public GameObject findCardPrefab()
+	public override GameObject findCardPrefab()
     {
         return (GameObject)Resources.Load("DynamicOrdCard", typeof(GameObject));
     }
 
 	
 
-	public void modifyCardAfterCreation(GameObject o)
+	public override void modifyCardAfterCreation(GameObject o)
     {
         nameString = name;
         OrdCard card = o.GetComponent<OrdCard>();

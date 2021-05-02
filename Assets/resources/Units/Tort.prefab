@@ -140,11 +140,11 @@ MonoBehaviour:
   - type: 0
     value: 5
   - type: 1
-    value: 3
+    value: 2
   - type: 3
     value: 1
   - type: 2
-    value: 1
+    value: 2
   - type: 20
     value: 2
 --- !u!114 &6247676399809486883

@@ -4,7 +4,7 @@ using UnityEngine;
 using Mirror;
 using static StatBlock;
 
-public class StatHandler : NetworkBehaviour
+public class StatHandler : NetworkBehaviour, PseudoDestroy
 {
 
     public Stat[] statsList;
@@ -192,7 +192,7 @@ public class StatHandler : NetworkBehaviour
     {
         
     }
-	private void OnDestroy()
+	public void PDestroy()
 	{
         terminateStreams();
 	}

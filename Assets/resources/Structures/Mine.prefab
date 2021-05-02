@@ -98,6 +98,8 @@ MonoBehaviour:
   - type: 2
     value: 0
   - type: 10
+    value: 3
+  - type: 11
     value: 2
 --- !u!114 &6247676399809486883
 MonoBehaviour:

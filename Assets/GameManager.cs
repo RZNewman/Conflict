@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
+using static ViewPipeline;
+using static GameConstants;
 
 public class GameManager : NetworkBehaviour
 {
@@ -12,6 +14,9 @@ public class GameManager : NetworkBehaviour
     [SyncVar (hook =nameof(showLimitIncreace))]
     int roundCounter = 0;
 
+    ViewPipeline pipe;
+    List<GameObject> cleanupStaging = new List<GameObject>();
+    List<GameObject> cleanup = new List<GameObject>();
 
     public PlayerGhost clientPlayer;
     public int clientTeam
@@ -21,12 +26,21 @@ public class GameManager : NetworkBehaviour
             return clientPlayer.teamIndex;
         }
     }
+    
+    public ViewPipeline viewPipe
+	{
+		get
+		{
+            return pipe;
+		}
+	}
 
 
     //public static GameManager gm;
     // Start is called before the first frame update
     void Start()
     {
+
         //if (!gm)
         //{
         //          gm = this;
@@ -35,13 +49,14 @@ public class GameManager : NetworkBehaviour
         //{
         //          Destroy(gameObject);
         //}
+        pipe = GetComponent<ViewPipeline>();
     }
     public void initUnits()
     {
 
         GetComponent<GameGrid>().initialize();
         drawOpeningHand();
-        nextTurn();
+        firstTurn();
     }
     public void teamUnitUpstreamStats(StatHandler st, int team)
 	{
@@ -57,14 +72,52 @@ public class GameManager : NetworkBehaviour
 
         }
     }
+    public void delayedDestroy(GameObject o)
+	{
+        cleanupStaging.Add(o);
+        foreach(PseudoDestroy pd in o.GetComponentsInChildren<PseudoDestroy>())
+		{
+            pd.PDestroy();
+		}
+        pipe.RpcAddViewEvent(new ViewEvent(ViewType.objDeath, o.GetComponent<NetworkIdentity>().netId, 0, Time.time));
+		if (!isClient)
+		{
+            o.SetActive(false);
+        }
+        
+	}
 	#region turn control
+    void firstTurn()
+	{
+        currentTurn = 0;
+        roundCounter = 1;
+        foreach (uint playerID in teams.Keys)
+        {
+            PlayerGhost p = NetworkIdentity.spawned[playerID].GetComponent<PlayerGhost>();
+            //p.TargetSetTurn(p.netIdentity.connectionToClient, teams[playerID]==currentTurn);
+            if (teams[playerID] == currentTurn)
+            {
+                pipe.TargetAddViewEvent(p.netIdentity.connectionToClient, new ViewEvent(ViewType.beginTurn, 0, 0, Time.time));
+            }
+            else
+            {
+                pipe.TargetAddViewEvent(p.netIdentity.connectionToClient, new ViewEvent(ViewType.endTurn, 0, 0, Time.time));
+            }
+        }
+    }
 	void nextTurn()
     {
         //Debug.Log(currentTurn);
         setTeamUI(false);
+        foreach(GameObject o in cleanup)
+		{
+            Destroy(o);
+		}
+        cleanup = cleanupStaging;
+        cleanupStaging = new List<GameObject>();
         int refreshTeam = currentTurn;
         currentTurn += 1;
-        if (currentTurn >= teams.Count)
+        if (currentTurn >= teams.Count) //has to change for multiple players ont he same team
         {
             currentTurn = 0;
             
@@ -81,6 +134,7 @@ public class GameManager : NetworkBehaviour
     void setTeamUI(bool isTurn)
     {
         if (currentTurn == -1) { return; }
+        if ( teams.Count <= 1) { return; }
 
         foreach (uint playerID in teams.Keys)
         {
@@ -88,7 +142,15 @@ public class GameManager : NetworkBehaviour
             {
                 PlayerGhost p = NetworkIdentity.spawned[playerID].GetComponent<PlayerGhost>();
 
-                p.TargetSetTurn(p.netIdentity.connectionToClient, isTurn);
+				//p.TargetSetTurn(p.netIdentity.connectionToClient, isTurn);
+				if (isTurn)
+				{
+                    pipe.TargetAddViewEvent(p.netIdentity.connectionToClient, new ViewEvent(ViewType.beginTurn, 0, 0, Time.time));
+				}
+				else
+				{
+                    pipe.TargetAddViewEvent(p.netIdentity.connectionToClient, new ViewEvent(ViewType.endTurn, 0, 0, Time.time));
+                }
 
             }
 
@@ -118,10 +180,8 @@ public class GameManager : NetworkBehaviour
     public static bool[] maxIncome = new bool[]        
     { 
         false, true,
-        false, true,
-        false, true,
-        false, true,
-        false, true,
+        false, false, true,
+
     };
     public static bool[] maxCapacity = new bool[]      
     { 
@@ -139,7 +199,6 @@ public class GameManager : NetworkBehaviour
     public static bool[] maxSpendLimit = new bool[]    
     {   
         false, true,
-        false, false, true, 
         false, false, true, 
         false, false, true, 
         false, false, true, 
@@ -302,21 +361,17 @@ public class GameManager : NetworkBehaviour
             && attacker.teamIndex != defender.teamIndex
             )
         {
+            pipe.RpcAddViewEvent(new ViewEvent(ViewType.unitAttack, unitID, tileID, Time.time));
             attacker.attack(defender, dist, didBypass);
-            RpcAttackUnit(unitID, tileID);
+            //RpcAttackUnit(unitID, tileID);
+            
         }
     }
-    [ClientRpc]
-    void RpcAttackUnit(uint unitID, uint tileID)
+    [Client]
+    public void clientAttackUnit(Unit attacker, Tile target)
     {
-        if (!NetworkIdentity.spawned.ContainsKey(unitID))
-        {
-            return;
-        }
-        Unit attacker = NetworkIdentity.spawned[unitID].GetComponent<Unit>();
-        Tile target = NetworkIdentity.spawned[tileID].GetComponent<Tile>();
 
-        attacker.attackInDir(target, 1);
+        attacker.attackInDir(target, clientViewpiplelineActionTime);
     }
     [Server]
     public void move(uint ownerID, uint unitID, uint tileID)
@@ -352,7 +407,8 @@ public class GameManager : NetworkBehaviour
         {
             mover.move(dist);
             transferToTile(mover, target, true);
-            RpcMoveUnit(unitID, tileID);
+            //RpcMoveUnit(unitID, tileID);
+            pipe.RpcAddViewEvent(new ViewEvent(ViewType.unitMove, unitID, tileID, Time.time));
         }
     }
     [ClientRpc]
@@ -367,10 +423,10 @@ public class GameManager : NetworkBehaviour
         transferToTile(mover, target);
     }
 
-    void transferToTile(Unit u, Tile t, bool onServer = false)
+    public void transferToTile(Unit u, Tile t, bool onServer = false)
     {
-        //if ((onServer && isServer) || (!onServer && !isServer))
-        if(true)
+        if (!onServer || !isClient)
+        //if(true)
         {
             Tile origin = u.loc;
 
@@ -378,7 +434,7 @@ public class GameManager : NetworkBehaviour
             origin.occExit();
             t.occEnter(u);
             //Debug.Log("Move" + isServer + isClient);
-            u.moveToLoc(1);
+            u.moveToLoc(clientViewpiplelineActionTime);
         }
 
         
@@ -431,6 +487,7 @@ public class GameManager : NetworkBehaviour
             if(castAbility.castAbil(target, castAbility.getTeam(), castAbility.caster.loc))
 			{
                 player.spendResources(castAbility.resourceCost);
+                pipe.RpcAddViewEvent(new ViewEvent(ViewType.playEffect, abilID, tileID, Time.time));
             }
             
             

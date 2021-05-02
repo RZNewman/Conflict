@@ -4,12 +4,11 @@ using UnityEngine;
 using Mirror;
 using static StatBlock;
 using static Targeting;
+using System.Linq;
 
-public class Unit : NetworkBehaviour, TeamOwnership, Cardmaker
+public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
 {
-    public int resourceCost;
-    public Sprite cardArt;
-    Collider col;
+    //Collider col;
     GameManager gm;
     [SyncVar]
     public string unitName = "";
@@ -47,7 +46,7 @@ public class Unit : NetworkBehaviour, TeamOwnership, Cardmaker
 	// Start is called before the first frame update
 	void Start()
     {
-        col = GetComponent<Collider>();
+        //col = GetComponent<Collider>();
         st = GetComponent<StatHandler>();
 
 		if (isServer)
@@ -55,20 +54,23 @@ public class Unit : NetworkBehaviour, TeamOwnership, Cardmaker
             spawnAbilitites();
 
         }
-        if (loc)
-		{
-            loc.alignOcc();
-		}
         if (isClient)
 		{
             reUI = refreshUI;
             st.addRefresh(reUI);
             teamRotation();
-            
+            visibility(false);
             //teamColor();
         }
         
         //Debug.Log("started");
+    } 
+    public void visibility(bool visible)
+	{
+        foreach (MeshRenderer rend in GetComponentsInChildren<MeshRenderer>())
+        {
+            rend.enabled = visible;
+        }
     }
     void hookRefreshUI(int oldVal, int newVal)
 	{
@@ -363,7 +365,7 @@ public class Unit : NetworkBehaviour, TeamOwnership, Cardmaker
 	{
 		get
 		{
-            float h = col.bounds.extents.y;
+            float h = GetComponent<Collider>().bounds.extents.y;
             if(type == unitType.flying)
 			{
                 h += 0.3f;
@@ -506,7 +508,8 @@ public class Unit : NetworkBehaviour, TeamOwnership, Cardmaker
         currentHealth -=d;
 		if (currentHealth <= 0)
 		{
-            Destroy(gameObject);
+            //Destroy(gameObject);
+            gm.delayedDestroy(gameObject);
 		}
 		//else
 		//{
@@ -525,7 +528,7 @@ public class Unit : NetworkBehaviour, TeamOwnership, Cardmaker
 	}
 	#endregion
 
-	private void OnDestroy()
+	public void PDestroy()
 	{
 		if (loc)
 		{
@@ -535,7 +538,7 @@ public class Unit : NetworkBehaviour, TeamOwnership, Cardmaker
 		{
             st.removeRefresh(reUI);
 		}
-        
+        visibility(false);
 	}
 	//   public override void OnStopClient()
 	//{
@@ -549,13 +552,13 @@ public class Unit : NetworkBehaviour, TeamOwnership, Cardmaker
 	//       }
 	//}
 	#region cardmaker
-	public GameObject findCardPrefab()
+	public override GameObject findCardPrefab()
 	{
         return (GameObject)Resources.Load("DynamicUnitCard", typeof(GameObject));
 
     }
 
-	public void modifyCardAfterCreation(GameObject o)
+	public override void modifyCardAfterCreation(GameObject o)
 	{
         UnitCard card = o.GetComponent<UnitCard>();
         card.setUnitPre(this);

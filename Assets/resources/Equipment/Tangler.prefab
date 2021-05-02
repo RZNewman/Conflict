@@ -46,8 +46,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ccfa8eb28bcb4e42b88abc48e84fbe2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
   resourceCost: 2
   cardArt: {fileID: 21300000, guid: f7436f9160ca8324e81189e56a861c6b, type: 3}
+  playEffectPre: {fileID: 4927487206556695495, guid: 02a7c36c33bbb1544af77b5cf2a64004, type: 3}
   type: 1
 --- !u!114 &2364573760762706500
 MonoBehaviour:

@@ -5,10 +5,9 @@ using UnityEditor;
 using UnityEngine;
 using static Targeting;
 
-public class Equipment : MonoBehaviour, Cardmaker
+public class Equipment : Cardmaker
 {
-    public int resourceCost;
-    public Sprite cardArt;
+
     public Unit.unitType type;
     // Start is called before the first frame update
 
@@ -24,12 +23,12 @@ public class Equipment : MonoBehaviour, Cardmaker
             }
         }
     }
-    public GameObject findCardPrefab()
+    public override GameObject findCardPrefab()
     {
         return (GameObject)Resources.Load("DynamicEquipCard", typeof(GameObject));
     }
 
-    public void modifyCardAfterCreation(GameObject o)
+    public override void modifyCardAfterCreation(GameObject o)
     {
         EquipCard card = o.GetComponent<EquipCard>();
         card.setEquipPre(this);

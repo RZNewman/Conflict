@@ -13,7 +13,10 @@ public static class SystemClassReaders
     {
         return (StatBlock.StatType)reader.ReadByte();
     }
+    public static ViewPipeline.ViewType ReadViewEvent(this NetworkReader reader)
+    {
+        return (ViewPipeline.ViewType)reader.ReadByte();
+    }
 
-    
 }
 

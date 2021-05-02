@@ -104,7 +104,7 @@ MonoBehaviour:
   syncInterval: 0.4
   statsList:
   - type: 10
-    value: 1
+    value: 0
   - type: 11
     value: 6
   - type: 13

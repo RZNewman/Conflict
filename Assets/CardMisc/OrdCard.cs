@@ -50,7 +50,10 @@ public class OrdCard : Card
 		Ability ab = ability.GetComponent<Ability>();
 		ab.initialize();
 		ab.cast(target, team, null);
-		Destroy(ability);
+		//Destroy(ability);
+		NetworkServer.Spawn(ability);
+		gm.viewPipe.RpcAddViewEvent(new ViewPipeline.ViewEvent(ViewPipeline.ViewType.playEffect, ab.GetComponent<NetworkIdentity>().netId, target.netId, Time.time));
+		gm.delayedDestroy(ability);
 		Destroy(gameObject);
 	}
 

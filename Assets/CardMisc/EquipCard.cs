@@ -59,6 +59,7 @@ public class EquipCard : Card
 		//target.assignUnit(u);
 		NetworkServer.Spawn(buff);
 		b.RpcAssignUnit(target.getOccupant().netId);
+		gm.viewPipe.RpcAddViewEvent(new ViewPipeline.ViewEvent(ViewPipeline.ViewType.playEffect, b.netId, target.netId, Time.time));
 		Destroy(gameObject);
 	}
 

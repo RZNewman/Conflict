@@ -1,10 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
-public interface Cardmaker
+public abstract class Cardmaker: NetworkBehaviour 
 {
-	public GameObject findCardPrefab();
+	public int resourceCost;
+	public Sprite cardArt;
+	public GameObject playEffectPre;
+	public abstract GameObject findCardPrefab();
 
-	public void modifyCardAfterCreation(GameObject o);
+	public abstract void modifyCardAfterCreation(GameObject o);
 }

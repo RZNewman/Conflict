@@ -70,7 +70,8 @@ public class UnitCard : Card
         u.initialize(team,unitPre.name);
         target.assignUnit(u);             
         NetworkServer.Spawn(pawn);
-        target.RpcAssignUnit(u.netId, false);
+        gm.viewPipe.RpcAddViewEvent(new ViewPipeline.ViewEvent(ViewPipeline.ViewType.unitPlay, u.netId, target.netId, Time.time));
+        //target.RpcAssignUnit(u.netId, false);
         Destroy(gameObject);
 	}
 

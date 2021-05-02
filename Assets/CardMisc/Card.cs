@@ -5,7 +5,7 @@ using Mirror;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public abstract class Card : NetworkBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler, TeamOwnership, Cardmaker
+public abstract class Card : NetworkBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler, TeamOwnership
 {
     protected GameObject cardTemplatePre;
     protected GameObject cardBody;
@@ -129,14 +129,5 @@ public abstract class Card : NetworkBehaviour, IPointerEnterHandler, IPointerExi
     {
         GetComponent<Targeting>().rules = r;
     }
-    //Called on Prefab
-    public GameObject findCardPrefab()
-	{
-        return gameObject;
-	}
 
-    public void modifyCardAfterCreation(GameObject o)
-	{
-        return;
-	}
 }

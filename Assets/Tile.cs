@@ -97,16 +97,18 @@ public class Tile : NetworkBehaviour, TeamOwnership
         {
             Unit u = hit.collider.GetComponent<Unit>();
             u.initialize(u.teamIndex);
-            RpcAssignUnit(u.netId,true);
+            RpcAssignUnit(u.netId);
             assignUnit(u);
-            alignOcc();
             
         }
     }
     public void assignUnit(Unit u)
     {
         occEnter(u);
-        //alignOcc();
+        u.teamColor();
+        u.visibility(true);
+        alignOcc();
+        //TODO WTF is all this shit
     }
     public void alignOcc()
     {
@@ -116,18 +118,14 @@ public class Tile : NetworkBehaviour, TeamOwnership
         }
     }
     [ClientRpc]
-    public void RpcAssignUnit(uint unitID, bool onBoard)
+    public void RpcAssignUnit(uint unitID)
 	{
         Unit u = NetworkIdentity.spawned[unitID].GetComponent<Unit>();
         //Debug.Log("assingd");
         assignUnit(u);
-        u.teamColor();
-		if (onBoard)
-		{
-            alignOcc();
-            
-		}
+
     }
+
     
     #endregion
     Unit occupant;
@@ -434,7 +432,7 @@ public class Tile : NetworkBehaviour, TeamOwnership
                     selected.Add(currentTile);
                     break;
                 }
-                if (!currentTile.isSight)
+                if (!currentTile.isSight || currentTile.getOccupant())
                 {
                     if (!bypass)
                     {

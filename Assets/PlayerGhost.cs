@@ -42,7 +42,13 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
     //Client only, set by server, enables interaction
     bool myTurn = false;
 
-
+    public bool isTurn
+	{
+		get
+		{
+            return myTurn;
+		}
+	}
 
     #region cards
     public Deck loadedDeck;
@@ -285,8 +291,8 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
         }
 	}
 
-    [TargetRpc]
-    public void TargetSetTurn(NetworkConnection con, bool isTurn)
+
+    public void setTurn( bool isTurn)
     {
         myTurn = isTurn;
 		if (!isTurn)
