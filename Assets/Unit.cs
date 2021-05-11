@@ -10,8 +10,7 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
 {
     //Collider col;
     GameManager gm;
-    [SyncVar]
-    public string unitName = "";
+    
 
     public enum unitType
 	{
@@ -59,18 +58,43 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
             reUI = refreshUI;
             st.addRefresh(reUI);
             teamRotation();
-            visibility(false);
+            visibility(visType.none,visType.off);
             //teamColor();
         }
         
         //Debug.Log("started");
     } 
-    public void visibility(bool visible)
+    public enum visType
 	{
-        foreach (MeshRenderer rend in GetComponentsInChildren<MeshRenderer>())
-        {
-            rend.enabled = visible;
+        none,
+        off,
+        on
+        
+	}
+    visType currentVisibility = visType.none;
+    public void visibility(visType current, visType target)
+	{
+        //Debug.Log(current.ToString() + " - " + target.ToString());
+        if(currentVisibility == current)
+		{
+            bool shouldVis = false;
+            if(target == visType.off)
+			{
+                shouldVis = false;
+                
+
+            }
+            else if(target == visType.on)
+			{
+                shouldVis = true;
+			}
+            currentVisibility = target;
+            foreach (MeshRenderer rend in GetComponentsInChildren<MeshRenderer>())
+            {
+                rend.enabled = shouldVis;
+            }
         }
+        
     }
     void hookRefreshUI(int oldVal, int newVal)
 	{
@@ -103,20 +127,10 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
         }
     }
     [Server]
-    public void initialize(int team, string nameGiven = "")
+    public void initialize(int team)
 	{
         teamIndex = team;
-        if(nameGiven != "")
-		{
-            unitName = nameGiven;
-		}
-		else
-		{
-            if(unitName == "")
-			{
-                unitName = "MISS";
-			}
-		}
+        
 		st = GetComponent<StatHandler>();
 		st.initialize();
 
@@ -138,7 +152,7 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
         //refresh();
     }
     [Client]
-    public void register() //prefab
+    public override void register() //prefab
 	{
         if (!ClientScene.prefabs.ContainsValue(gameObject))
         {
@@ -264,7 +278,7 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
 	{
         GameObject ab = Instantiate(o, transform);
         Ordnance ord = ab.GetComponent<Ordnance>();
-        ord.nameString = o.name;
+        ord.provideName(o.name);
         ord.caster = this;
         Ability abil = ab.GetComponent<Ability>();
         abil.initialize();
@@ -538,7 +552,7 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
 		{
             st.removeRefresh(reUI);
 		}
-        visibility(false);
+        visibility(visType.on, visType.off);
 	}
 	//   public override void OnStopClient()
 	//{
@@ -561,7 +575,7 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
 	public override void modifyCardAfterCreation(GameObject o)
 	{
         UnitCard card = o.GetComponent<UnitCard>();
-        card.setUnitPre(this);
+        card.setCardmaker(this);
         Dictionary<StatType,float> tempS = GetComponent<StatHandler>().prefabStats();
         bool frontline = tempS.ContainsKey(StatType.frontline) && tempS[StatType.frontline] > 0;
         if (isStructure || frontline)

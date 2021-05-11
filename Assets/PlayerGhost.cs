@@ -79,11 +79,11 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
 	}
     public void cardInspect(GameObject body, CardInspector.inspectType type, Dictionary<StatType, float> stats = null)
 	{
-        inspect.inspect(body,type, stats);
+        inspect.inspect(body,type,2, stats);
 	}
-    public void cardUnInspect()
+    public void cardUnInspect(GameObject body)
     {
-        inspect.uninspect();
+        inspect.uninspect(body);
     }
     public void drawCardsOnTurn()
 	{
@@ -104,6 +104,16 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
         }
 
     }
+    public void returnCardToDeck(Card c)
+	{
+        addCard(c.sourceCardmaker);
+        gm.delayedDestroy(c.gameObject);
+	}
+    public void addCard(GameObject cPrefab)
+	{
+        int i = Mathf.FloorToInt(Random.Range(0, MainDeck.Count));
+        MainDeck.Insert(i, cPrefab);
+	}
     [Server]
     public void createStructureSideboard()
 	{
@@ -449,7 +459,7 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
                         if (hoverUnitTime > GameConstants.hoverInspectTime)
                         {
                             inspecting = true;
-                            inspect.inspect(hoverUnitCurrent.gameObject, CardInspector.inspectType.unit);
+                            inspect.inspect(hoverUnitCurrent.gameObject, CardInspector.inspectType.cardmaker,3);
                         }
 
                     }
@@ -457,39 +467,49 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
                 }
                 else
                 {
-                    hoverUnitCurrent = inp.target.getOccupant();
-                    hoverUnitTime = 0;
                     if (inspecting)
                     {
                         inspecting = false;
-                        inspect.uninspect();
+                        inspect.uninspect(hoverUnitCurrent.gameObject);
                     }
+                    hoverUnitCurrent = inp.target.getOccupant();
+                    hoverUnitTime = 0;
+                    
 
                 }
             }
             else
             {
-                if (hoverUnitCurrent)
-                {
-                    hoverUnitCurrent = null;
-                    
-
-                }
+                
                 if (inspecting)
                 {
                     inspecting = false;
-                    inspect.uninspect();
+                    inspect.uninspect(hoverUnitCurrent.gameObject);
                 }
+                if (hoverUnitCurrent)
+                {
+                    hoverUnitCurrent = null;
 
+
+                }
 
             }
         }
+
+        Vector3 camForward = transform.GetChild(0).forward;
+
+
+        if (gm.viewPipe.isFixating)
+		{
+            transform.position = gm.viewPipe.fixation - camForward * Mathf.Abs((transform.position.y - gm.viewPipe.fixation.y)/ camForward.y); 
+
+        }
+		else
+		{
+            transform.position += (transform.right * inp.pan.x + transform.forward * inp.pan.y) * transform.position.y;
+        }
         
-
-
-
-        transform.position += (transform.right*inp.pan.x +transform.forward*inp.pan.y) * transform.position.y;
-        transform.position += transform.GetChild(0).forward * inp.zoom;
+        transform.position += camForward * inp.zoom;
     }
     void setTargetUnit(Unit u)
 	{

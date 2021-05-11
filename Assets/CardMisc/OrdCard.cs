@@ -5,48 +5,29 @@ using Mirror;
 
 public class OrdCard : Card
 {
-	OrdCardUI cardVis;
-	GameObject ordPre;
 
-	[SyncVar]
-	string ordPrePath;
+	//GameObject ordPre;
+
+	
 
 	[Server]
-	public void setEquipPre(Ordnance o)
+	public override void setCardmaker(Cardmaker c)
 	{
-		string name = o.nameString;
+		string name = c.name;
 		string path = "Ordnance/";
-		ordPrePath = path + name;
+		sourceCardmakerPath = path + name;
+		base.setCardmaker(c);
 	}
 
 
 	// Start is called before the first frame update
-	protected override void Start()
-	{
 
-
-		if (isClient)
-		{
-			ordPre = (GameObject)Resources.Load(ordPrePath, typeof(GameObject));
-			//if (ClientScene.prefabs.ContainsKey())
-			//{
-
-			//}
-
-			//TODO Hide register until action
-			//if (!ClientScene.prefabs.ContainsValue(ordPre))
-			//{
-			//	ClientScene.RegisterPrefab(ordPre);
-			//}
-			ordPre.GetComponent<Ordnance>().register();
-		}
-		base.Start();
-	}
 	public override void playCard(Tile target)
 	{
 
-		ordPre = (GameObject)Resources.Load(ordPrePath, typeof(GameObject));
-		GameObject ability = Instantiate(ordPre);
+		//sourceCardmaker = (GameObject)Resources.Load(sourceCardmakerPath, typeof(GameObject));
+		GameObject ability = Instantiate(sourceCardmaker);
+		ability.GetComponent<Cardmaker>().provideName(sourceCardmaker.name);
 		Ability ab = ability.GetComponent<Ability>();
 		ab.initialize();
 		ab.cast(target, team, null);
@@ -54,32 +35,18 @@ public class OrdCard : Card
 		NetworkServer.Spawn(ability);
 		gm.viewPipe.RpcAddViewEvent(new ViewPipeline.ViewEvent(ViewPipeline.ViewType.playEffect, ab.GetComponent<NetworkIdentity>().netId, target.netId, Time.time));
 		gm.delayedDestroy(ability);
-		Destroy(gameObject);
+		//Destroy(gameObject);
 	}
 
 	protected override void populateTemplate()
 	{
 		getTemplate("OrdCardPre");
 		cardBody = Instantiate(cardTemplatePre, transform);
-		cardVis = cardBody.GetComponent<OrdCardUI>();
-		Ability prefabAbilityScript = ordPre.GetComponent<Ability>();
-		Ordnance prefabOrdScript = ordPre.GetComponent<Ordnance>();
-		//
-		if (prefabOrdScript.cardArt != null)
-		{
-			cardVis.populateArt(prefabOrdScript.cardArt);
-		}
-		else
-		{
-			cardVis.populateArt(ordPre);
-		}
+		Cardmaker mkr = sourceCardmaker.GetComponent<Cardmaker>();
+		cardBody.GetComponent<OrdCardUI>().populateSelf(mkr,true);
+		resourceCost = mkr.resourceCost;
 
-		cardVis.populateTitle(ordPre.name);
-		cardVis.setBackground();
-		resourceCost = prefabOrdScript.resourceCost;
-		cardVis.populateCost(resourceCost.ToString());
-
-		cardVis.populateBody(prefabAbilityScript);
+		
 	}
 
 }

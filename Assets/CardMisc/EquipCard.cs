@@ -7,48 +7,28 @@ using System.Linq;
 
 public class EquipCard : Card
 {
-	EquipCardUI cardVis;
-	GameObject equipPre;
 
-	[SyncVar]
-	string equipPrePath;
+	//GameObject equipPre;
+
+
 
 	[Server]
-	public void setEquipPre(Equipment e)
+	public override void setCardmaker(Cardmaker c)
 	{
-		string name = e.name;
+		string name = c.name;
 		string path = "Equipment/";
-		equipPrePath = path + name;
+		sourceCardmakerPath = path + name;
+		base.setCardmaker(c);
 	}
-	protected override void Start()
-	{
 
-
-		if (isClient)
-		{
-			equipPre = (GameObject)Resources.Load(equipPrePath, typeof(GameObject));
-			//if (ClientScene.prefabs.ContainsKey())
-			//{
-
-			//}
-
-			//TODO Hide register until action
-			//if (!ClientScene.prefabs.ContainsValue(equipPre))
-			//{
-			//	ClientScene.RegisterPrefab(equipPre);
-			//}
-			equipPre.GetComponent<Equipment>().register();
-		}
-		base.Start();
-	}
 
 	public override void playCard(Tile target)
 	{
 
-		equipPre = (GameObject)Resources.Load(equipPrePath, typeof(GameObject));
-		GameObject buff = Instantiate(equipPre);
+		//sourceCardmaker = (GameObject)Resources.Load(sourceCardmakerPath, typeof(GameObject));
+		GameObject buff = Instantiate(sourceCardmaker);
 		Buff b = buff.GetComponent<Buff>();
-		
+		buff.GetComponent<Cardmaker>().provideName(sourceCardmaker.name);
 		Unit u = target.getOccupant().GetComponent<Unit>();
 		b.initailize(u);
 
@@ -60,35 +40,23 @@ public class EquipCard : Card
 		NetworkServer.Spawn(buff);
 		b.RpcAssignUnit(target.getOccupant().netId);
 		gm.viewPipe.RpcAddViewEvent(new ViewPipeline.ViewEvent(ViewPipeline.ViewType.playEffect, b.netId, target.netId, Time.time));
-		Destroy(gameObject);
+		//Destroy(gameObject);
 	}
 
 	protected override void populateTemplate()
 	{
 		getTemplate("EquipCardPre");
 		cardBody = Instantiate(cardTemplatePre, transform);
-		cardVis = cardBody.GetComponent<EquipCardUI>();
-		Equipment prefabEquipScript = equipPre.GetComponent<Equipment>();
-		//
-		if (prefabEquipScript.cardArt != null)
-		{
-			cardVis.populateArt(prefabEquipScript.cardArt);
-		}
-		else
-		{
-			cardVis.populateArt(equipPre);
-		}
-		cardVis.setBackground();
-		cardVis.populateTitle(equipPre.name);
-		cardVis.populateType(prefabEquipScript);
-		StatHandler st = equipPre.GetComponent<StatHandler>();
-		Dictionary<StatType, float> sts = st.prefabStats();
-		resourceCost = prefabEquipScript.resourceCost;
-		cardVis.populateCost(resourceCost.ToString());
-		cardVis.populateBody(sts, false, equipPre.GetComponent<Buff>().abilitiesPre.Select(x => x.GetComponent<Ability>()).ToArray());
+		Cardmaker mkr = sourceCardmaker.GetComponent<Cardmaker>();
+		cardBody.GetComponent<CardUI>().populateSelf(mkr,true);
+		resourceCost = mkr.resourceCost;
 
+	
 	}
-
+	protected override void inspect()
+	{
+		gm.clientPlayer.cardInspect(cardBody, CardInspector.inspectType.card, sourceCardmaker.GetComponent<StatHandler>().prefabStats());
+	}
 	// Start is called before the first frame update
 
 }

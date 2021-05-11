@@ -6,7 +6,7 @@ using UnityEngine;
 public class Ordnance : Cardmaker, TeamOwnership, PseudoDestroy
 {
 
-    public string nameString;
+
 	#region unitAbility
 	public Unit caster;
 
@@ -28,7 +28,7 @@ public class Ordnance : Cardmaker, TeamOwnership, PseudoDestroy
 
     }
     [Client]
-    public void register() //prefab
+    public override void register() //prefab
     {
         if (!ClientScene.prefabs.ContainsValue(gameObject))
         {
@@ -53,9 +53,8 @@ public class Ordnance : Cardmaker, TeamOwnership, PseudoDestroy
 
 	public override void modifyCardAfterCreation(GameObject o)
     {
-        nameString = name;
         OrdCard card = o.GetComponent<OrdCard>();
-        card.setEquipPre(this);
+        card.setCardmaker(this);
 
         Targeting tar = o.GetComponent<Targeting>();
 

@@ -1,13 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using static StatBlock;
 
 public class EquipCardUI : CardUI
 {
     public Text type;
 
-    public void populateType(Equipment e)
+
+
+	public void populateType(Equipment e)
 	{
         string t = "";
 		switch (e.type)
@@ -33,15 +37,40 @@ public class EquipCardUI : CardUI
 	{
         cardBG.color = GameColors.equipment;
 	}
-    // Start is called before the first frame update
-    void Start()
+    public override void populateSelf(Cardmaker maker, bool isPrefab)
     {
-        
-    }
+		Equipment e = maker.GetComponent<Equipment>();
+		//
+		if (e.cardArt != null)
+		{
+			populateArt(e.cardArt);
+		}
+		else
+		{
+			populateArt(maker.gameObject);
+		}
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+        if (isPrefab)
+        {
+            StatHandler st = maker.GetComponent<StatHandler>();
+            Dictionary<StatType, float> sts = st.prefabStats();
+            populateTitle(maker.name);
+
+            populateBody(sts, false, maker.GetComponent<Buff>().abilitiesPre.Select(x => x.GetComponent<Ability>()).ToArray());
+        }
+        else
+        {
+            populateTitle(maker.originalName);
+            populateBody(e.GetComponent<StatHandler>().export(), false, e.GetComponent<Buff>().abilities.Select(x => x.GetComponent<Ability>()).ToArray());
+        }
+
+
+        setBackground();
+		populateType(e);
+		
+
+		populateCost(maker.resourceCost.ToString());
+		
+
+	}
 }

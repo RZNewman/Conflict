@@ -49,7 +49,7 @@ public class OrdSqUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler
                 currentTime = GameConstants.hoverInspectTime;
                 if (!inspecting)
                 {
-                    gm.clientPlayer.cardInspect(ability.gameObject, CardInspector.inspectType.ability);
+                    gm.clientPlayer.cardInspect(ability.gameObject, CardInspector.inspectType.cardmaker);
                     inspecting = true;
 
                 }
@@ -63,7 +63,7 @@ public class OrdSqUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler
 
             if (inspecting)
             {
-                gm.clientPlayer.cardUnInspect();
+                gm.clientPlayer.cardUnInspect(ability.gameObject);
                 inspecting = false;
             }
 

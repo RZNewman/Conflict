@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 
-public class Tile : NetworkBehaviour, TeamOwnership
+public class Tile : NetworkBehaviour
 {
 	#region neigh
 	public enum neighDir
@@ -97,6 +97,7 @@ public class Tile : NetworkBehaviour, TeamOwnership
         {
             Unit u = hit.collider.GetComponent<Unit>();
             u.initialize(u.teamIndex);
+            u.provideName("");
             RpcAssignUnit(u.netId);
             assignUnit(u);
             
@@ -106,7 +107,8 @@ public class Tile : NetworkBehaviour, TeamOwnership
     {
         occEnter(u);
         u.teamColor();
-        u.visibility(true);
+        u.visibility(Unit.visType.none, Unit.visType.on);
+        u.visibility(Unit.visType.off, Unit.visType.on);
         alignOcc();
         //TODO WTF is all this shit
     }
@@ -313,10 +315,6 @@ public class Tile : NetworkBehaviour, TeamOwnership
 		}
 	}
 
-	public int getTeam()
-	{
-        return teamDeploy;
-	}
     #region tile Searching
     public List<Tile> select()
     {

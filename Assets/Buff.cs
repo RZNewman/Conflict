@@ -6,7 +6,7 @@ using Mirror;
 public class Buff : NetworkBehaviour
 {
     public List<GameObject> abilitiesPre;
-    List<GameObject> abilities = new List<GameObject>();
+    public List<GameObject> abilities = new List<GameObject>();
 
     [ClientRpc]
     public void RpcAssignUnit(uint unitID)

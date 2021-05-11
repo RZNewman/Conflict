@@ -16,18 +16,29 @@ public class ResourceUI : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        assignGM();
+
+    }
+    void assignGM()
+	{
         if (!gm)
         {
-            gm = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameManager>();
-        }
+            GameObject o = GameObject.FindGameObjectWithTag("GameController");
+            if (o)
+            {
+                gm = o.GetComponent<GameManager>();
+            }
 
+        }
     }
 
     // Update is called once per frame
     public void refresh()
     {
         //Debug.Log("Refresh called");
-        
+        assignGM();
+		if (!gm) { return; }
+        if (!gm.clientPlayer) { return; }
         StatHandler st = gm.clientPlayer.GetComponent<StatHandler>();
 		if (income)
 		{

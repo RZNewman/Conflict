@@ -11,19 +11,38 @@ public class OrdCardUI : CardUI
         desc = Operations.Capatialize(desc);
         cardBody.text = desc;
     }
-    public void setBackground()
+
+	
+
+	public void setBackground()
     {
         cardBG.color = GameColors.ordnance;
     }
-    // Start is called before the first frame update
-    void Start()
+    public override void populateSelf(Cardmaker maker, bool isPrefab)
     {
-        
-    }
+		Ability ab = maker.GetComponent<Ability>();
+		Ordnance ord = maker.GetComponent<Ordnance>();
+		//
+		if (ord.cardArt != null)
+		{
+			populateArt(ord.cardArt);
+		}
+		else
+		{
+			populateArt(maker.gameObject);
+		}
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+		if (isPrefab)
+		{
+			populateTitle(maker.name);
+		}
+		else
+		{
+			populateTitle(maker.originalName);
+		}
+		
+		setBackground();
+		populateCost(maker.resourceCost.ToString());
+		populateBody(ab);
     }
 }

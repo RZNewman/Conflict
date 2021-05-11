@@ -12,6 +12,14 @@ public class ViewPipeline : NetworkBehaviour
 	new AudioSource audio;
 	public AudioClip endTurnSound;
 	public AudioClip beginTurnSound;
+
+	public bool isFixating = false;
+	public Vector3 fixation;
+
+	//public bool inspecting = false;
+	GameObject inspection = null;
+	CardInspector ins;
+
 	[Serializable]
     public enum ViewType : byte
 	{
@@ -62,7 +70,7 @@ public class ViewPipeline : NetworkBehaviour
 			{
 				break;
 			}
-			if (incomingViews[index].serverTimestamp == v.serverTimestamp && v.type != ViewType.objDeath)
+			if (incomingViews[index].serverTimestamp == v.serverTimestamp && v.type != ViewType.objDeath && index != 0)
 			{
 				break;
 			}
@@ -76,6 +84,7 @@ public class ViewPipeline : NetworkBehaviour
 	{
 		gm = GetComponent<GameManager>();
 		audio = GetComponent<AudioSource>();
+		ins = FindObjectOfType<CardInspector>();
 	}
 	private void Update()
 	{
@@ -86,7 +95,7 @@ public class ViewPipeline : NetworkBehaviour
 			currentViewTime -= Time.deltaTime;
 			if(currentViewTime<= 0)
 			{
-				incomingViews.RemoveAt(0);
+				exitView();
 				nextView();
 			}
 		}
@@ -96,6 +105,24 @@ public class ViewPipeline : NetworkBehaviour
 		} 
 			
 		
+	}
+	void fixate(Vector3 f)
+	{
+		//if(true)
+		if (!gm.clientPlayer.isTurn)		
+		{
+			isFixating = true;
+			fixation = f;
+		}
+	}
+	[Client]
+	void inspect(Cardmaker c)
+	{
+		if (!gm.clientPlayer.isTurn)
+		{
+			inspection = c.gameObject;
+			ins.inspect(c.gameObject, CardInspector.inspectType.cardmaker, 1);
+		}
 	}
 	void nextView()
 	{
@@ -107,13 +134,13 @@ public class ViewPipeline : NetworkBehaviour
 				case ViewType.beginTurn:
 				case ViewType.objDeath:
 					enterView();
-					incomingViews.RemoveAt(0);
+					exitView();
 					break;
 				default:
 					enterView();
 					if (gm.clientPlayer.isTurn)
 					{
-						incomingViews.RemoveAt(0);
+						exitView();
 					}
 					else
 					{
@@ -134,18 +161,24 @@ public class ViewPipeline : NetworkBehaviour
 		{
 			case ViewType.unitMove:
 				actor = NetworkIdentity.spawned[incomingViews[0].sourceID].GetComponent<Unit>();
-				target = NetworkIdentity.spawned[incomingViews[0].tileID].GetComponent<Tile>();
+				target = NetworkIdentity.spawned[incomingViews[0].tileID].GetComponent<Tile>();							
 				gm.transferToTile(actor, target);
+				fixate(target.positionOcc);
 				break;
 			case ViewType.unitAttack:
 				actor = NetworkIdentity.spawned[incomingViews[0].sourceID].GetComponent<Unit>();
 				target = NetworkIdentity.spawned[incomingViews[0].tileID].GetComponent<Tile>();
 				gm.clientAttackUnit(actor, target);
+				Vector3 diff = target.positionOcc - actor.transform.position;
+				diff = actor.transform.position + diff * 0.5f;
+				fixate(new Vector3(diff.x, target.positionOcc.y, diff.z));
 				break;
 			case ViewType.unitPlay:
 				actor = NetworkIdentity.spawned[incomingViews[0].sourceID].GetComponent<Unit>();
 				target = NetworkIdentity.spawned[incomingViews[0].tileID].GetComponent<Tile>();
 				target.assignUnit(actor);
+				fixate(target.positionOcc);
+				inspect(actor);
 				break;
 			case ViewType.playEffect:
 				effector = NetworkIdentity.spawned[incomingViews[0].sourceID].GetComponent<Cardmaker>();
@@ -154,6 +187,8 @@ public class ViewPipeline : NetworkBehaviour
 				{
 					Instantiate(effector.playEffectPre, target.transform.position + target.GetComponent<Collider>().bounds.extents.y * target.transform.up, Quaternion.identity);
 				}
+				fixate(target.positionOcc);
+				inspect(effector);
 				break;
 			case ViewType.beginTurn:
 				audio.clip = beginTurnSound;
@@ -174,6 +209,16 @@ public class ViewPipeline : NetworkBehaviour
 				obj.SetActive(false);
 				break;
 
+		}
+	}
+	void exitView()
+	{
+		incomingViews.RemoveAt(0);
+		isFixating = false;
+		if (inspection)
+		{
+			ins.uninspect(inspection);
+			inspection = null;
 		}
 	}
 }

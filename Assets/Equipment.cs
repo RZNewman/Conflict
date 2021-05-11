@@ -12,7 +12,7 @@ public class Equipment : Cardmaker
     // Start is called before the first frame update
 
     [Client]
-    public void register() //prefab
+    public override void register() //prefab
     {
         if (!ClientScene.prefabs.ContainsValue(gameObject))
         {
@@ -31,7 +31,7 @@ public class Equipment : Cardmaker
     public override void modifyCardAfterCreation(GameObject o)
     {
         EquipCard card = o.GetComponent<EquipCard>();
-        card.setEquipPre(this);
+        card.setCardmaker(this);
         Targeting tar = o.GetComponent<Targeting>();
         Rule[] mod = new Rule[tar.rules.Length];
         for (int i = 0; i < tar.rules.Length; i++)

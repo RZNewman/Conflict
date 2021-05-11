@@ -79,14 +79,20 @@ public class GameManager : NetworkBehaviour
 		{
             pd.PDestroy();
 		}
-        pipe.RpcAddViewEvent(new ViewEvent(ViewType.objDeath, o.GetComponent<NetworkIdentity>().netId, 0, Time.time));
+        StartCoroutine(sendDestroyLater(0.2f, o.GetComponent<NetworkIdentity>().netId));
 		if (!isClient)
 		{
             o.SetActive(false);
         }
         
 	}
-	#region turn control
+    IEnumerator sendDestroyLater(float t, uint id)
+    {
+        // suspend execution for 5 seconds
+        yield return new WaitForSeconds(t);
+        pipe.RpcAddViewEvent(new ViewEvent(ViewType.objDeath, id, 0, Time.time));
+    }
+    #region turn control
     void firstTurn()
 	{
         currentTurn = 0;
@@ -462,6 +468,7 @@ public class GameManager : NetworkBehaviour
 		{
             player.spendResources(playedCard.resourceCost);
             playedCard.playCard(target);
+            delayedDestroy(playedCard.gameObject);
 		}
     }
     [Server]

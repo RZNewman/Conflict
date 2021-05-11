@@ -7,7 +7,10 @@ public class CardInspector : MonoBehaviour
 {
     UnitCardUI visualsUnit;
     OrdCardUI visualsAbility;
+    EquipCardUI visualsBuff;
     GameObject handSample;
+
+    List<inspectBlock> blocks = new List<inspectBlock>();
 
     public GameObject keywordHolder;
     public GameObject keywordPre;
@@ -19,94 +22,140 @@ public class CardInspector : MonoBehaviour
         visualsUnit.gameObject.SetActive(false);
         visualsAbility = GetComponentInChildren<OrdCardUI>();
         visualsAbility.gameObject.SetActive(false);
+        visualsBuff = GetComponentInChildren<EquipCardUI>();
+        visualsBuff.gameObject.SetActive(false);
     }
     public enum inspectType
 	{
         card,
-        unit,
-        ability
+        cardmaker
 	}
-    // Update is called once per frame
-    public void inspect(GameObject obj, inspectType type, Dictionary<StatType, float> stats = null)
+    struct inspectBlock
 	{
-        if (type == inspectType.card)
+        public GameObject obj;
+        public inspectType type;
+        public Dictionary<StatType, float> stats;
+        public int priority;
+        public inspectBlock(GameObject o, inspectType t, int p, Dictionary<StatType, float> s)
         {
-            handSample = Instantiate(obj, transform);
-            handSample.transform.localPosition = Vector3.zero;
-			if (stats != null)
-			{
-                generateKeywordDesc(stats);
-			}
+            obj = o;
+            type = t;
+            stats = s;
+            priority = p;
         }
-        else if(type == inspectType.unit)
-        {
 
+    }
+    // Update is called once per frame
+    public void inspect(GameObject obj, inspectType type, int priority, Dictionary<StatType, float> stats = null)
+	{
+        //Debug.Log("START ins -"+obj);
+        inspectBlock b = new inspectBlock(obj, type, priority, stats);
+        int i = 0;
 
-            Unit u = obj.GetComponent<Unit>();
-            if (u.cardArt != null)
-            {
-                visualsUnit.populateArt(u.cardArt);
-            }
-            else
-            {
-                visualsUnit.populateArt(obj);
-            }
-
-            visualsUnit.populateTitle(u.unitName);
-            visualsUnit.populateType(u);
-
-
-            visualsUnit.populateCost(u.resourceCost.ToString());
-            visualsUnit.populateValues(u);
-            visualsUnit.populateBody(u.stat.export(),true,u.abilities.Select(x => x.GetComponent<Ability>()).ToArray());
-            visualsUnit.modifyForStructure(u.isStructure);
-
-            generateKeywordDesc(u.stat.export());
-
-            visualsUnit.gameObject.SetActive(true);
-        }
-        else if(type == inspectType.ability)
+		while (i < blocks.Count)
 		{
-            Ordnance o = obj.GetComponent<Ordnance>();
-            if (o.cardArt != null)
+            if(b.priority < blocks[i].priority)
+			{
+                break;
+			}
+            i++;
+		}
+
+        if(i == 0)
+		{
+			if (blocks.Count > 0)
+			{
+                killInspection();
+			}
+            createInspection(b);
+		}
+        blocks.Insert(i, b);
+    }
+    public void uninspect(GameObject obj)
+	{
+        //Debug.Log("END ins -" + obj);
+        int i = -1;
+        for(int j =0; j<blocks.Count; j++)
+		{
+            if(blocks[j].obj == obj)
+			{
+                i = j;
+                break;
+			}
+		}
+        if(i != -1)
+		{
+            if(i == 0)
+			{
+                killInspection();
+			}
+            blocks.RemoveAt(i);
+            if (i == 0 && blocks.Count>0)
             {
-                visualsAbility.populateArt(o.cardArt);
+                createInspection(blocks[0]);
             }
-            else
+        }
+
+
+
+    }
+    void createInspection(inspectBlock b)
+	{
+        if (b.type == inspectType.card)
+        {
+            handSample = Instantiate(b.obj, transform);
+            handSample.transform.localPosition = Vector3.zero;
+            if (b.stats != null)
             {
-                visualsAbility.populateArt(obj);
+                generateKeywordDesc(b.stats);
+            }
+        }
+        else if (b.type == inspectType.cardmaker)
+        {
+            Unit u = b.obj.GetComponent<Unit>();
+            Ordnance o = b.obj.GetComponent<Ordnance>();
+            Equipment e = b.obj.GetComponent<Equipment>();
+
+            if (u)
+            {
+                generateKeywordDesc(u.stat.export());
+                visualsUnit.populateSelf(u, false);
+                visualsUnit.gameObject.SetActive(true);
+            }
+            else if (o)
+            {
+                visualsAbility.populateSelf(o, false);
+                visualsAbility.gameObject.SetActive(true);
+            }
+            else if (e)
+            {
+                generateKeywordDesc(e.GetComponent<StatHandler>().export());
+                visualsBuff.populateSelf(e, false);
+                visualsBuff.gameObject.SetActive(true);
             }
 
-            visualsAbility.populateTitle(o.nameString);
-            visualsAbility.setBackground();
 
-            visualsAbility.populateCost(o.resourceCost.ToString());
-
-            visualsAbility.populateBody(o.GetComponent<Ability>());
-            visualsAbility.gameObject.SetActive(true);
         }
     }
-    public void uninspect()
+    void killInspection()
 	{
         if (handSample)
         {
             Destroy(handSample);
         }
-		else
-		{
+        else
+        {
             visualsUnit.gameObject.SetActive(false);
             visualsAbility.gameObject.SetActive(false);
+            visualsBuff.gameObject.SetActive(false);
         }
         //List<GameObject> toRemove = new List<GameObject>();
-        foreach(GameObject o in keywordInstances)
-		{
+        foreach (GameObject o in keywordInstances)
+        {
             //toRemove.Add(o);
             Destroy(o);
-		}
+        }
         //foreach (GameObject o in keywordInstances)
-
-
-
     }
     void generateKeywordDesc(Dictionary<StatType, float> stats)
 	{

@@ -26,11 +26,12 @@ public abstract class CardUI : MonoBehaviour
     {
         
     }
-    public void populateArt(Sprite art)
+    public abstract void populateSelf(Cardmaker maker, bool isPrefab);
+    protected void populateArt(Sprite art)
 	{
         cardArt.sprite = art;
     }
-    public void populateArt(GameObject prefab/*, int retry =0*/)
+    protected void populateArt(GameObject prefab/*, int retry =0*/)
     {
 		//if (retry > 3)
 		//{
@@ -49,17 +50,17 @@ public abstract class CardUI : MonoBehaviour
             //StartCoroutine(ArtCoRou(prefab,retry+1));
         }
     }
- //   IEnumerator ArtCoRou(GameObject prefab,int retry)
-	//{
- //       yield return new WaitForSeconds(1);
- //       populateArt(prefab, retry);
- //   }
-    
-    public void populateTitle(string title)
+    //   IEnumerator ArtCoRou(GameObject prefab,int retry)
+    //{
+    //       yield return new WaitForSeconds(1);
+    //       populateArt(prefab, retry);
+    //   }
+
+    protected void populateTitle(string title)
 	{
         cardTitle.text = title;
 	}
-    public void populateCost(string cost)
+    protected void populateCost(string cost)
     {
         cardCost.text = cost;
         //cardCost.transform.parent.GetComponent<Image>().color = GameColors.resources;
@@ -69,7 +70,7 @@ public abstract class CardUI : MonoBehaviour
         selection.SetActive(isSelected);
 	}
 
-    public void populateBody(Dictionary<StatType, float> stats, bool skipUnitValues = true, Ability[] abils = null)
+    protected void populateBody(Dictionary<StatType, float> stats, bool skipUnitValues = true, Ability[] abils = null)
 	{
         string text = "";
         int[] valueText = new int[2];

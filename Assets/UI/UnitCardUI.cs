@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using static StatBlock;
@@ -77,5 +78,36 @@ public class UnitCardUI : CardUI
         
 	}
 
+	public override void populateSelf(Cardmaker maker, bool isPrefab)
+	{
+        Unit u = maker.GetComponent<Unit>();
+        //
+        if (u.cardArt != null)
+        {
+            populateArt(u.cardArt);
+        }
+        else
+        {
+            populateArt(maker.gameObject);
+        }
 
+		if (isPrefab)
+		{
+            StatHandler st = maker.GetComponent<StatHandler>();
+            Dictionary<StatType, float> sts = st.prefabStats();
+            populateTitle(maker.name);
+            populateValues(sts);
+            populateBody(sts, true, u.abilitiesPre.Select(x => x.GetComponent<Ability>()).ToArray());
+        }
+		else
+		{
+            populateTitle( maker.originalName);
+            populateValues(u);
+            populateBody(u.stat.export(), true, u.abilities.Select(x => x.GetComponent<Ability>()).ToArray());
+        }
+        
+        populateType(u);      
+        populateCost(maker.resourceCost.ToString());
+        modifyForStructure(u.isStructure);
+    }
 }

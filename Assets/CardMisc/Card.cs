@@ -9,7 +9,11 @@ public abstract class Card : NetworkBehaviour, IPointerEnterHandler, IPointerExi
 {
     protected GameObject cardTemplatePre;
     protected GameObject cardBody;
-    
+
+    public GameObject sourceCardmaker;
+    [SyncVar]
+    protected string sourceCardmakerPath;
+
     [SyncVar]
     public int team;
 
@@ -29,12 +33,22 @@ public abstract class Card : NetworkBehaviour, IPointerEnterHandler, IPointerExi
     }
     protected abstract void populateTemplate();
 
+    [Server]
+    public virtual void setCardmaker(Cardmaker c) 
+    {
+        sourceCardmaker = c.gameObject;
+    }
+    
+
     public abstract void playCard(Tile target);
     // Start is called before the first frame update
     protected virtual void Start()
     {
 		if (isClient)
 		{
+            sourceCardmaker = (GameObject)Resources.Load(sourceCardmakerPath, typeof(GameObject));
+            sourceCardmaker.GetComponent<Cardmaker>().register();
+
             populateTemplate();
             gm= GameObject.FindGameObjectWithTag("GameController").GetComponent<GameManager>();
             if(gm.clientTeam == team)
@@ -86,7 +100,7 @@ public abstract class Card : NetworkBehaviour, IPointerEnterHandler, IPointerExi
 
 			if (inspecting)
 			{
-                gm.clientPlayer.cardUnInspect();
+                gm.clientPlayer.cardUnInspect(cardBody);
                 inspecting = false;
             }
 

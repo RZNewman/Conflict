@@ -6,6 +6,7 @@ TagManager:
   tags:
   - PlayerHand
   - StructureBoard
+  - Mulligan
   layers:
   - Default
   - TransparentFX
