@@ -36,6 +36,7 @@ public abstract class Card : NetworkBehaviour, IPointerEnterHandler, IPointerExi
     [Server]
     public virtual void setCardmaker(Cardmaker c) 
     {
+        //Debug.Log(c);
         sourceCardmaker = c.gameObject;
     }
     

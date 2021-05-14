@@ -56,6 +56,32 @@ public class GameManager : NetworkBehaviour
 
         GetComponent<GameGrid>().initialize();
         drawOpeningHand();
+        foreach (uint playerID in teams.Keys)
+        { 
+            TargetShowMulligan(NetworkIdentity.spawned[playerID].connectionToClient,true);
+
+        }
+        
+    }
+    public GameObject mulliganScreen;
+    [TargetRpc]
+    void TargetShowMulligan(NetworkConnection conn, bool show)
+	{
+        mulliganScreen.SetActive(show);
+		if (!show)
+		{
+            clientPlayer.isMulligan = false;
+		}
+
+    }
+    [Client]
+    public void localSubmitMulligan()
+	{
+        clientPlayer.mulligan();
+	}
+    void initGame()
+	{
+        drawSideboards();
         firstTurn();
     }
     public void teamUnitUpstreamStats(StatHandler st, int team)
@@ -250,6 +276,18 @@ public class GameManager : NetworkBehaviour
 			{
                 p.drawCard();
 			}
+
+
+
+        }
+    }
+    void drawSideboards()
+    {
+        foreach (uint playerID in teams.Keys)
+        {
+
+            PlayerGhost p = NetworkIdentity.spawned[playerID].GetComponent<PlayerGhost>();
+
             p.createStructureSideboard();
 
 
@@ -264,6 +302,51 @@ public class GameManager : NetworkBehaviour
         //Debug.Log(currentTurn);
         nextTurn();
 
+
+    }
+    List<uint> playersMulligan = new List<uint>();
+    public void mulligan(uint ownerID, List<uint> cardIDs)
+	{
+        //Debug.Log(ownerID);
+        if (!NetworkIdentity.spawned.ContainsKey(ownerID))
+        {
+            return;
+        }
+		if (playersMulligan.Contains(ownerID))
+		{
+            return;
+        }
+        foreach (uint id in cardIDs)
+		{
+            //Debug.Log(id);
+            if (!NetworkIdentity.spawned.ContainsKey(id) )
+            {
+                return;
+            }
+            Card c = NetworkIdentity.spawned[id].GetComponent<Card>();
+            if (!c)
+            {
+                return;
+            }
+            if (c.team != teams[ownerID])
+            {
+                return;
+            }
+
+        }
+        PlayerGhost p = NetworkIdentity.spawned[ownerID].GetComponent<PlayerGhost>();
+        //set p not mulligan
+        foreach (uint id in cardIDs)
+        {
+            p.returnCardToDeck(NetworkIdentity.spawned[id].GetComponent<Card>());
+            p.drawCard();
+        }
+        playersMulligan.Add(ownerID);
+        TargetShowMulligan(p.connectionToClient, false);
+        if(playersMulligan.Count == teams.Count)
+		{
+            initGame();
+		}
 
     }
     public void refreshUnits(int team)
@@ -332,7 +415,8 @@ public class GameManager : NetworkBehaviour
         }
         return true;
     }
-    [Server]
+	#region attack
+	[Server]
     public void attack(uint ownerID, uint unitID, uint tileID)
     {
         if (!messageCheck(ownerID, unitID, tileID))
@@ -379,7 +463,9 @@ public class GameManager : NetworkBehaviour
 
         attacker.attackInDir(target, clientViewpiplelineActionTime);
     }
-    [Server]
+	#endregion
+	#region move
+	[Server]
     public void move(uint ownerID, uint unitID, uint tileID)
     {
         if (!messageCheck(ownerID, unitID, tileID))
@@ -446,7 +532,9 @@ public class GameManager : NetworkBehaviour
         
 
     }
-    [Server]
+	#endregion
+	#region cardPlay
+	[Server]
     public void cardPlay(uint ownerID, uint cardID, uint tileID)
     {
         if (!messageCheck(ownerID, cardID, tileID))
@@ -500,5 +588,6 @@ public class GameManager : NetworkBehaviour
             
         }
     }
-    #endregion
+	#endregion
+	#endregion
 }

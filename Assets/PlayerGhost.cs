@@ -4,6 +4,7 @@ using UnityEngine;
 using Mirror;
 using static StatBlock;
 using UnityEditor;
+using System.Linq;
 
 public class PlayerGhost : NetworkBehaviour, TeamOwnership
 {
@@ -54,10 +55,26 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
     public Deck loadedDeck;
 	List<GameObject> MainDeck = new List<GameObject>();
     List<GameObject> Structures = new List<GameObject>();
- 
+
+    [HideInInspector]
+    public bool isMulligan = true;
+    List<Card> toMulligan = new List<Card>();
     public void cardClick(Card c)
 	{
-		if (myTurn)
+		if (isMulligan)
+		{
+			if (toMulligan.Contains(c))
+			{
+                c.setSelection(false);
+                toMulligan.Remove(c);
+			}
+			else
+			{
+                c.setSelection(true);
+                toMulligan.Add(c);
+            }
+		}
+		else if (myTurn)
 		{
             int cost = c.resourceCost;
             //Debug.Log(cost);
@@ -73,10 +90,18 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
                 setTargetUnit(null);
                 setTargetCard(c);
             }
-        }
+        } 
         
 
 	}
+    public void mulligan()
+	{
+		if (isMulligan)
+		{
+            CmdMulligan();
+		}
+	}
+
     public void cardInspect(GameObject body, CardInspector.inspectType type, Dictionary<StatType, float> stats = null)
 	{
         inspect.inspect(body,type,2, stats);
@@ -106,8 +131,11 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
     }
     public void returnCardToDeck(Card c)
 	{
+        //Debug.Log(c);
+        //Debug.Log(c.sourceCardmaker);
         addCard(c.sourceCardmaker);
-        gm.delayedDestroy(c.gameObject);
+        //gm.delayedDestroy(c.gameObject);
+        Destroy(c.gameObject);
 	}
     public void addCard(GameObject cPrefab)
 	{
@@ -604,6 +632,11 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
 	{
         gm.endTurn(netId);
         
+	}
+    [Command]
+    void CmdMulligan()
+	{
+        gm.mulligan(netId, toMulligan.Select(x => x.netId).ToList());
 	}
 
 	public int getTeam()

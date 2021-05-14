@@ -13,8 +13,9 @@ public class NetInterface : MonoBehaviour
     public void connectToBetaAddress()
 	{
         NetworkManager nm = FindObjectOfType<NetworkManager>();
-        nm.networkAddress = "24.148.76.143";
+        nm.networkAddress = "24.148.78.17";
         nm.StartClient();
+
     }
     public void startTutorial()
 	{
