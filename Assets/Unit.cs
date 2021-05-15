@@ -154,9 +154,9 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
     [Client]
     public override void register() //prefab
 	{
-        if (!ClientScene.prefabs.ContainsValue(gameObject))
+        if (!NetworkClient.prefabs.ContainsValue(gameObject))
         {
-            ClientScene.RegisterPrefab(gameObject);
+            NetworkClient.RegisterPrefab(gameObject);
             foreach (GameObject aPre in abilitiesPre)
             {
                 aPre.GetComponent<Ordnance>().register();

@@ -90,7 +90,7 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
                 setTargetUnit(null);
                 setTargetCard(c);
             }
-        } 
+        }
         
 
 	}
@@ -98,7 +98,7 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
 	{
 		if (isMulligan)
 		{
-            CmdMulligan();
+            CmdMulligan(toMulligan.Select(x => x.netId).ToList());
 		}
 	}
 
@@ -634,9 +634,9 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
         
 	}
     [Command]
-    void CmdMulligan()
+    void CmdMulligan(List<uint> cardIDs)
 	{
-        gm.mulligan(netId, toMulligan.Select(x => x.netId).ToList());
+        gm.mulligan(netId, cardIDs);
 	}
 
 	public int getTeam()

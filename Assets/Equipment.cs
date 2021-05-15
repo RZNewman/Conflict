@@ -14,9 +14,9 @@ public class Equipment : Cardmaker
     [Client]
     public override void register() //prefab
     {
-        if (!ClientScene.prefabs.ContainsValue(gameObject))
+        if (!NetworkClient.prefabs.ContainsValue(gameObject))
         {
-            ClientScene.RegisterPrefab(gameObject);
+            NetworkClient.RegisterPrefab(gameObject);
             foreach (GameObject aPre in GetComponent<Buff>().abilitiesPre)
             {
                 aPre.GetComponent<Ordnance>().register();

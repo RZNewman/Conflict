@@ -13,7 +13,7 @@ public class NetInterface : MonoBehaviour
     public void connectToBetaAddress()
 	{
         NetworkManager nm = FindObjectOfType<NetworkManager>();
-        nm.networkAddress = "24.148.78.17";
+        nm.networkAddress = ConfReader.Value("serverip");
         nm.StartClient();
 
     }

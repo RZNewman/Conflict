@@ -30,9 +30,9 @@ public class Ordnance : Cardmaker, TeamOwnership, PseudoDestroy
     [Client]
     public override void register() //prefab
     {
-        if (!ClientScene.prefabs.ContainsValue(gameObject))
+        if (!NetworkClient.prefabs.ContainsValue(gameObject))
         {
-            ClientScene.RegisterPrefab(gameObject);
+            NetworkClient.RegisterPrefab(gameObject);
             
         }
     }
