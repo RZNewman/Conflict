@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 6247676399809486883}
   - component: {fileID: 8083475318984609903}
   m_Layer: 7
-  m_Name: Lisk
+  m_Name: Ram
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -117,7 +117,8 @@ MonoBehaviour:
   syncInterval: 0.1
   resourceCost: 6
   cardArt: {fileID: 0}
-  unitName: 
+  playEffectPre: {fileID: 0}
+  originalName: 
   type: 1
   loc: {fileID: 0}
   teamIndex: 0
@@ -139,7 +140,7 @@ MonoBehaviour:
   syncInterval: 0.4
   statsList:
   - type: 0
-    value: 6
+    value: 8
   - type: 1
     value: 4
   - type: 3

@@ -38,15 +38,6 @@ public class OrdCard : Card
 		//Destroy(gameObject);
 	}
 
-	protected override void populateTemplate()
-	{
-		getTemplate("OrdCardPre");
-		cardBody = Instantiate(cardTemplatePre, transform);
-		Cardmaker mkr = sourceCardmaker.GetComponent<Cardmaker>();
-		cardBody.GetComponent<OrdCardUI>().populateSelf(mkr,true);
-		resourceCost = mkr.resourceCost;
 
-		
-	}
 
 }

@@ -48,10 +48,19 @@ public class Ordnance : Cardmaker, TeamOwnership, PseudoDestroy
     {
         return (GameObject)Resources.Load("DynamicOrdCard", typeof(GameObject));
     }
+    public override GameObject findCardTemplate()
+    {
+        return (GameObject)Resources.Load("OrdCardPre", typeof(GameObject));
 
-	
+    }
+    public override Color getColor()
+    {
 
-	public override void modifyCardAfterCreation(GameObject o)
+        return GameColors.ordnance;
+
+    }
+
+    public override void modifyCardAfterCreation(GameObject o)
     {
         OrdCard card = o.GetComponent<OrdCard>();
         card.setCardmaker(this);

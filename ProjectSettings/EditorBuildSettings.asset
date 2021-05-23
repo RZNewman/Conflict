@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Layers - 7B.unity
     guid: 880dd11245b4a4249b41ee239500037b
+  - enabled: 1
+    path: Assets/Scenes/Deckbuilder.unity
+    guid: a856fe82286a35f4a93b0712ad631831
   m_configObjects: {}

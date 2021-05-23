@@ -14,16 +14,7 @@ public class UnitCard : Card
 
     
 
-	protected override void populateTemplate()
-	{
-        getTemplate("UnitCardPre");
-        cardBody = Instantiate(cardTemplatePre,transform);
-        Cardmaker mkr = sourceCardmaker.GetComponent<Cardmaker>();
-        cardBody.GetComponent<CardUI>().populateSelf(mkr, true);
-        resourceCost = mkr.resourceCost;
 
-
-    }
 	protected override void inspect()
 	{
         gm.clientPlayer.cardInspect(cardBody, CardInspector.inspectType.card, sourceCardmaker.GetComponent<StatHandler>().prefabStats());

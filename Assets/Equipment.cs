@@ -27,7 +27,17 @@ public class Equipment : Cardmaker
     {
         return (GameObject)Resources.Load("DynamicEquipCard", typeof(GameObject));
     }
+    public override GameObject findCardTemplate()
+    {
+        return (GameObject)Resources.Load("EquipCardPre", typeof(GameObject));
 
+    }
+    public override Color getColor()
+    {
+
+        return GameColors.equipment;
+
+    }
     public override void modifyCardAfterCreation(GameObject o)
     {
         EquipCard card = o.GetComponent<EquipCard>();

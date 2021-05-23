@@ -467,7 +467,8 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
 		}
         dealDamage(tar);
         tar.getSlowed(st.getStat(StatType.slow));
-        tar.tryRetailiation(this, range, didBypass);
+        //Retal OFF
+        //tar.tryRetaliation(this, range, didBypass);
 	}
     public enum damageSource
 	{
@@ -487,7 +488,7 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
             currentMovement = 0;
 		}
 	}
-    void tryRetailiation(Unit tar, int range, bool didBypass)
+    void tryRetaliation(Unit tar, int range, bool didBypass)
 	{
         int maxRange = st.getStat(StatType.range);
 		if (range < 1)
@@ -571,8 +572,22 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
         return (GameObject)Resources.Load("DynamicUnitCard", typeof(GameObject));
 
     }
+    public override GameObject findCardTemplate()
+    {
+        return (GameObject)Resources.Load("UnitCardPre", typeof(GameObject));
 
-	public override void modifyCardAfterCreation(GameObject o)
+    }
+    public override Color getColor()
+    {
+		if (isStructure)
+		{
+            return GameColors.structure;
+		}
+        return Color.white;
+
+    }
+
+    public override void modifyCardAfterCreation(GameObject o)
 	{
         UnitCard card = o.GetComponent<UnitCard>();
         card.setCardmaker(this);

@@ -26,12 +26,16 @@ public abstract class Card : NetworkBehaviour, IPointerEnterHandler, IPointerExi
 
 
     bool inspecting = false;
-    protected void getTemplate(string templateName)
-	{
-        cardTemplatePre = (GameObject)Resources.Load(templateName, typeof(GameObject));
 
+    protected void populateTemplate()
+    {
+
+        
+        Cardmaker mkr = sourceCardmaker.GetComponent<Cardmaker>();
+        cardBody = Instantiate(mkr.findCardTemplate(), transform);
+        cardBody.GetComponent<CardUI>().populateSelf(mkr, true);
+        resourceCost = mkr.resourceCost;
     }
-    protected abstract void populateTemplate();
 
     [Server]
     public virtual void setCardmaker(Cardmaker c) 

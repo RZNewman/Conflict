@@ -28,6 +28,9 @@ public abstract class Cardmaker: NetworkBehaviour
 		}
 	}
 	public abstract GameObject findCardPrefab();
+	public abstract GameObject findCardTemplate();
+
+	public abstract Color getColor();
 
 	public abstract void modifyCardAfterCreation(GameObject o);
 
