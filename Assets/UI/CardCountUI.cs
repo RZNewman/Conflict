@@ -12,6 +12,7 @@ public class CardCountUI : MonoBehaviour, IPointerClickHandler
 
     public int cardmakerIndex;
     public int count= 0;
+    DeckbuildingUI.deckType type;
     // Start is called before the first frame update
     void Start()
     {
@@ -22,15 +23,17 @@ public class CardCountUI : MonoBehaviour, IPointerClickHandler
         countTxt.text = count.ToString();
 
     }
-    public void setCardmaker(Cardmaker c, int index)
+    public void setCardmaker(Cardmaker c, int index, DeckbuildingUI.deckType t)
 	{
         costTxt.text = c.resourceCost.ToString();
         nameTxt.text = c.name;
         cardmakerIndex = index;
+        type = t;
         GetComponent<Image>().color = c.getColor();
 	}
     public void incrementCount(int delta)
 	{
+        //Debug.Log(delta);
         if(count+delta<= GameConstants.maxCardDuplicateLimit)
 		{
             count += delta;
@@ -41,7 +44,21 @@ public class CardCountUI : MonoBehaviour, IPointerClickHandler
 
             }
             setCountText();
-            DeckbuildingUI.currentDeckSize += delta;
+            int trueDelta = delta;
+			if (count < 0)
+			{
+                trueDelta -= count;
+			}
+            if (type == DeckbuildingUI.deckType.main)
+            {
+                DeckbuildingUI.currentMainDeckSize += trueDelta;
+            }
+			else
+			{
+                DeckbuildingUI.currentStrcDeckSize += trueDelta;
+
+            }
+            
         }
         
         

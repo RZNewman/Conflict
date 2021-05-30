@@ -17,6 +17,19 @@ public class NetInterface : MonoBehaviour
         nm.StartClient();
 
     }
+    public void Host()
+    {
+        NetworkManager nm = FindObjectOfType<NetworkManager>();
+        nm.StartHost();
+
+    }
+    public void localClient()
+    {
+        NetworkManager nm = FindObjectOfType<NetworkManager>();
+        nm.StartClient();
+
+    }
+
     public void startTutorial()
 	{
         foreach(NetworkIdentity id in FindObjectsOfType<NetworkIdentity>(true))

@@ -14,6 +14,7 @@ public class TileUI : MonoBehaviour
 	public Image armor;
 	public Image ghost;
 	public Image bypass;
+	public Image canAttack;
 	public GameObject selection;
 	public GameObject info;
 
@@ -60,6 +61,7 @@ public class TileUI : MonoBehaviour
 		armor.gameObject.SetActive(occ.stat.getStat(StatType.armor)>0);
 		bypass.gameObject.SetActive(occ.stat.getBool(StatType.bypass));
 		ghost.gameObject.SetActive(occ.stat.getBool(StatType.ghost));
+		canAttack.gameObject.SetActive(occ.canAttackVisual);
 	}
 
 	public enum SelectType

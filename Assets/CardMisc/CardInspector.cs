@@ -226,6 +226,10 @@ public class CardInspector : MonoBehaviour
                 desc[0] = "Resource Limit";
                 desc[1] = "Play bigger cards";
                 break;
+            case StatType.bloodlust:
+                desc[0] = "Bloodlust";
+                desc[1] = "Attack after killing";
+                break;
             default:
                 desc[0] = "";
                 desc[1] = "";

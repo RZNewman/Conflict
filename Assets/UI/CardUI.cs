@@ -129,16 +129,16 @@ public abstract class CardUI : MonoBehaviour
                 case StatType.slow:
                     line = "Slow {0}";
                     break;
-                //case StatType.hydra://benched
-                //    line = "Hydra";
-                //    break;
-                //case StatType.collateral://benched
-                //    line = "Collateral {0}";
-                //    break;
-                //case StatType.cleave://benched
-                //    line = "Cleave {0}";
-                //    break;
-                case StatType.cardDraw:
+				case StatType.bloodlust:
+					line = "Bloodlust";
+					break;
+				//case StatType.collateral://benched
+				//    line = "Collateral {0}";
+				//    break;
+				//case StatType.cleave://benched
+				//    line = "Cleave {0}";
+				//    break;
+				case StatType.cardDraw:
                     line = "+{0} Card Draw";
                     break;
                 case StatType.addOn:

@@ -11,4 +11,5 @@ public static class GameConstants
     public static readonly int maxCardDuplicateLimit = 3;
     public static readonly int mainDeckSize = 40;
     public static readonly int structureDeckSize = 6;
+    public static readonly int cardCountOpeningHand = 5;
 }

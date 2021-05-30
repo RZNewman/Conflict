@@ -212,7 +212,8 @@ MonoBehaviour:
   syncInterval: 0.1
   resourceCost: 4
   cardArt: {fileID: 0}
-  unitName: 
+  playEffectPre: {fileID: 0}
+  originalName: 
   type: 1
   loc: {fileID: 0}
   teamIndex: 0
@@ -238,7 +239,7 @@ MonoBehaviour:
   - type: 1
     value: 2
   - type: 3
-    value: 3
+    value: 4
   - type: 2
     value: 2
   - type: 26

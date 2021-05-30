@@ -6,84 +6,289 @@ using UnityEngine.UI;
 public class DeckbuildingUI : MonoBehaviour
 {
     public Deck deckCards;
-    public GameObject mainCardList;
-    public GameObject maidCardScroll;
-    public GameObject mainDeckList;
-    public GameObject maidDeckScroll;
 
+    public GameObject deckRoot;
+    public GameObject decksMadeList;
+    public GameObject decksMadeScroll;
+    public Text newDeckName;
+
+    public GameObject mainRoot;
+    public GameObject mainCardList;
+    public GameObject mainCardScroll;
+    public GameObject mainDeckList;
+    public GameObject mainDeckScroll;
     public Text mainDeckCount;
     public Text mainDeckMax;
 
+    public GameObject strcRoot;
+    public GameObject strcCardList;
+    public GameObject strcCardScroll;
+    public GameObject strcDeckList;
+    public GameObject strcDeckScroll;
+    public Text strcDeckCount;
+    public Text strcDeckMax;
+
+    public enum deckType
+	{
+        deck,
+        main,
+        structure
+	}
+    deckType mode = deckType.deck;
+
     public GameObject buildCardPre;
     public GameObject cardCountPre;
+    public GameObject deckPre;
+    public GameObject deckExportPre;
 
-    public static int currentDeckSize = 0;
+    public static int currentMainDeckSize = 0;
+    public static int currentStrcDeckSize = 0;
 
-    Dictionary<int, CardCountUI> currectDeckList = new Dictionary<int, CardCountUI>();
+    Dictionary<int, CardCountUI> currentMainDeckList = new Dictionary<int, CardCountUI>();
+    Dictionary<int, CardCountUI> currentStrcDeckList = new Dictionary<int, CardCountUI>();
+
+    string currentEditingDeck="";
+    DeckUI currentDeckUI;
 
     // Start is called before the first frame update
     void Start()
     {
+
         mainDeckMax.text = GameConstants.mainDeckSize.ToString();
+        strcDeckMax.text = GameConstants.structureDeckSize.ToString();
         createPlayableCards();
-        LoadDeck();
+        //LoadDeck();
     }
+    public void swapMode(deckType newMode)
+	{
+
+        modeToggle(false);
+        mode = newMode;
+        modeToggle(true);
+
+	}  
+    public void swapMode(int newMode)
+    {
+
+        swapMode((deckType)newMode);
+
+    }
+    void modeToggle(bool on)
+	{
+        switch (mode)
+        {
+            case deckType.main:
+                mainRoot.gameObject.SetActive(on);
+                break;
+            case deckType.structure:
+                strcRoot.gameObject.SetActive(on);
+                break;
+            case deckType.deck:
+                deckRoot.gameObject.SetActive(on);
+                break;
+        }
+    }
+
     void createPlayableCards()
 	{
+        string[] decksMade = DeckRW.getDecks();
+        for (int i = 0; i < decksMade.Length; i++)
+        {
+            GameObject d = Instantiate(deckPre, decksMadeList.transform);
+            DeckUI dui = d.GetComponent<DeckUI>();
+            dui.assignName(decksMade[i], this);
+        }
+        decksMadeScroll.GetComponent<ScrollRect>().verticalNormalizedPosition = 1;
         //foreach(GameObject c in deckCards.main)
-        for(int i = 0; i<deckCards.main.Count; i++)
+        for (int i = 0; i<deckCards.main.Count; i++)
 		{
             GameObject c = deckCards.main[i];
             Cardmaker mkr = c.GetComponent<Cardmaker>();
             GameObject card = Instantiate(buildCardPre, mainCardList.transform);
-            card.GetComponent<BuildCard>().initalize(mkr,i, this);
+            card.GetComponent<BuildCard>().initalize(mkr,i, this, deckType.main);
 		}
-        maidCardScroll.GetComponent<ScrollRect>().verticalNormalizedPosition = 1;
-	}
-    public void addCard(int index, Cardmaker mkr, int count = 1)
+        mainCardScroll.GetComponent<ScrollRect>().verticalNormalizedPosition = 1;
+        for (int i = 0; i < deckCards.structures.Count; i++)
+        {
+            GameObject c = deckCards.structures[i];
+            Cardmaker mkr = c.GetComponent<Cardmaker>();
+            GameObject card = Instantiate(buildCardPre, strcCardList.transform);
+            card.GetComponent<BuildCard>().initalize(mkr, i, this, deckType.structure);
+        }
+        strcCardScroll.GetComponent<ScrollRect>().verticalNormalizedPosition = 1;
+    }
+    public void addCard(int index, Cardmaker mkr, deckType type, int count = 1)
 	{
-		if (currectDeckList.ContainsKey(index))
+        Dictionary<int, CardCountUI> deckList;
+        GameObject deckTarget;
+        if(type == deckType.main)
 		{
-			if (currectDeckList[index])
+            deckList = currentMainDeckList;
+            deckTarget = mainDeckList;
+        }
+        else //if (type == deckType.structure)
+		{
+            deckList = currentStrcDeckList;
+            deckTarget = strcDeckList;
+        }
+
+        if (deckList.ContainsKey(index))
+		{
+			if (deckList[index])
 			{
-                currectDeckList[index].incrementCount(count);
+                //Debug.Log("existing " + count);
+                deckList[index].incrementCount(count);
                 return;
             }
 		}
-
-        GameObject cc = Instantiate(cardCountPre, mainDeckList.transform);
+        //Debug.Log("new " + count);
+        GameObject cc = Instantiate(cardCountPre, deckTarget.transform);
         CardCountUI ccUI = cc.GetComponent<CardCountUI>();
-        ccUI.setCardmaker(mkr, index);
+        ccUI.setCardmaker(mkr, index, type);
         ccUI.incrementCount(count);
-        currectDeckList[index] = ccUI;
-
+        deckList[index] = ccUI;
+        //Debug.Log(deckList.Count);
+        //Debug.Log(deckList[index].count);
 
     }
     // Update is called once per frame
     void Update()
     {
-        mainDeckCount.text = currentDeckSize.ToString();
+        mainDeckCount.text = currentMainDeckSize.ToString();
+        strcDeckCount.text = currentStrcDeckSize.ToString();
     }
-
-
-    public void SaveDeck()
+    public void newDeck()
 	{
-        Dictionary<int, int> finalDeck = new Dictionary<int, int>();
-        foreach(int index in currectDeckList.Keys)
+        currentEditingDeck = newDeckName.text;
+        newDeckName.GetComponent<InputField>().text = "New Deck";
+        swapMode(deckType.main);
+	}
+    public void goToDeck()
+	{
+        if (!currentDeckUI) { return; }
+
+        LoadDeck(currentEditingDeck);
+        swapMode(deckType.main);
+	}
+    public void selectDeck(string deck, DeckUI dui)
+	{
+        if(currentDeckUI)
 		{
-			if (currectDeckList[index])
+            currentDeckUI.deselect();
+		}
+        currentEditingDeck = deck;
+        currentDeckUI = dui;
+    }
+    public void exportDeck()
+	{
+		if (currentEditingDeck == "") { return; }
+        GameObject exp;
+        exp = GameObject.FindGameObjectWithTag("DeckExport");
+		if (!exp)
+		{
+            exp = Instantiate(deckExportPre);
+        }
+        exp.GetComponent<DeckExport>().holdDeck(DeckRW.loadDeck(currentEditingDeck));
+            
+            
+
+	}
+    public void leaveDeck()
+	{
+		if (SaveDeck(currentEditingDeck))
+		{
+            //create deck
+            GameObject d = Instantiate(deckPre, decksMadeList.transform);
+            DeckUI dui = d.GetComponent<DeckUI>();
+            dui.assignName(currentEditingDeck, this);
+        }
+
+        resetDeckCounters();
+        currentEditingDeck = "";
+        if (currentDeckUI)
+        {
+            currentDeckUI.deselect();
+        }
+        swapMode(deckType.deck);
+	}
+
+    void resetDeckCounters()
+	{
+        foreach(int i in currentMainDeckList.Keys)
+		{
+            //Debug.Log(currentMainDeckList[i]);
+            if (currentMainDeckList[i])
+            {
+                Destroy( currentMainDeckList[i].gameObject);
+                
+            }
+        }
+        foreach (int i in currentStrcDeckList.Keys)
+        {
+            //Debug.Log(currentStrcDeckList[i]);
+            if (currentStrcDeckList[i])
+            {
+                Destroy(currentStrcDeckList[i].gameObject);
+                
+            }
+        }
+        currentMainDeckSize = 0;
+        currentStrcDeckSize = 0;
+        currentMainDeckList = new Dictionary<int, CardCountUI>();
+        currentStrcDeckList = new Dictionary<int, CardCountUI>();
+    }
+    bool SaveDeck(string deckName) // true if new
+	{
+        Dictionary<int, int> finalMainDeck = new Dictionary<int, int>();
+        Dictionary<int, int> finalStrcDeck = new Dictionary<int, int>();
+        foreach (int index in currentMainDeckList.Keys)
+		{
+			if (currentMainDeckList[index])
 			{
-                finalDeck.Add(index, currectDeckList[index].count);
+                //Debug.Log(currentMainDeckList[index].count);
+                finalMainDeck.Add(index, currentMainDeckList[index].count);
 			}
 		}
-        DeckRW.saveDeck("test", finalDeck);
+        foreach (int index in currentStrcDeckList.Keys)
+        {
+            if (currentStrcDeckList[index])
+            {
+                finalStrcDeck.Add(index, currentStrcDeckList[index].count);
+            }
+        }
+        return DeckRW.saveDeck(deckName, finalMainDeck, finalStrcDeck);
+
 	}
-    public void LoadDeck()
+    void LoadDeck(string deckName)
 	{
-        Dictionary<int, int> loadedDeck = DeckRW.loadDeck("test");
-        foreach(int index in loadedDeck.Keys)
+        Dictionary<int, int>[] loadedDeck = DeckRW.loadDeck(deckName);
+        foreach(int index in loadedDeck[0].Keys)
 		{
-            addCard(index, deckCards.main[index].GetComponent<Cardmaker>(),loadedDeck[index]);
+            if(index!= -1)
+			{
+                if(loadedDeck[0][index] == 0)
+				{
+                    Debug.LogError("Saved count 0");
+				}
+                //Debug.Log(loadedDeck[0][index]);
+                addCard(index, deckCards.main[index].GetComponent<Cardmaker>(), deckType.main, loadedDeck[0][index]);
+            }
+            
 		}
+		if (loadedDeck.Length > 1)
+		{
+            foreach (int index in loadedDeck[1].Keys)
+            {
+                if (index != -1)
+                {
+                    //Debug.Log(index);
+                    if (loadedDeck[1][index] == 0)
+                    {
+                        Debug.LogError("Saved count 0");
+                    }
+                    addCard(index, deckCards.structures[index].GetComponent<Cardmaker>(), deckType.structure, loadedDeck[1][index]);
+                }
+            }
+        }
     }
 }

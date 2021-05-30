@@ -53,6 +53,7 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
 
     #region cards
     public Deck loadedDeck;
+    public Deck playableCards;
 	List<GameObject> MainDeck = new List<GameObject>();
     List<GameObject> Structures = new List<GameObject>();
 
@@ -112,21 +113,24 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
     }
     public void drawCardsOnTurn()
 	{
-        for(int i =0; i < st.getStat(StatType.cardDraw) + 1; i++)
-		{
-            drawCard();
-		}
+
+        drawCards(st.getStat(StatType.cardDraw) + 1);
+
 	}
 
     [Server]
-    public void drawCard()
+    public void drawCards(int cards)
     {
-        if (MainDeck.Count > 0)
-        {
-            Cardmaker mkr = MainDeck[0].GetComponent<Cardmaker>();
-            MainDeck.RemoveAt(0);
-            spawnCard(mkr, "PlayerHand");
+        for (int i = 0; i < cards; i++)
+		{
+            if (MainDeck.Count > 0)
+            {
+                Cardmaker mkr = MainDeck[0].GetComponent<Cardmaker>();
+                MainDeck.RemoveAt(0);
+                spawnCard(mkr, "PlayerHand");
+            }
         }
+        
 
     }
     public void returnCardToDeck(Card c)
@@ -153,7 +157,104 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
 
         }
 	}
+    [Client]
+    void findClientDeck()
+	{
+        GameObject exp;
+        exp = GameObject.FindGameObjectWithTag("DeckExport");
+		if (exp)
+		{
+            exp.GetComponent<DeckExport>().printDeck();
+            Dictionary<int, int>[] deck = exp.GetComponent<DeckExport>().getDeck();
+            CmdSubmitDeck(DeckRW.writeDeck(deck[0],deck[1]));
+		}
+    }
+    [Command]
+    //void CmdSubmitDeck(Dictionary<int, int> deckMaine, Dictionary<int, int> deckStrc )
+    void CmdSubmitDeck(string deckStr)
+    {
+        Dictionary<int, int>[] deck = DeckRW.readDeck(deckStr);
 
+        
+        bool checkDeck(Dictionary<int,int> deckL, bool isMain)
+		{
+            int totalCount =0;
+            foreach(int card in deckL.Keys)
+			{
+				if (card < 0)
+				{
+                    return false;
+				}
+                if((isMain && card>=playableCards.main.Count) || (!isMain && card >= playableCards.structures.Count))
+				{
+                    return false;
+				}
+                if(deckL[card] > GameConstants.maxCardDuplicateLimit)
+				{
+                    return false;
+				}
+                totalCount += deckL[card];
+			}
+            if(totalCount!= (isMain? GameConstants.mainDeckSize:GameConstants.structureDeckSize) )
+			{
+                return false;
+			}
+            return true;
+        }
+        if(! checkDeck(deck[0],true) || ! checkDeck(deck[1], false))
+		{
+            return;
+		}
+
+
+
+
+        loadedDeck = new Deck();
+        loadedDeck.main = deckLookup(deck[0], true);
+        loadedDeck.structures = deckLookup(deck[1], false);
+
+        
+    }
+    List<GameObject> deckLookup(Dictionary<int, int> deckCounts, bool isMain)
+	{
+        List<GameObject> deck = new List<GameObject>();
+        foreach(int i in deckCounts.Keys)
+		{
+            for(int j=0; j<deckCounts[i]; j++)
+			{
+				if (isMain)
+				{
+                    deck.Add(playableCards.main[i]);
+
+                }
+				else
+				{
+                    deck.Add(playableCards.structures[i]);
+                }
+                
+			}
+		}
+
+        return deck;
+    }
+    [Server]
+    public void initDeck()
+    {
+        //Debug.Log(teamIndex.ToString());
+        foreach (GameObject c in loadedDeck.main)
+        {
+            MainDeck.Add(c);
+            //double cards
+            //MainDeck.Add(c);
+        }
+        foreach (GameObject c in loadedDeck.structures)
+        {
+            Structures.Add(c);
+        }
+        //MainDeck = loadedDeck.main;
+        //Structures = loadedDeck.structures;
+        MainDeck.Shuffle();
+    }
     void spawnCard(Cardmaker mkr, string targetHand)
 	{
         GameObject c_obj = Instantiate(mkr.findCardPrefab(), transform);
@@ -264,20 +365,7 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
 			}
 			else
 			{
-                //Debug.Log(teamIndex.ToString());
-                foreach(GameObject c in loadedDeck.main)
-				{
-                    MainDeck.Add(c);
-                    //double cards
-                    MainDeck.Add(c);
-                }
-                foreach (GameObject c in loadedDeck.structures)
-                {
-                    Structures.Add(c);
-                }
-                //MainDeck = loadedDeck.main;
-                //Structures = loadedDeck.structures;
-                MainDeck.Shuffle();
+                //initDeck();
                 RpcAssignTeam( teamIndex);
             }
             
@@ -296,9 +384,13 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
             inspect = FindObjectOfType<CardInspector>();
             UIturn = FindObjectOfType<TurnIndicatorUI>();
             abilPanel = FindObjectOfType<UnitAbilityUI>();
+            findClientDeck();
             //Debug.Log("Refresh added");
         }
     }
+    
+
+
     [ClientRpc]
     void RpcAssignTeam(int newTeam)
 	{

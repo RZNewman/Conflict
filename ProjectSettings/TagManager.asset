@@ -7,6 +7,7 @@ TagManager:
   - PlayerHand
   - StructureBoard
   - Mulligan
+  - DeckExport
   layers:
   - Default
   - TransparentFX

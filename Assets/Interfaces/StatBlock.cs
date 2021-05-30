@@ -32,7 +32,7 @@ public static class StatBlock
         ghost,
         slow,
         addOn,
-        //hydra,
+        bloodlust,
         //collateral,
         //cleave
         

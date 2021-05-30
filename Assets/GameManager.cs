@@ -10,6 +10,8 @@ public class GameManager : NetworkBehaviour
     //public readonly SyncDictionary<unit>
     Dictionary<uint, int> teams = new Dictionary<uint, int>();
     public static Vector3[] dirs = new Vector3[] { Vector3.forward, -Vector3.forward, Vector3.right, -Vector3.right };
+
+    [SyncVar (hook = nameof(turnUIUpdates))]
     int currentTurn = -1;
     [SyncVar (hook =nameof(showLimitIncreace))]
     int roundCounter = 0;
@@ -34,7 +36,13 @@ public class GameManager : NetworkBehaviour
             return pipe;
 		}
 	}
-
+    public int whosTurn
+	{
+		get
+		{
+            return currentTurn;
+		}
+	}
 
     //public static GameManager gm;
     // Start is called before the first frame update
@@ -264,18 +272,16 @@ public class GameManager : NetworkBehaviour
             p.increaseIncomeResources();
         }
     }
-    static readonly int COUNT_OPENING_HAND=5;
+    
     void drawOpeningHand()
 	{
         foreach (uint playerID in teams.Keys)
         {
-
+            
             PlayerGhost p = NetworkIdentity.spawned[playerID].GetComponent<PlayerGhost>();
+            p.initDeck();
             //Debug.Log(team);
-            for(int i =0; i < COUNT_OPENING_HAND; i++)
-			{
-                p.drawCard();
-			}
+            p.drawCards(cardCountOpeningHand);
 
 
 
@@ -336,10 +342,10 @@ public class GameManager : NetworkBehaviour
         }
         PlayerGhost p = NetworkIdentity.spawned[ownerID].GetComponent<PlayerGhost>();
         //set p not mulligan
+        p.drawCards(cardIDs.Count);
         foreach (uint id in cardIDs)
         {
             p.returnCardToDeck(NetworkIdentity.spawned[id].GetComponent<Card>());
-            p.drawCard();
         }
         playersMulligan.Add(ownerID);
         TargetShowMulligan(p.connectionToClient, false);
@@ -349,6 +355,7 @@ public class GameManager : NetworkBehaviour
 		}
 
     }
+    [Server]
     public void refreshUnits(int team)
     {
         if (team == -1) { return; }
@@ -359,6 +366,16 @@ public class GameManager : NetworkBehaviour
             {
                 u.refresh();
             }
+            
+        }
+    }
+    [Client]
+    void turnUIUpdates(int oldVal, int newVal)
+	{
+        foreach (Unit u in FindObjectsOfType<Unit>())
+        {
+            u.refreshUI();
+
         }
     }
     void showLimitIncreace(int lastRound, int thisRound)

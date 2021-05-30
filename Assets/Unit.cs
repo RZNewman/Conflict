@@ -412,6 +412,13 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
             return currentAttacks > 0 && st.getStat(StatType.attack) > 0;
         }
 	}
+    public bool canAttackVisual
+    {
+        get
+        {
+            return canAttack && gm && gm.whosTurn == teamIndex;
+        }
+    }
     public bool canCast
     {
         get
@@ -465,7 +472,11 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
 		{
             currentMovement= 0;
 		}
-        dealDamage(tar);
+        int remainingHP = dealDamage(tar);
+        if(remainingHP == 0 && st.getBool(StatType.bloodlust))
+		{
+            currentAttacks++;
+		}
         tar.getSlowed(st.getStat(StatType.slow));
         //Retal OFF
         //tar.tryRetaliation(this, range, didBypass);
@@ -476,9 +487,9 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
         retaliation,
         ability
 	}
-    void dealDamage(Unit tar)
+    int dealDamage(Unit tar)
 	{
-        tar.takeDamage(st.getStat(StatType.attack),st.getBool(StatType.piercing), damageSource.attack);
+        return tar.takeDamage(st.getStat(StatType.attack),st.getBool(StatType.piercing), damageSource.attack);
 	}
     void getSlowed(int slow)
 	{
@@ -505,7 +516,7 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
         tar.takeDamage(st.getStat(StatType.attack), st.getBool(StatType.piercing), damageSource.retaliation);
     }
     [Server]
-    public void takeDamage(int d,bool piercing, damageSource type)
+    public int takeDamage(int d,bool piercing, damageSource type)
 	{
 		if (!piercing/*!source.getBool(StatType.piercing)*/)
 		{
@@ -526,6 +537,7 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
             //Destroy(gameObject);
             gm.delayedDestroy(gameObject);
 		}
+        return currentHealth;
 		//else
 		//{
   //          loc.refeshUI();

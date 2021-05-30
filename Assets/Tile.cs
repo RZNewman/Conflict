@@ -110,7 +110,7 @@ public class Tile : NetworkBehaviour
         u.visibility(Unit.visType.none, Unit.visType.on);
         u.visibility(Unit.visType.off, Unit.visType.on);
         alignOcc();
-        //TODO WTF is all this shit
+        
     }
     public void alignOcc()
     {

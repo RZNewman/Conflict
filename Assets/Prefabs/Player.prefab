@@ -51,6 +51,8 @@ MonoBehaviour:
   teamIndex: -1
   cameraPre: {fileID: 5485884329866021510, guid: 315ddff1ae016594b864cc20ef3e7cad, type: 3}
   loadedDeck: {fileID: 11400000, guid: b8fe50c328fffd74d955b0990e38a8ff, type: 2}
+  playableCards: {fileID: 11400000, guid: 3e3190c0cb188e2409ceec4b06348b5e, type: 2}
+  isMulligan: 1
 --- !u!114 &963194226
 MonoBehaviour:
   m_ObjectHideFlags: 0
