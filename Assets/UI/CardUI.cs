@@ -135,9 +135,9 @@ public abstract class CardUI : MonoBehaviour
 				//case StatType.collateral://benched
 				//    line = "Collateral {0}";
 				//    break;
-				//case StatType.cleave://benched
-				//    line = "Cleave {0}";
-				//    break;
+				case StatType.cleave://benched
+					line = "Cleave {0}";
+					break;
 				case StatType.cardDraw:
                     line = "+{0} Card Draw";
                     break;
@@ -145,7 +145,7 @@ public abstract class CardUI : MonoBehaviour
                     line = "Add-On";
                     break;
                 case StatType.resourceSpend:
-                    line = "+{0}<sprite index= 0> Resource Limit";
+                    line = "+{0}<sprite index= 0> Power Limit";
                     break;
                 default:
                     line = "";

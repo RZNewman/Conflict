@@ -5,14 +5,13 @@ using static Targeting;
 
 public abstract class Ability : MonoBehaviour
 {
-
+	protected GameManager gm;
 
 	//protected StatHandler st;
 	// Start is called before the first frame update
 	public void initialize()
 	{
-		//st = GetComponent<StatHandler>();
-		//st.initialize();
+		gm = FindObjectOfType<GameManager>();
 	}
 
 	// Update is called once per frame

@@ -68,7 +68,8 @@ MonoBehaviour:
   syncInterval: 0.1
   resourceCost: 6
   cardArt: {fileID: 0}
-  unitName: 
+  playEffectPre: {fileID: 0}
+  originalName: 
   type: 0
   loc: {fileID: 0}
   teamIndex: 0
@@ -98,7 +99,7 @@ MonoBehaviour:
   - type: 2
     value: 0
   - type: 10
-    value: 3
+    value: 4
   - type: 11
     value: 2
 --- !u!114 &6247676399809486883
@@ -358,7 +359,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 1279644195e185d44bc1049d7c48f56c, type: 2}
+  - {fileID: 2100000, guid: d2fbdb9de92d8254abc41d9269cb25b1, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

@@ -9,6 +9,7 @@ public class ResourceUI : MonoBehaviour
     public Text current;
     public Text max;
     public Text limit;
+    public Text cardCount;
     public GameObject limitInc;
     public GameObject maxInc;
     GameManager gm;
@@ -56,7 +57,10 @@ public class ResourceUI : MonoBehaviour
 		{
             limit.text = st.getStat(StatBlock.StatType.resourceSpend).ToString();
         }
-        
+		if (cardCount)
+		{
+            cardCount.text = gm.clientPlayer.getCurrentCards().ToString();
+		}
         
 
     }

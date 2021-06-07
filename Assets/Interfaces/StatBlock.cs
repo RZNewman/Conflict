@@ -33,16 +33,17 @@ public static class StatBlock
         slow,
         addOn,
         bloodlust,
+        cleave,
         //collateral,
-        //cleave
-        
 
 
 
 
 
 
-    }    
+
+
+    }
 
     [Serializable]
     public struct Stat

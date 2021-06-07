@@ -515,21 +515,26 @@ public class GameManager : NetworkBehaviour
             )
         {
             mover.move(dist);
-            transferToTile(mover, target, true);
-            //RpcMoveUnit(unitID, tileID);
-            pipe.RpcAddViewEvent(new ViewEvent(ViewType.unitMove, unitID, tileID, Time.time));
+            serverMove(mover,target);
         }
     }
-    [ClientRpc]
-    void RpcMoveUnit(uint unitID, uint tileID)
-    {
-        if (!NetworkIdentity.spawned.ContainsKey(unitID))
-        {
-            return;
-        }
-        Unit mover = NetworkIdentity.spawned[unitID].GetComponent<Unit>();
-        Tile target = NetworkIdentity.spawned[tileID].GetComponent<Tile>();
-        transferToTile(mover, target);
+    //[ClientRpc]
+    //void RpcMoveUnit(uint unitID, uint tileID)
+    //{
+    //    if (!NetworkIdentity.spawned.ContainsKey(unitID))
+    //    {
+    //        return;
+    //    }
+    //    Unit mover = NetworkIdentity.spawned[unitID].GetComponent<Unit>();
+    //    Tile target = NetworkIdentity.spawned[tileID].GetComponent<Tile>();
+    //    transferToTile(mover, target);
+    //}
+    [Server]
+    public void serverMove(Unit mover, Tile target)
+	{
+        transferToTile(mover, target, true);
+        //RpcMoveUnit(unitID, tileID);
+        pipe.RpcAddViewEvent(new ViewEvent(ViewType.unitMove, mover.netId, target.netId, Time.time));
     }
 
     public void transferToTile(Unit u, Tile t, bool onServer = false)

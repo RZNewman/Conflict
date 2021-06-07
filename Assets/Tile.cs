@@ -15,8 +15,8 @@ public class Tile : NetworkBehaviour
     }
     static Vector3[] neighVec = {
         new Vector3(0, 0, 1),
-        new Vector3(0, 0, -1),
         new Vector3(1, 0, 0),
+        new Vector3(0, 0, -1),
         new Vector3(-1, 0, 0),
     };
     Tile[] neigh = new Tile[4];
@@ -333,7 +333,7 @@ public class Tile : NetworkBehaviour
 
 			if (occupant.canAttack)
 			{
-                List<Tile> attackSelect = tilesInRange(occupant.stat.getStat(StatBlock.StatType.range), occupant.stat.getBool(StatBlock.StatType.bypass), occupant.teamIndex);
+                List<Tile> attackSelect = tilesInAttack(occupant.stat.getStat(StatBlock.StatType.range), occupant.stat.getBool(StatBlock.StatType.bypass), occupant.teamIndex);
                 foreach (Tile t in attackSelect)
                 {
                     t.unitUI.select(TileUI.SelectType.attack);
@@ -415,6 +415,20 @@ public class Tile : NetworkBehaviour
 
         return -1;
 	}
+    List<Tile> tilesInAttack(int range, bool bypass, int team)
+	{
+        List<Tile> selected = new List<Tile>();
+        foreach(Tile currentTile in tilesInRange(range, bypass, team))
+		{
+            if (currentTile.getOccupant() && currentTile.getOccupant().teamIndex != team)
+            {
+                selected.Add(currentTile);
+                //break;
+            }
+        }
+
+        return selected;
+    }
     List<Tile> tilesInRange(int range, bool bypass, int team)
 	{
         List<Tile> selected = new List<Tile>();
@@ -424,12 +438,9 @@ public class Tile : NetworkBehaviour
             int currentRange = 1;
             while (currentTile != null && currentRange <= range)
             {
+                selected.Add(currentTile);
                 //Debug.Log(currentTile);
-                if (currentTile.getOccupant() && currentTile.getOccupant().teamIndex != team)
-                {
-                    selected.Add(currentTile);
-                    break;
-                }
+
                 if (!currentTile.isSight || currentTile.getOccupant())
                 {
                     if (!bypass)
@@ -441,6 +452,42 @@ public class Tile : NetworkBehaviour
                 currentTile = currentTile.neigh[dirInd];
                 currentRange++;
             }
+        }
+
+        return selected;
+    }
+    public List<Tile> tilesSideways(Vector3 dir)
+	{
+        List<Tile> selected = new List<Tile>();
+
+        int index = -1;
+            
+        for(int i=0; i<neighVec.Length; i++)
+		{
+            if( neighVec[i] == dir)
+			{
+                index = i;
+                break;
+
+			}
+		}
+        if(index == -1)
+		{
+            return selected;
+		}
+        //Debug.Log("Contains");
+        int left = Operations.mod(index+1, neighVec.Length);
+        int right = Operations.mod(index - 1, neighVec.Length);
+
+        Tile test = neigh[left];
+		if (test)
+		{
+            selected.Add(test);
+        }
+        test = neigh[right];
+        if (test)
+        {
+            selected.Add(test);
         }
 
         return selected;

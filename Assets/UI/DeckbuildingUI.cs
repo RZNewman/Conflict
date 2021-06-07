@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using static StatBlock;
 
 public class DeckbuildingUI : MonoBehaviour
 {
@@ -41,8 +42,8 @@ public class DeckbuildingUI : MonoBehaviour
     public GameObject deckPre;
     public GameObject deckExportPre;
 
-    public static int currentMainDeckSize = 0;
-    public static int currentStrcDeckSize = 0;
+    public int currentMainDeckSize = 0;
+    public int currentStrcDeckSize = 0;
 
     Dictionary<int, CardCountUI> currentMainDeckList = new Dictionary<int, CardCountUI>();
     Dictionary<int, CardCountUI> currentStrcDeckList = new Dictionary<int, CardCountUI>();
@@ -50,15 +51,28 @@ public class DeckbuildingUI : MonoBehaviour
     string currentEditingDeck="";
     DeckUI currentDeckUI;
 
+
+    CardInspector inspect;
+
     // Start is called before the first frame update
     void Start()
     {
-
+        inspect = FindObjectOfType<CardInspector>();
         mainDeckMax.text = GameConstants.mainDeckSize.ToString();
         strcDeckMax.text = GameConstants.structureDeckSize.ToString();
         createPlayableCards();
         //LoadDeck();
     }
+
+    public void cardInspect(GameObject body, Dictionary<StatType, float> stats = null)
+    {
+        inspect.inspect(body, CardInspector.inspectType.cardmakerPre, 2, stats);
+    }
+    public void cardUnInspect(GameObject body)
+    {
+        inspect.uninspect(body);
+    }
+
     public void swapMode(deckType newMode)
 	{
 
@@ -75,18 +89,26 @@ public class DeckbuildingUI : MonoBehaviour
     }
     void modeToggle(bool on)
 	{
+        ScrollRect scroll = null;
         switch (mode)
         {
             case deckType.main:
                 mainRoot.gameObject.SetActive(on);
+                scroll = mainCardScroll.GetComponent<ScrollRect>();
                 break;
             case deckType.structure:
                 strcRoot.gameObject.SetActive(on);
+                scroll = mainCardScroll.GetComponent<ScrollRect>();
                 break;
             case deckType.deck:
                 deckRoot.gameObject.SetActive(on);
+                scroll = mainCardScroll.GetComponent<ScrollRect>();
                 break;
         }
+		if (on)
+		{
+            scroll.verticalNormalizedPosition = 1;
+		}
     }
 
     void createPlayableCards()
@@ -98,7 +120,7 @@ public class DeckbuildingUI : MonoBehaviour
             DeckUI dui = d.GetComponent<DeckUI>();
             dui.assignName(decksMade[i], this);
         }
-        decksMadeScroll.GetComponent<ScrollRect>().verticalNormalizedPosition = 1;
+        
         //foreach(GameObject c in deckCards.main)
         for (int i = 0; i<deckCards.main.Count; i++)
 		{
@@ -107,7 +129,7 @@ public class DeckbuildingUI : MonoBehaviour
             GameObject card = Instantiate(buildCardPre, mainCardList.transform);
             card.GetComponent<BuildCard>().initalize(mkr,i, this, deckType.main);
 		}
-        mainCardScroll.GetComponent<ScrollRect>().verticalNormalizedPosition = 1;
+        
         for (int i = 0; i < deckCards.structures.Count; i++)
         {
             GameObject c = deckCards.structures[i];
@@ -115,7 +137,12 @@ public class DeckbuildingUI : MonoBehaviour
             GameObject card = Instantiate(buildCardPre, strcCardList.transform);
             card.GetComponent<BuildCard>().initalize(mkr, i, this, deckType.structure);
         }
+
+        mainCardScroll.GetComponent<ScrollRect>().verticalNormalizedPosition = 1;
         strcCardScroll.GetComponent<ScrollRect>().verticalNormalizedPosition = 1;
+        decksMadeScroll.GetComponent<ScrollRect>().verticalNormalizedPosition = 1;
+
+
     }
     public void addCard(int index, Cardmaker mkr, deckType type, int count = 1)
 	{
@@ -144,7 +171,7 @@ public class DeckbuildingUI : MonoBehaviour
         //Debug.Log("new " + count);
         GameObject cc = Instantiate(cardCountPre, deckTarget.transform);
         CardCountUI ccUI = cc.GetComponent<CardCountUI>();
-        ccUI.setCardmaker(mkr, index, type);
+        ccUI.setCardmaker(mkr, index, type, this);
         ccUI.incrementCount(count);
         deckList[index] = ccUI;
         //Debug.Log(deckList.Count);
@@ -152,10 +179,11 @@ public class DeckbuildingUI : MonoBehaviour
 
     }
     // Update is called once per frame
-    void Update()
+    public void deckSizeUpdate()
     {
         mainDeckCount.text = currentMainDeckSize.ToString();
         strcDeckCount.text = currentStrcDeckSize.ToString();
+        //Debug.Log(mainCardScroll.GetComponent<ScrollRect>().verticalNormalizedPosition);
     }
     public void newDeck()
 	{
@@ -169,6 +197,7 @@ public class DeckbuildingUI : MonoBehaviour
 
         LoadDeck(currentEditingDeck);
         swapMode(deckType.main);
+
 	}
     public void selectDeck(string deck, DeckUI dui)
 	{

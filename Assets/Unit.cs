@@ -478,8 +478,23 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
             currentAttacks++;
 		}
         tar.getSlowed(st.getStat(StatType.slow));
+		if (st.getBool(StatType.cleave))
+		{
+            tryCleave(tar);
+		}
         //Retal OFF
         //tar.tryRetaliation(this, range, didBypass);
+	}
+    void tryCleave(Unit tar)
+	{
+        foreach(Tile t in tar.loc.tilesSideways((tar.loc.transform.position - loc.transform.position).normalized))
+		{
+            //Debug.Log(t);
+			if (t.getOccupant() && t.getOccupant().teamIndex != teamIndex)
+			{
+                t.getOccupant().takeDamage(st.getStat(StatType.cleave), st.getBool(StatType.piercing), damageSource.attack);
+			}
+		}
 	}
     public enum damageSource
 	{

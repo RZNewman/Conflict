@@ -116,7 +116,8 @@ MonoBehaviour:
   syncInterval: 0.1
   resourceCost: 3
   cardArt: {fileID: 0}
-  unitName: 
+  playEffectPre: {fileID: 0}
+  originalName: 
   type: 1
   loc: {fileID: 0}
   teamIndex: 0
@@ -138,7 +139,7 @@ MonoBehaviour:
   syncInterval: 0.4
   statsList:
   - type: 0
-    value: 5
+    value: 3
   - type: 1
     value: 2
   - type: 3

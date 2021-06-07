@@ -175,10 +175,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  resourceCost: 5
+  resourceCost: 7
   cardArt: {fileID: 21300000, guid: b7c073c9f0370554c8fb52966cc1b74e, type: 3}
   playEffectPre: {fileID: 4927487206556695495, guid: 7d45f22b211149743ac6e6ca4a34d3da, type: 3}
-  nameString: Mind Storm
+  originalName: 
   caster: {fileID: 0}
 --- !u!114 &6376049692265075907
 MonoBehaviour:

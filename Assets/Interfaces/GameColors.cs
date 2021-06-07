@@ -10,7 +10,7 @@ public static class GameColors
 	public static Color defense = new Color(1, 0.75f, 0);
 	public static Color resources = new Color(0, 0, 1);
 
-	public static Color equipment = new Color(0, 1, 0.8f);
+	public static Color equipment = new Color(1, 1, 0.5f);
 	public static Color ordnance = new Color(1, 0.5f, 1);
 
 	public static Color smokescreen = new Color(0.2f, 0.2f, 0.2f);

@@ -35,6 +35,9 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
 
     [SyncVar(hook = nameof(refreshResourceUI))]
     int currentResources = 1;
+
+    [SyncVar(hook = nameof(refreshResourceUI))]
+    int currentCards = 0;
     //[SyncVar(hook =nameof(alignDirection))]
     public int teamIndex= -1;
 
@@ -128,10 +131,11 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
                 Cardmaker mkr = MainDeck[0].GetComponent<Cardmaker>();
                 MainDeck.RemoveAt(0);
                 spawnCard(mkr, "PlayerHand");
+                
             }
         }
-        
 
+        currentCards = MainDeck.Count;
     }
     public void returnCardToDeck(Card c)
 	{
@@ -140,11 +144,13 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
         addCard(c.sourceCardmaker);
         //gm.delayedDestroy(c.gameObject);
         Destroy(c.gameObject);
+        
 	}
     public void addCard(GameObject cPrefab)
 	{
         int i = Mathf.FloorToInt(Random.Range(0, MainDeck.Count));
         MainDeck.Insert(i, cPrefab);
+        currentCards = MainDeck.Count;
 	}
     [Server]
     public void createStructureSideboard()
@@ -164,7 +170,7 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
         exp = GameObject.FindGameObjectWithTag("DeckExport");
 		if (exp)
 		{
-            exp.GetComponent<DeckExport>().printDeck();
+            //exp.GetComponent<DeckExport>().printDeck();
             Dictionary<int, int>[] deck = exp.GetComponent<DeckExport>().getDeck();
             CmdSubmitDeck(DeckRW.writeDeck(deck[0],deck[1]));
 		}
@@ -209,7 +215,7 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
 
 
 
-        loadedDeck = new Deck();
+        loadedDeck = ScriptableObject.CreateInstance<Deck>();
         loadedDeck.main = deckLookup(deck[0], true);
         loadedDeck.structures = deckLookup(deck[1], false);
 
@@ -254,6 +260,7 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
         //MainDeck = loadedDeck.main;
         //Structures = loadedDeck.structures;
         MainDeck.Shuffle();
+        currentCards = MainDeck.Count;
     }
     void spawnCard(Cardmaker mkr, string targetHand)
 	{
@@ -308,6 +315,10 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
 	{
         return currentResources;
 	}
+    public int getCurrentCards()
+    {
+        return currentCards;
+    }
     public int getCurrentSpendLimit()
 	{
         return st.getStat(StatType.resourceSpend);

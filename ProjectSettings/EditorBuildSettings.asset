@@ -9,7 +9,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Main Menu.unity
     guid: 263c2bb0608e67349a352d5316abb4c3
   - enabled: 1
-    path: Assets/Scenes/Layers - 7B.unity
+    path: Assets/Scenes/MP-Layers.unity
     guid: 880dd11245b4a4249b41ee239500037b
   - enabled: 1
     path: Assets/Scenes/Deckbuilder.unity

@@ -140,15 +140,13 @@ MonoBehaviour:
   syncInterval: 0.4
   statsList:
   - type: 0
-    value: 8
+    value: 6
   - type: 1
     value: 4
   - type: 3
     value: 1
   - type: 2
     value: 3
-  - type: 24
-    value: 2
 --- !u!114 &6247676399809486883
 MonoBehaviour:
   m_ObjectHideFlags: 0

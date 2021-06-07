@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class CardCountUI : MonoBehaviour, IPointerClickHandler
+public class CardCountUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
     public Text costTxt;
     public Text countTxt;
@@ -13,6 +13,9 @@ public class CardCountUI : MonoBehaviour, IPointerClickHandler
     public int cardmakerIndex;
     public int count= 0;
     DeckbuildingUI.deckType type;
+
+    DeckbuildingUI controller;
+    Cardmaker mkr;
     // Start is called before the first frame update
     void Start()
     {
@@ -23,12 +26,14 @@ public class CardCountUI : MonoBehaviour, IPointerClickHandler
         countTxt.text = count.ToString();
 
     }
-    public void setCardmaker(Cardmaker c, int index, DeckbuildingUI.deckType t)
+    public void setCardmaker(Cardmaker c, int index, DeckbuildingUI.deckType t, DeckbuildingUI ct)
 	{
         costTxt.text = c.resourceCost.ToString();
         nameTxt.text = c.name;
         cardmakerIndex = index;
         type = t;
+        controller = ct;
+        mkr = c;
         GetComponent<Image>().color = c.getColor();
 	}
     public void incrementCount(int delta)
@@ -39,6 +44,12 @@ public class CardCountUI : MonoBehaviour, IPointerClickHandler
             count += delta;
             if (count <= 0)
             {
+                
+                if (inspecting)
+                {
+                    controller.cardUnInspect(mkr.gameObject);
+                    inspecting = false;
+                }
                 Destroy(gameObject);
                 //return true;
 
@@ -51,27 +62,68 @@ public class CardCountUI : MonoBehaviour, IPointerClickHandler
 			}
             if (type == DeckbuildingUI.deckType.main)
             {
-                DeckbuildingUI.currentMainDeckSize += trueDelta;
+                controller.currentMainDeckSize += trueDelta;
             }
 			else
 			{
-                DeckbuildingUI.currentStrcDeckSize += trueDelta;
+                controller.currentStrcDeckSize += trueDelta;
 
             }
-            
+            controller.deckSizeUpdate();
         }
         
         
         //return false;
 	}
 
-    // Update is called once per frame
+    bool hovered = false;
+    bool inspecting = false;
+    float currentTime = 0;
     void Update()
     {
-        
+        //Debug.Log(hovered);
+        if (hovered)
+        {
+            currentTime += Time.deltaTime;
+
+            if (currentTime > GameConstants.hoverInspectTime)
+            {
+                currentTime = GameConstants.hoverInspectTime;
+                if (!inspecting)
+                {
+                    StatHandler blk = mkr.GetComponent<StatHandler>();
+                    controller.cardInspect(mkr.gameObject,blk? blk.prefabStats(): null );
+                    inspecting = true;
+
+                }
+
+            }
+        }
+        else
+        {
+
+            currentTime = 0;
+
+            if (inspecting)
+            {
+                controller.cardUnInspect(mkr.gameObject);
+                inspecting = false;
+            }
+
+        }
+
+    }
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        hovered = true;
     }
 
-	public void OnPointerClick(PointerEventData eventData)
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        hovered = false;
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
 	{
         incrementCount(-1);
 	}
