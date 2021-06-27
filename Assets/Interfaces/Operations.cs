@@ -37,6 +37,7 @@ public static class Operations
         return inp;
 	}
 
+
     public static Texture2D textureFromSprite(Sprite sprite)
     {
         if (sprite.rect.width != sprite.texture.width)

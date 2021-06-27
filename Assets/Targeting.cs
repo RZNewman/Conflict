@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using static StatBlock;
 using Mirror;
+using System.Linq;
 
 public class Targeting : MonoBehaviour
 {
@@ -17,7 +18,9 @@ public class Targeting : MonoBehaviour
         unitType,
         roomForEquipment,
         inArea,
-        isDamaged
+        isDamaged,
+        inRange,
+        inRangeBypass
 
         //inMove
         //inRange
@@ -54,6 +57,7 @@ public class Targeting : MonoBehaviour
         foreach(Rule r in eRules)
 		{
             bool result =false;
+            bool didBypass;
             //bool goal = r.value > 0;
             //Debug.Log(r.type + " - " + r.value);
             switch (r.type)
@@ -126,6 +130,25 @@ public class Targeting : MonoBehaviour
                     }
                     result = source.tilesInArea(Mathf.FloorToInt(r.value)).Contains(t);
                     break;
+                case TargetRule.inRange:
+                    if (!source)
+                    {
+                        result = false;
+                        break;
+                    }
+                    
+                    result = source.rangeToTile(t, false, out didBypass)<= Mathf.FloorToInt(r.value);
+                    //result = source.tilesInRange(Mathf.FloorToInt(r.value),false, team).Contains(t);
+                    break;
+                case TargetRule.inRangeBypass:
+                    if (!source)
+                    {
+                        result = false;
+                        break;
+                    }
+                    result = source.rangeToTile(t, true, out didBypass) <= Mathf.FloorToInt(r.value);
+                    //result = source.tilesInRange(Mathf.FloorToInt(r.value), true, team).Contains(t);
+                    break;
                 case TargetRule.isDamaged:
                     if (!t.getOccupant())
                     {
@@ -163,12 +186,35 @@ public class Targeting : MonoBehaviour
                 switch (r.type)
                 {
                     case TargetRule.inArea:
-                        ruleHit = true;
+                        
                         if (!source)
                         {
                             break;
                         }
+                        ruleHit = true;
                         subset = source.tilesInArea(Mathf.FloorToInt(r.value));                       
+                        break;
+                    case TargetRule.inRange:
+                        
+                        if (!source)
+                        {
+                            break;
+                        }
+                        ruleHit = true;
+                        subset = source.tilesInRange(Mathf.FloorToInt(r.value),false,team);
+                        break;
+                    case TargetRule.inRangeBypass:
+
+                        if (!source)
+                        {
+                            break;
+                        }
+                        ruleHit = true;
+                        subset = source.tilesInRange(Mathf.FloorToInt(r.value), true, team);
+                        break;
+                    case TargetRule.isOccupied:
+                        ruleHit = true;
+                        subset = FindObjectsOfType<Unit>().Select(u => u.loc).ToList();
                         break;
                 }
 				if (ruleHit)

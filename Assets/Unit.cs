@@ -166,7 +166,7 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
 	#endregion
 	public void refresh()
 	{
-        currentMovement= st.getStat(StatType.movement);
+        currentMovement= st.getStat(StatType.moveSpeed);
         currentAttacks= 1;
         currentCasts = 1;
         currentHealth += stat.getStat(StatType.regen);
@@ -241,7 +241,7 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
             {
                 currentHealth -= Mathf.FloorToInt(buffDict[t]);
             }
-            else if (t == StatType.movement)
+            else if (t == StatType.moveSpeed)
             {
                 currentMovement -= Mathf.FloorToInt(buffDict[t]);
             }
@@ -550,7 +550,7 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
 		if (currentHealth <= 0)
 		{
             //Destroy(gameObject);
-            gm.delayedDestroy(gameObject);
+            killSelf();
 		}
         return currentHealth;
 		//else
@@ -558,6 +558,10 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
   //          loc.refeshUI();
 		//}
 	}
+    public void killSelf()
+	{
+        gm.delayedDestroy(gameObject);
+    }
     public void heal(int h)
 	{
         currentHealth += h;
@@ -568,9 +572,19 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
 
         }
 	}
-	#endregion
+    public void changeMovement(int m)
+    {
+        currentMovement += m;
+        
+        if (currentMovement < 0)
+        {
+            currentMovement = 0;
 
-	public void PDestroy()
+        }
+    }
+    #endregion
+
+    public void PDestroy()
 	{
 		if (loc)
 		{

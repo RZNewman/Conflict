@@ -429,7 +429,7 @@ public class Tile : NetworkBehaviour
 
         return selected;
     }
-    List<Tile> tilesInRange(int range, bool bypass, int team)
+    public List<Tile> tilesInRange(int range, bool bypass, int team)
 	{
         List<Tile> selected = new List<Tile>();
         for(int dirInd = 0; dirInd < neigh.Length; dirInd++)

@@ -31,7 +31,7 @@ public class UnitCardUI : CardUI
         
         attack.text = sts[StatType.attack].ToString();
         defense.text = sts[StatType.health].ToString();
-        movement.text = sts[StatType.movement].ToString();
+        movement.text = sts[StatType.moveSpeed].ToString();
         range.text = sts[StatType.range].ToString();
     }
     public void populateValues(Unit u)

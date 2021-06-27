@@ -90,8 +90,8 @@ public abstract class CardUI : MonoBehaviour
                 case StatType.range:
                     line = "+{0} Range";
                     break;
-                case StatType.movement:
-                    line = "+{0} Movement";
+                case StatType.moveSpeed:
+                    line = "+{0} Move Speed";
                     break;
                 case StatType.resourceMax:
                     line = "+{0} Max Resources";
@@ -153,7 +153,7 @@ public abstract class CardUI : MonoBehaviour
 			}
 			if (line != "")
 			{
-                if(t == StatType.range || t == StatType.movement)
+                if(t == StatType.range || t == StatType.moveSpeed)
 				{
                     valueLines += string.Format(line + "\n", stats[t]);
                 }

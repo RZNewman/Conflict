@@ -14,7 +14,7 @@ public class Teleport : Ability
     {
         if (GetComponent<Targeting>().evaluate(target, team, source))
         {
-            Unit u = target.getOccupant();
+            Unit u = source.getOccupant();
             if (u && !target.getOccupant())
             {
                 gm.serverMove(u, target);

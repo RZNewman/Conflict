@@ -12,7 +12,7 @@ public static class StatBlock
     {
         health=0,
         attack,
-        movement,
+        moveSpeed,
         range,
         
         //resourceCost,

@@ -9,6 +9,7 @@ public class OrdCardUI : CardUI
 	{
         string desc = ab.toDesc();
         desc = Operations.Capatialize(desc);
+		desc.Replace("  ", " ");
         cardBody.text = desc;
     }
 

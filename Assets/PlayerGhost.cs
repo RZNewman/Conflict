@@ -327,6 +327,10 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
 	{
         currentResources-=i;
 	}
+    public void gainResources(int i)
+	{
+        currentResources += i;
+    }
     void refreshResourceUI(int oldVal, int newVal)
 	{
 		if (isLocalPlayer)

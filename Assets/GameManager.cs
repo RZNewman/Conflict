@@ -399,6 +399,22 @@ public class GameManager : NetworkBehaviour
         }
         return false;
     }
+    public delegate void callOnPlayers(PlayerGhost p);
+
+    public void delegateToTeam(callOnPlayers call, int teamInd)
+	{
+        foreach (uint playerID in teams.Keys)
+        {
+            if (teams[playerID] == teamInd)
+            {
+                call(NetworkIdentity.spawned[playerID].GetComponent<PlayerGhost>());
+
+
+
+            }
+
+        }
+    }
     // Update is called once per frame
     void Update()
     {

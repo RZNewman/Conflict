@@ -33,6 +33,11 @@ public abstract class Ability : MonoBehaviour
 		string suffix = "";
 		if (tar)
 		{
+			if(tar.rules.Length== 0)
+			{
+				return "";
+			}
+
 			foreach (Rule r in tar.rules)
 			{
 				switch (r.type)
@@ -76,6 +81,22 @@ public abstract class Ability : MonoBehaviour
 							area = "not " + area;
 						}
 						suffix += " "+area;
+						break;
+					case TargetRule.inRange:
+						string range = "in range " + Mathf.FloorToInt(r.value);
+						if (r.inverse)
+						{
+							area = "not " + range;
+						}
+						suffix += " " + range;
+						break;
+					case TargetRule.inRangeBypass:
+						string rangeB = "in bypass range " + Mathf.FloorToInt(r.value);
+						if (r.inverse)
+						{
+							area = "not " + rangeB;
+						}
+						suffix += " " + rangeB;
 						break;
 				}
 			}

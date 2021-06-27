@@ -175,6 +175,7 @@ GameObject:
   - component: {fileID: 1912627563771565748}
   - component: {fileID: 6247676399809486883}
   - component: {fileID: -2761275419017786406}
+  - component: {fileID: 6543996257407990292}
   m_Layer: 7
   m_Name: Transformer
   m_TagString: Untagged
@@ -280,6 +281,19 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
+--- !u!65 &6543996257407990292
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4675587079186190858}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.4, y: 0.3, z: 0.6}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &8918773887298190142
 GameObject:
   m_ObjectHideFlags: 0
