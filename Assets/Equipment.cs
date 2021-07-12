@@ -38,6 +38,11 @@ public class Equipment : Cardmaker
         return GameColors.equipment;
 
     }
+    protected override int getOrderType()
+    {
+        return 2;
+    }
+
     public override void modifyCardAfterCreation(GameObject o)
     {
         EquipCard card = o.GetComponent<EquipCard>();

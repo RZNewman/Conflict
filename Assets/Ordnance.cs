@@ -59,6 +59,12 @@ public class Ordnance : Cardmaker, TeamOwnership, PseudoDestroy
         return GameColors.ordnance;
 
     }
+    protected override int getOrderType()
+    {
+
+        return 3;
+    }
+
 
     public override void modifyCardAfterCreation(GameObject o)
     {

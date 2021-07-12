@@ -32,6 +32,10 @@ public class BuildCard : MonoBehaviour, IPointerClickHandler, IPointerEnterHandl
     {
         
     }
+    public string getOrder()
+	{
+        return mkr.getOrder();
+	}
 
     bool hovered = false;
     bool inspecting = false;

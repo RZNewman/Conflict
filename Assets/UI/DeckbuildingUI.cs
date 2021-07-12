@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using static StatBlock;
@@ -129,13 +130,28 @@ public class DeckbuildingUI : MonoBehaviour
             GameObject card = Instantiate(buildCardPre, mainCardList.transform);
             card.GetComponent<BuildCard>().initalize(mkr,i, this, deckType.main);
 		}
-        
+
+        GameObject[] cardBuilders = mainCardList.GetComponentsInChildren<BuildCard>().Select(x => x.gameObject).ToArray();
+        cardBuilders = cardBuilders.OrderBy(c=> c.GetComponent<BuildCard>().getOrder()).ToArray();
+        for (int i = 0; i < cardBuilders.Length; i++)
+        {
+            cardBuilders[i].transform.SetSiblingIndex(i);
+        }
+
+
         for (int i = 0; i < deckCards.structures.Count; i++)
         {
             GameObject c = deckCards.structures[i];
             Cardmaker mkr = c.GetComponent<Cardmaker>();
             GameObject card = Instantiate(buildCardPre, strcCardList.transform);
             card.GetComponent<BuildCard>().initalize(mkr, i, this, deckType.structure);
+        }
+
+        cardBuilders = strcCardList.GetComponentsInChildren<BuildCard>().Select(x => x.gameObject).ToArray();
+        cardBuilders = cardBuilders.OrderBy(c => c.GetComponent<BuildCard>().getOrder()).ToArray();
+        for (int i = 0; i < cardBuilders.Length; i++)
+        {
+            cardBuilders[i].transform.SetSiblingIndex(i);
         }
 
         mainCardScroll.GetComponent<ScrollRect>().verticalNormalizedPosition = 1;
@@ -169,15 +185,41 @@ public class DeckbuildingUI : MonoBehaviour
             }
 		}
         //Debug.Log("new " + count);
-        GameObject cc = Instantiate(cardCountPre, deckTarget.transform);
+        //GameObject cc = Instantiate(cardCountPre, deckTarget.transform);
+        GameObject cc = Instantiate(cardCountPre);
+        
         CardCountUI ccUI = cc.GetComponent<CardCountUI>();
         ccUI.setCardmaker(mkr, index, type, this);
         ccUI.incrementCount(count);
         deckList[index] = ccUI;
+        setCounterInOrder(cc, deckTarget);
         //Debug.Log(deckList.Count);
         //Debug.Log(deckList[index].count);
 
     }
+    void setCounterInOrder(GameObject counter, GameObject list)
+	{
+        
+        int index;
+        for(index=0; index < list.transform.childCount; index++)
+		{
+
+			if (string.Compare(list.transform.GetChild(index).GetComponent<CardCountUI>().getOrder(),
+                    counter.GetComponent<CardCountUI>().getOrder()
+
+                    ) > 0
+                
+                )
+			{
+                counter.transform.SetParent(list.transform);
+                counter.transform.SetSiblingIndex(index);
+                return;
+            }
+		}
+        counter.transform.SetParent(list.transform);
+
+    }
+
     // Update is called once per frame
     public void deckSizeUpdate()
     {

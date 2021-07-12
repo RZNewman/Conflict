@@ -627,8 +627,16 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
         return Color.white;
 
     }
+    protected override int getOrderType()
+	{
+        if (isStructure)
+        {
+            return 4;
+        }
+        return 1;
+    }
 
-    public override void modifyCardAfterCreation(GameObject o)
+	public override void modifyCardAfterCreation(GameObject o)
 	{
         UnitCard card = o.GetComponent<UnitCard>();
         card.setCardmaker(this);

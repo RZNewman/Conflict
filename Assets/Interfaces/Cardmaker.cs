@@ -27,6 +27,12 @@ public abstract class Cardmaker: NetworkBehaviour
 			}
 		}
 	}
+
+	public string getOrder()
+	{
+		return resourceCost.ToString("D2") + getOrderType().ToString("D2") + name;
+	}
+	protected abstract int getOrderType();
 	public abstract GameObject findCardPrefab();
 	public abstract GameObject findCardTemplate();
 

@@ -26,6 +26,10 @@ public class CardCountUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
         countTxt.text = count.ToString();
 
     }
+    public string getOrder()
+    {
+        return mkr.getOrder();
+    }
     public void setCardmaker(Cardmaker c, int index, DeckbuildingUI.deckType t, DeckbuildingUI ct)
 	{
         costTxt.text = c.resourceCost.ToString();
