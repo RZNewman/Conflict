@@ -105,7 +105,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9f2f14730afa69499589f5d85f71aa8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 6
+  damage: 5
   piercing: 0
 --- !u!114 &3701119146639462677
 MonoBehaviour:
@@ -173,7 +173,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  resourceCost: 2
+  resourceCost: 3
   cardArt: {fileID: 21300000, guid: 0d96e04b87d9ae1478397f0ce9b1f22d, type: 3}
   playEffectPre: {fileID: 4927487206556695495, guid: 7d45f22b211149743ac6e6ca4a34d3da, type: 3}
   originalName: 

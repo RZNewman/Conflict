@@ -91,7 +91,7 @@ public abstract class CardUI : MonoBehaviour
                     line = "+{0} Range";
                     break;
                 case StatType.moveSpeed:
-                    line = "+{0} Move Speed";
+                    line = "+{0} Starting Movement";
                     break;
                 case StatType.resourceMax:
                     line = "+{0} Max Resources";

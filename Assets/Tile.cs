@@ -340,6 +340,26 @@ public class Tile : NetworkBehaviour
                 }
                 selected.AddRange(attackSelect);
 
+                void threatFind(Tile t)
+				{
+                    List<Tile> threat = t.tilesInRange(occupant.stat.getStat(StatBlock.StatType.range), occupant.stat.getBool(StatBlock.StatType.bypass));
+
+                    foreach (Tile t2 in threat)
+                    {
+                        if (!selected.Contains(t2))
+                        {
+                            t2.unitUI.select(TileUI.SelectType.threat);
+                            selected.Add(t2);
+                        }
+                    }
+                }
+
+                threatFind(this);
+                foreach (Tile t in moveSelect)
+                {
+                    threatFind(t);
+                }
+
             }
 
 		}
@@ -418,7 +438,7 @@ public class Tile : NetworkBehaviour
     List<Tile> tilesInAttack(int range, bool bypass, int team)
 	{
         List<Tile> selected = new List<Tile>();
-        foreach(Tile currentTile in tilesInRange(range, bypass, team))
+        foreach(Tile currentTile in tilesInRange(range, bypass))
 		{
             if (currentTile.getOccupant() && currentTile.getOccupant().teamIndex != team)
             {
@@ -429,7 +449,7 @@ public class Tile : NetworkBehaviour
 
         return selected;
     }
-    public List<Tile> tilesInRange(int range, bool bypass, int team)
+    public List<Tile> tilesInRange(int range, bool bypass)
 	{
         List<Tile> selected = new List<Tile>();
         for(int dirInd = 0; dirInd < neigh.Length; dirInd++)

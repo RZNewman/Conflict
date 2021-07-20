@@ -20,6 +20,7 @@ public static class GameColors
 
 	public static Color activeSelect = new Color(0, 1, 0);
 	public static Color moveSelect = new Color(1, 1, 0);
+	public static Color threatSelect = new Color(1, 0.5f, 0);
 	public static Color attackSelect = new Color(1, 0, 0);
 	public static Color abilitySelect = new Color(1, 0, 1);
 

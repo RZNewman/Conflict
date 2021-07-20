@@ -105,7 +105,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9f2f14730afa69499589f5d85f71aa8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 7
+  damage: 4
   piercing: 0
 --- !u!114 &3701119146639462677
 MonoBehaviour:

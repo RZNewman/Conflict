@@ -124,7 +124,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42019648ed50bb149a63c674ce337807, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  move: 2
+  move: 1
 --- !u!1 &7333381270984794355
 GameObject:
   m_ObjectHideFlags: 0
@@ -174,7 +174,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  resourceCost: 3
+  resourceCost: 4
   cardArt: {fileID: 21300000, guid: 18531363396a0a148816a4a2946f6dde, type: 3}
   playEffectPre: {fileID: 4927487206556695495, guid: 7d45f22b211149743ac6e6ca4a34d3da, type: 3}
   originalName: 

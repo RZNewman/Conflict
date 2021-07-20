@@ -221,11 +221,11 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
 			{
                 currentHealth += Mathf.FloorToInt(buffDict[t]);
 			}
-            //else if (t == StatType.movement)
-            //{
-            //    currentMovement += Mathf.FloorToInt(buffDict[t]);
-            //}
-        }
+			//else if (t == StatType.moveSpeed)
+			//{
+			//	currentMovement += Mathf.FloorToInt(buffDict[t]);
+			//}
+		}
         st.addUpstream(buffStats);
         //Debug.Log(st.getStat(StatType.attack));
     }

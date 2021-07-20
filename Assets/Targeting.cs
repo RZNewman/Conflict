@@ -201,7 +201,7 @@ public class Targeting : MonoBehaviour
                             break;
                         }
                         ruleHit = true;
-                        subset = source.tilesInRange(Mathf.FloorToInt(r.value),false,team);
+                        subset = source.tilesInRange(Mathf.FloorToInt(r.value),false);
                         break;
                     case TargetRule.inRangeBypass:
 
@@ -210,7 +210,7 @@ public class Targeting : MonoBehaviour
                             break;
                         }
                         ruleHit = true;
-                        subset = source.tilesInRange(Mathf.FloorToInt(r.value), true, team);
+                        subset = source.tilesInRange(Mathf.FloorToInt(r.value), true);
                         break;
                     case TargetRule.isOccupied:
                         ruleHit = true;
