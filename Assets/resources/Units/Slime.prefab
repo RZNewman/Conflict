@@ -162,7 +162,7 @@ MonoBehaviour:
   - type: 3
     value: 1
   - type: 2
-    value: 0
+    value: 1
   - type: 27
     value: 1
 --- !u!114 &6247676399809486883

@@ -139,13 +139,13 @@ MonoBehaviour:
   syncInterval: 0.4
   statsList:
   - type: 0
-    value: 15
+    value: 16
   - type: 1
     value: 3
   - type: 3
     value: 2
   - type: 2
-    value: 2
+    value: 3
   - type: 31
     value: 1
 --- !u!114 &6247676399809486883

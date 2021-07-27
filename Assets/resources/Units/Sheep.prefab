@@ -139,7 +139,7 @@ MonoBehaviour:
   syncInterval: 0.4
   statsList:
   - type: 0
-    value: 3
+    value: 5
   - type: 1
     value: 2
   - type: 3

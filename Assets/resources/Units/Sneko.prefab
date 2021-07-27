@@ -235,9 +235,9 @@ MonoBehaviour:
   syncInterval: 0.4
   statsList:
   - type: 0
-    value: 2
+    value: 3
   - type: 1
-    value: 2
+    value: 3
   - type: 3
     value: 4
   - type: 2

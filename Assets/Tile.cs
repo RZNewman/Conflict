@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
+using static SelectorUI;
 
 public class Tile : NetworkBehaviour
 {
@@ -192,9 +193,10 @@ public class Tile : NetworkBehaviour
         tryAddPreset(GameColors.barricade);
         tryAddPreset(GameColors.deployfield);
         tryAddPreset(GameColors.structure);
+        tryAddPreset(GameColors.mountain);
         //colorPresets();
 
-        
+
 
     }
     void tryAddPreset(Color c)
@@ -232,7 +234,12 @@ public class Tile : NetworkBehaviour
 
         fillPresets();
 
-        if (!isSight)
+        if (!isSight && !isWalk)
+        {
+            //GetComponent<MeshRenderer>().material.color = GameColors.smokescreen;
+            GetComponent<MeshRenderer>().material = presets[GameColors.mountain];
+        }
+        else if (!isSight)
         {
             //GetComponent<MeshRenderer>().material.color = GameColors.smokescreen;
             GetComponent<MeshRenderer>().material = presets[GameColors.smokescreen];
@@ -316,29 +323,35 @@ public class Tile : NetworkBehaviour
 	}
 
     #region tile Searching
-    public List<Tile> select()
+    public List<GameObject> select(bool isHover)
     {
-        List<Tile> selected = new List<Tile>();
-        selected.Add(this);
-        unitUI.select(TileUI.SelectType.active);
+        List<GameObject> selected = new List<GameObject>();
+        List<Tile> searched = new List<Tile>();
+		if (!isHover)
+		{
+            selected.Add(unitUI.select(SelectType.active,isHover));
+            
+        }
+        searched.Add(this);
+        
 
 		if (occupant)
 		{
             List<Tile> moveSelect = tilesInMove(occupant.getMove(), !(occupant.type == Unit.unitType.flying), occupant.teamIndex,occupant.isStructure,occupant.stat.getBool(StatBlock.StatType.ghost));
             foreach (Tile t in moveSelect)
             {
-                t.unitUI.select(TileUI.SelectType.move);
+                selected.Add(t.unitUI.select(SelectType.move,isHover));
             }
-            selected.AddRange(moveSelect);
+            searched.AddRange(moveSelect);
 
 			if (occupant.canAttack)
 			{
                 List<Tile> attackSelect = tilesInAttack(occupant.stat.getStat(StatBlock.StatType.range), occupant.stat.getBool(StatBlock.StatType.bypass), occupant.teamIndex);
                 foreach (Tile t in attackSelect)
                 {
-                    t.unitUI.select(TileUI.SelectType.attack);
+                    selected.Add(t.unitUI.select(SelectType.attack, isHover));
                 }
-                selected.AddRange(attackSelect);
+                searched.AddRange(attackSelect);
 
                 void threatFind(Tile t)
 				{
@@ -346,10 +359,11 @@ public class Tile : NetworkBehaviour
 
                     foreach (Tile t2 in threat)
                     {
-                        if (!selected.Contains(t2))
+                        if (!searched.Contains(t2))
                         {
-                            t2.unitUI.select(TileUI.SelectType.threat);
-                            selected.Add(t2);
+                            
+                            selected.Add(t2.unitUI.select(SelectType.threat,isHover));
+                            searched.Add(t2);
                         }
                     }
                 }
@@ -365,14 +379,14 @@ public class Tile : NetworkBehaviour
 		}
         return selected;
     }
-    public void selectAbility()
+    public GameObject selectAbility()
 	{
-        unitUI.select(TileUI.SelectType.ability);
+        return unitUI.select(SelectType.ability, false);
 	}
-    public void deselect()
-	{
-        unitUI.deselect();
-	}
+ //   public void deselect()
+	//{
+ //       unitUI.deselect();
+	//}
     List<Tile> tilesInMove(int dist, bool walking, int team, bool isStructure, bool ghost)
 	{
         List<Tile> selected = new List<Tile>();

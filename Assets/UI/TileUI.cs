@@ -15,9 +15,10 @@ public class TileUI : MonoBehaviour
 	public Image ghost;
 	public Image bypass;
 	public Image canAttack;
-	public GameObject selection;
+	public GameObject selectorPre;
 	public GameObject info;
 
+	//List<GameObject> selectors =  new List<GameObject>();
 
 	Unit occ;
 	// Start is called before the first frame update
@@ -64,38 +65,20 @@ public class TileUI : MonoBehaviour
 		canAttack.gameObject.SetActive(occ.canAttackVisual);
 	}
 
-	public enum SelectType
+	
+	public GameObject select(SelectorUI.SelectType type, bool isHover)
 	{
-		active,
-		move,
-		threat,
-		attack,
-		ability
+		GameObject s = Instantiate(selectorPre, transform);
+		//selection.SetActive(true);
+		s.GetComponent<SelectorUI>().select(type, isHover);
+		//selectors.Add(s);
+		return s;
 	}
-	public void select(SelectType type)
-	{
-		selection.SetActive(true);
-		switch (type)
-		{
-			case SelectType.active:
-				selection.GetComponent<SpriteRenderer>().color = GameColors.activeSelect;
-				break;
-			case SelectType.move:
-				selection.GetComponent<SpriteRenderer>().color = GameColors.moveSelect;
-				break;
-			case SelectType.threat:
-				selection.GetComponent<SpriteRenderer>().color = GameColors.threatSelect;
-				break;
-			case SelectType.attack:
-				selection.GetComponent<SpriteRenderer>().color = GameColors.attackSelect;
-				break;
-			case SelectType.ability:
-				selection.GetComponent<SpriteRenderer>().color = GameColors.abilitySelect;
-				break;
-		}
-	}
-	public void deselect()
-	{
-		selection.SetActive(false);
-	}
+	//public void deselect()
+	//{
+	//	foreach(GameObject s in selectors)
+	//	{
+	//		Destroy(s);
+	//	}
+	//}
 }

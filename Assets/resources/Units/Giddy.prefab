@@ -402,7 +402,7 @@ MonoBehaviour:
   syncInterval: 0.4
   statsList:
   - type: 0
-    value: 5
+    value: 7
   - type: 1
     value: 2
   - type: 3

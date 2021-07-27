@@ -512,13 +512,13 @@ MonoBehaviour:
   syncInterval: 0.4
   statsList:
   - type: 0
-    value: 20
+    value: 18
   - type: 1
-    value: 6
+    value: 5
   - type: 3
     value: 2
   - type: 2
-    value: 2
+    value: 4
 --- !u!114 &6247676399809486883
 MonoBehaviour:
   m_ObjectHideFlags: 0

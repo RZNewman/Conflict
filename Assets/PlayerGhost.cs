@@ -20,7 +20,8 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
     StatHandler st;
     //selected unit for actions
     Unit unitCurrent;
-    List<Tile> tilesSelected =  new List<Tile>();
+    List<GameObject> tilesSelectedTarget =  new List<GameObject>();
+    List<GameObject> tilesSelectedHover = new List<GameObject>();
 
     Card cardCurrent;
     OrdSqUI abilityCurrent;
@@ -595,6 +596,7 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
                         {
                             inspecting = true;
                             inspect.inspect(hoverUnitCurrent.gameObject, CardInspector.inspectType.cardmaker,3);
+                            tilesSelectedHover = inp.target.select(true);
                         }
 
                     }
@@ -602,31 +604,16 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
                 }
                 else
                 {
-                    if (inspecting)
-                    {
-                        inspecting = false;
-                        inspect.uninspect(hoverUnitCurrent.gameObject);
-                    }
-                    hoverUnitCurrent = inp.target.getOccupant();
-                    hoverUnitTime = 0;
+
+                    uninspect( inp.target.getOccupant());
+                    
                     
 
                 }
             }
             else
             {
-                
-                if (inspecting)
-                {
-                    inspecting = false;
-                    inspect.uninspect(hoverUnitCurrent.gameObject);
-                }
-                if (hoverUnitCurrent)
-                {
-                    hoverUnitCurrent = null;
-
-
-                }
+                uninspect(null);
 
             }
         }
@@ -646,19 +633,35 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
         
         transform.position += camForward * inp.zoom;
     }
+    void uninspect(Unit newInspect)
+	{
+        if (inspecting)
+        {
+            inspecting = false;
+            inspect.uninspect(hoverUnitCurrent.gameObject);
+        }
+
+        hoverUnitCurrent = newInspect;
+        hoverUnitTime = 0;
+        foreach (GameObject s in tilesSelectedHover)
+        {
+            Destroy(s);
+        }
+
+    }
     void setTargetUnit(Unit u)
 	{
         if(unitCurrent != null)
 		{
-            foreach (Tile t in tilesSelected)
+            foreach (GameObject s in tilesSelectedTarget)
             {
-                t.deselect();
+                Destroy(s);
             }
             abilPanel.clearAll();
 		}
         if(u != null)
 		{
-            tilesSelected = u.loc.select();
+            tilesSelectedTarget = u.loc.select(false);
             foreach(Ordnance o in u.abilities)
 			{
                 //Debug.Log(o);
@@ -685,9 +688,9 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
         if (abilityCurrent != null)
         {
             abilityCurrent.setSelection(false);
-            foreach (Tile t in tilesSelected)
+            foreach (GameObject s in tilesSelectedTarget)
             {
-                t.deselect();
+                Destroy(s);
             }
         }
         if (sq != null)
@@ -697,18 +700,19 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
         abilityCurrent = sq;
         if(abilityCurrent == null)
 		{
-            tilesSelected = unitCurrent.loc.select();
+            tilesSelectedTarget = unitCurrent.loc.select(false);
         }
 		else
 		{
-            foreach (Tile t in tilesSelected)
+            foreach (GameObject s in tilesSelectedTarget)
             {
-                t.deselect();
+                Destroy(s);
             }
-            tilesSelected = abilityCurrent.ability.GetComponent<Targeting>().evaluateTargets(teamIndex, unitCurrent.loc);
-            foreach (Tile t in tilesSelected)
+            List<Tile> abSelect = abilityCurrent.ability.GetComponent<Targeting>().evaluateTargets(teamIndex, unitCurrent.loc);
+            tilesSelectedTarget = new List<GameObject>();
+            foreach (Tile t in abSelect)
             {
-                t.selectAbility();
+                tilesSelectedTarget.Add(t.selectAbility());
             }
 
         }
