@@ -247,10 +247,10 @@ public class GameManager : NetworkBehaviour
     void roundEndActions(PlayerGhost p)
 	{
         int roundInd = roundCounter - 1;
-        if((roundCounter+1) % card_rate == 0)
-		{
-            p.drawCardsOnTurn();
-        }
+  //      if((roundCounter+1) % card_rate == 0)
+		//{
+  //          p.drawCardsOnTurn();
+  //      }
 		//if ((roundCounter - 1) % max_cap_rate == 0)
         if(roundInd < maxCapacity.Length && maxCapacity[roundInd])
 		{
@@ -587,12 +587,16 @@ public class GameManager : NetworkBehaviour
 
         if (
             playedCard
-            && player.getCurrentResources() >= playedCard.resourceCost
+            && (
+                !playedCard.costsMaterial && player.getCurrentResources() >= playedCard.resourceCost 
+                ||
+                playedCard.costsMaterial && player.getCurrentMaterials() >= playedCard.resourceCost
+            )
             && player.getCurrentSpendLimit() >= playedCard.resourceCost
             && t.evaluate(target, teams[ownerID])
             )
 		{
-            player.spendResources(playedCard.resourceCost);
+            player.spendResources(playedCard.resourceCost, playedCard.costsMaterial);
             playedCard.playCard(target);
             delayedDestroy(playedCard.gameObject);
 		}

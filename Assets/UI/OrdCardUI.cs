@@ -13,7 +13,17 @@ public class OrdCardUI : CardUI
         cardBody.text = desc;
     }
 
-	
+	protected override void populateCost(Cardmaker mkr)
+	{
+		if (mkr.GetComponent<Ordnance>().caster)
+		{
+			cardCost.setCost(mkr.resourceCost.ToString(), new CostUI.costTypes(false, true, false));
+		}
+		else
+		{
+			base.populateCost(mkr);
+		}
+	}
 
 	public void setBackground()
     {
@@ -43,7 +53,7 @@ public class OrdCardUI : CardUI
 		}
 		
 		setBackground();
-		populateCost(maker.resourceCost.ToString());
+		populateCost(maker);
 		populateBody(ab);
     }
 }

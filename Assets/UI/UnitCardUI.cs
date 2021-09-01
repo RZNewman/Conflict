@@ -77,6 +77,17 @@ public class UnitCardUI : CardUI
         }
         
 	}
+    protected override void populateCost(Cardmaker mkr)
+	{
+		if (mkr.GetComponent<Unit>().isStructure)
+		{
+            cardCost.setCost(mkr.resourceCost.ToString(), new CostUI.costTypes(true, false, true));
+        }
+		else
+		{
+            base.populateCost(mkr);
+		}
+	}
 
 	public override void populateSelf(Cardmaker maker, bool isPrefab)
 	{
@@ -107,7 +118,7 @@ public class UnitCardUI : CardUI
         }
         
         populateType(u);      
-        populateCost(maker.resourceCost.ToString());
+        populateCost(maker);
         modifyForStructure(u.isStructure);
     }
 }

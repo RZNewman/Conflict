@@ -24,6 +24,9 @@ public abstract class Card : NetworkBehaviour, IPointerEnterHandler, IPointerExi
     [SyncVar]
     public int resourceCost;
 
+    [SyncVar]
+    public bool costsMaterial=false;
+
 
     bool inspecting = false;
 

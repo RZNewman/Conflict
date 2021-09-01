@@ -196,9 +196,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  resourceCost: 8
+  resourceCost: 7
   cardArt: {fileID: 0}
-  unitName: 
+  playEffectPre: {fileID: 0}
+  originalName: 
   type: 0
   loc: {fileID: 0}
   teamIndex: 0
@@ -220,7 +221,7 @@ MonoBehaviour:
   syncInterval: 0.4
   statsList:
   - type: 0
-    value: 14
+    value: 12
   - type: 1
     value: 0
   - type: 3
@@ -228,7 +229,7 @@ MonoBehaviour:
   - type: 2
     value: 0
   - type: 12
-    value: 1
+    value: 3
   - type: 10
     value: 1
 --- !u!114 &6247676399809486883

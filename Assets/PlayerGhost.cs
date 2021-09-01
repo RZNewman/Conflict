@@ -36,6 +36,12 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
 
     [SyncVar(hook = nameof(refreshResourceUI))]
     int currentResources = 1;
+    [SyncVar(hook = nameof(refreshResourceUI))]
+    int currentfragments = 0;
+    [SyncVar(hook = nameof(refreshResourceUI))]
+    int currentMaterials = 0;
+    [SyncVar(hook = nameof(refreshResourceUI))]
+    int currentShards = 0;
 
     [SyncVar(hook = nameof(refreshResourceUI))]
     int currentCards = 0;
@@ -88,7 +94,14 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
                 state = targetState.Free;
                 setTargetCard(null);
             }
-            else if (cost <= currentResources && cost <= st.getStat(StatType.resourceSpend))
+            else if (
+                (
+                    !c.costsMaterial && cost <= currentResources
+                    ||
+                    c.costsMaterial && cost <= currentMaterials
+                )
+                
+                && cost <= st.getStat(StatType.resourceSpend))
             {
                 state = targetState.Card;
                 //setTargetAbility(null);
@@ -115,12 +128,12 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
     {
         inspect.uninspect(body);
     }
-    public void drawCardsOnTurn()
-	{
+ //   public void drawCardsOnTurn()
+	//{
 
-        drawCards(st.getStat(StatType.cardDraw) + 1);
+ //       drawCards(st.getStat(StatType.cardShardIncome) + 1);
 
-	}
+	//}
 
     [Server]
     public void drawCards(int cards)
@@ -285,19 +298,38 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
     //static readonly int RESOURCE_INCOME_CAP = 3;
     public void refreshResources()
 	{
-        currentResources += st.getStat(StatType.resourceIncome);
-		if (currentResources > st.getStat(StatType.resourceMax))
+        currentResources += st.getStat(StatType.supplyIncome);
+		if (currentResources > st.getStat(StatType.supplyMax))
 		{
-            currentResources = st.getStat(StatType.resourceMax);
+            currentResources = st.getStat(StatType.supplyMax);
 		}
-	}
+
+        currentfragments += st.getStat(StatType.structureFragmentIncome);
+		while (currentfragments >= 6)
+		{
+            currentfragments -= 6;
+            currentMaterials += 1;
+		}
+
+        currentShards += st.getStat(StatType.cardShardIncome);
+        int cardsToDraw = 0;
+        while (currentShards >= 6)
+        {
+            currentShards -= 6;
+            cardsToDraw += 1;
+        }
+		if (cardsToDraw > 0)
+		{
+            drawCards(cardsToDraw);
+		}
+    }
     public void increaseMaxResources()
 	{
         //if (st.getStat(StatType.resourceMax, true) < RESOURCE_MAX_CAP)
         //{
         //    st.modifyStat(StatType.resourceMax, 1);
         //}
-        st.modifyStat(StatType.resourceMax, 1);
+        st.modifyStat(StatType.supplyMax, 1);
 
     }
     public void increaseIncomeResources()
@@ -306,7 +338,7 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
         //{
         //    st.modifyStat(StatType.resourceIncome, 1);
         //}
-        st.modifyStat(StatType.resourceIncome, 1);
+        st.modifyStat(StatType.supplyIncome, 1);
     }
     public void increaseSpendResources()
 	{
@@ -320,13 +352,33 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
     {
         return currentCards;
     }
+    public int getCurrentMaterials()
+    {
+        return currentMaterials;
+    }
+    public int getCurrentFragments()
+    {
+        return currentfragments;
+    }
+    public int getCurrentShards()
+    {
+        return currentShards;
+    }
     public int getCurrentSpendLimit()
 	{
         return st.getStat(StatType.resourceSpend);
 	}
-    public void spendResources(int i)
+    public void spendResources(int i, bool isMaterial = false)
 	{
-        currentResources-=i;
+		if (isMaterial)
+		{
+            currentMaterials -= i;
+		}
+		else
+		{
+            currentResources -= i;
+        }
+        
 	}
     public void gainResources(int i)
 	{

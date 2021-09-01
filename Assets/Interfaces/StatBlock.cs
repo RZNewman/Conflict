@@ -16,10 +16,11 @@ public static class StatBlock
         range,
         
         //resourceCost,
-        resourceIncome=10,
-        resourceMax,
-        cardDraw,
+        supplyIncome=10,
+        supplyMax,
+        cardShardIncome,
         resourceSpend,
+        structureFragmentIncome,
 
         armor =20,
         piercing,

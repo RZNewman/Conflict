@@ -111,3 +111,7 @@ MonoBehaviour:
     value: 6
   - type: 13
     value: 1
+  - type: 12
+    value: 3
+  - type: 14
+    value: 3

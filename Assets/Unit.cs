@@ -640,6 +640,7 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
 	{
         UnitCard card = o.GetComponent<UnitCard>();
         card.setCardmaker(this);
+        card.costsMaterial = isStructure;
         Dictionary<StatType,float> tempS = GetComponent<StatHandler>().prefabStats();
         bool frontline = tempS.ContainsKey(StatType.frontline) && tempS[StatType.frontline] > 0;
         if (isStructure || frontline)

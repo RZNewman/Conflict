@@ -8,7 +8,7 @@ public class OrdSqUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler
 {
 	#region UI part
 	public Image cardArt;
-    public Text cardCost;
+    public CostUI cardCost;
     public GameObject selection;
     void populateArt(Sprite art)
     {
@@ -16,8 +16,8 @@ public class OrdSqUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler
     }
     void populateCost(string cost)
     {
-        cardCost.text = cost;
-        cardCost.transform.parent.GetComponent<Image>().color = GameColors.resources;
+        cardCost.setCost(cost, new CostUI.costTypes(false, true, false));
+        //cardCost.transform.parent.GetComponent<Image>().color = GameColors.resources;
     }
     public void setSelection(bool isSelected)
     {

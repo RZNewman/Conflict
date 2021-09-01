@@ -5,13 +5,23 @@ using UnityEngine.UI;
 
 public class ResourceUI : MonoBehaviour
 {
-    public Text income;
-    public Text current;
-    public Text max;
-    public Text limit;
-    public Text cardCount;
-    public GameObject limitInc;
-    public GameObject maxInc;
+    public Text power;
+    public Text supply;
+    public Text supplyMax;
+    public Text material;
+    //cards in hand
+    public Text cardsInDeck;
+    public GameObject powerIncrement;
+    public Text supplyIncome;
+    public GameObject supplyMaxIncrement;
+    public Text materialFragmentIncome;
+    public Text cardShardIncome;
+    public FragmentCounter matFrags;
+    public FragmentCounter cardShards;
+
+
+
+
     GameManager gm;
 
     // Start is called before the first frame update
@@ -41,35 +51,31 @@ public class ResourceUI : MonoBehaviour
 		if (!gm) { return; }
         if (!gm.clientPlayer) { return; }
         StatHandler st = gm.clientPlayer.GetComponent<StatHandler>();
-		if (income)
+        void tryRefresh(Text field, int value)
 		{
-            income.text = st.getStat(StatBlock.StatType.resourceIncome).ToString();
-        }
-        if (current)
-        {
-            current.text = gm.clientPlayer.getCurrentResources().ToString();
-        }
-        if (max)
-        {
-            max.text = st.getStat(StatBlock.StatType.resourceMax).ToString();
-        }
-		if (limit)
-		{
-            limit.text = st.getStat(StatBlock.StatType.resourceSpend).ToString();
-        }
-		if (cardCount)
-		{
-            cardCount.text = gm.clientPlayer.getCurrentCards().ToString();
+            if (field) field.text = value.ToString();
 		}
-        
+
+        tryRefresh(supplyIncome, st.getStat(StatBlock.StatType.supplyIncome));
+        tryRefresh(supply, gm.clientPlayer.getCurrentResources());
+        tryRefresh(supplyMax, st.getStat(StatBlock.StatType.supplyMax));
+        tryRefresh(power, st.getStat(StatBlock.StatType.resourceSpend));
+        tryRefresh(cardsInDeck, gm.clientPlayer.getCurrentCards());
+
+        tryRefresh(material, gm.clientPlayer.getCurrentMaterials());
+        tryRefresh(materialFragmentIncome, st.getStat(StatBlock.StatType.structureFragmentIncome));
+        tryRefresh(cardShardIncome, st.getStat(StatBlock.StatType.cardShardIncome));
+
+        if (matFrags) matFrags.displayFragements(gm.clientPlayer.getCurrentFragments());
+        if (cardShards) cardShards.displayFragements(gm.clientPlayer.getCurrentShards());
 
     }
     public void setLimitIncrease(bool show)
 	{
-        limitInc.SetActive(show);
+        powerIncrement.SetActive(show);
 	}
     public void setMaxIncrease(bool show)
     {
-        maxInc.SetActive(show);
+        supplyMaxIncrement.SetActive(show);
     }
 }

@@ -11,7 +11,7 @@ public abstract class CardUI : MonoBehaviour
 {
     public Image cardArt;
     public Text cardTitle;
-    public Text cardCost;
+    public CostUI cardCost;
     public Image cardBG;
     public TextMeshProUGUI cardBody;
     public GameObject selection;
@@ -60,9 +60,9 @@ public abstract class CardUI : MonoBehaviour
 	{
         cardTitle.text = title;
 	}
-    protected void populateCost(string cost)
+    protected virtual void populateCost(Cardmaker mkr)
     {
-        cardCost.text = cost;
+        cardCost.setCost(mkr.resourceCost.ToString(), new CostUI.costTypes(true,true,false));
         //cardCost.transform.parent.GetComponent<Image>().color = GameColors.resources;
     }
     public void select(bool isSelected)
@@ -93,11 +93,11 @@ public abstract class CardUI : MonoBehaviour
                 case StatType.moveSpeed:
                     line = "+{0} Starting Movement";
                     break;
-                case StatType.resourceMax:
-                    line = "+{0} Max Resources";
+                case StatType.supplyMax:
+                    line = "+{0} Max Supply";
                     break;
-                case StatType.resourceIncome:
-                    line = "+{0}<sprite index= 1> Resource Income";
+                case StatType.supplyIncome:
+                    line = "+{0}<sprite index= 1> Supply Income";
                     break;
                 case StatType.armor:
                     line = "Armor {0}";
@@ -138,8 +138,8 @@ public abstract class CardUI : MonoBehaviour
 				case StatType.cleave://benched
 					line = "Cleave {0}";
 					break;
-				case StatType.cardDraw:
-                    line = "+{0} Card Draw";
+				case StatType.cardShardIncome:
+                    line = "+{0} Card Shard Income";
                     break;
                 case StatType.addOn:
                     line = "Add-On";

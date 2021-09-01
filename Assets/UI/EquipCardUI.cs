@@ -69,7 +69,7 @@ public class EquipCardUI : CardUI
 		populateType(e);
 		
 
-		populateCost(maker.resourceCost.ToString());
+		populateCost(maker);
 		
 
 	}
