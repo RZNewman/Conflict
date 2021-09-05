@@ -302,6 +302,10 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
 			{
                 abilities.Add(o);
             }
+			if (loc)
+			{
+                loc.refeshUI();
+            }
             
         }
 	}
@@ -405,6 +409,13 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
             return currentMovement;
 		}
 	}
+    public bool canMoveVisual
+    {
+        get
+        {
+            return currentMovement > 0 && gm && gm.whosTurn == teamIndex;
+        }
+    }
     public bool canAttack
 	{
 		get
@@ -424,6 +435,13 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
         get
         {
             return currentCasts > 0;
+        }
+    }
+    public bool canCastVisual
+    {
+        get
+        {
+            return canCast && abilities.Count>0 && gm && gm.whosTurn == teamIndex;
         }
     }
     public bool isDamaged

@@ -9,7 +9,7 @@ public class FragmentCounter : MonoBehaviour
 
 	public void displayFragements(int f)
 	{
-		if (f > fragments.Length) f = fragments.Length - 1;
+		if (f >= fragments.Length) f = fragments.Length - 1;
 		GetComponent<Image>().sprite = fragments[f];
 	}
 

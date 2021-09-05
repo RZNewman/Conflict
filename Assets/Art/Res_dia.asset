@@ -93,6 +93,18 @@ MonoBehaviour:
     m_Scale: 1
     m_Name: Res_dia_2
     m_HashCode: -115245862
+  - m_ElementType: 2
+    m_Unicode: 65534
+    m_GlyphIndex: 3
+    m_Scale: 1
+    m_Name: Res_dia_3
+    m_HashCode: -115245861
+  - m_ElementType: 2
+    m_Unicode: 65534
+    m_GlyphIndex: 4
+    m_Scale: 1
+    m_Name: Res_dia_4
+    m_HashCode: -115245860
   m_SpriteGlyphTable:
   - m_Index: 0
     m_Metrics:
@@ -139,5 +151,35 @@ MonoBehaviour:
     m_Scale: 1
     m_AtlasIndex: 0
     sprite: {fileID: 5447631669623025972, guid: 350e5986cbac43a45a110f4092fd4140, type: 3}
+  - m_Index: 3
+    m_Metrics:
+      m_Width: 100
+      m_Height: 100
+      m_HorizontalBearingX: 0
+      m_HorizontalBearingY: 90
+      m_HorizontalAdvance: 100
+    m_GlyphRect:
+      m_X: 300
+      m_Y: 0
+      m_Width: 100
+      m_Height: 100
+    m_Scale: 1
+    m_AtlasIndex: 0
+    sprite: {fileID: 4319758375947269423, guid: 350e5986cbac43a45a110f4092fd4140, type: 3}
+  - m_Index: 4
+    m_Metrics:
+      m_Width: 100
+      m_Height: 100
+      m_HorizontalBearingX: -50
+      m_HorizontalBearingY: 50
+      m_HorizontalAdvance: 100
+    m_GlyphRect:
+      m_X: 400
+      m_Y: 0
+      m_Width: 100
+      m_Height: 100
+    m_Scale: 1
+    m_AtlasIndex: 0
+    sprite: {fileID: 5093081555338058394, guid: 350e5986cbac43a45a110f4092fd4140, type: 3}
   spriteInfoList: []
   fallbackSpriteAssets: []

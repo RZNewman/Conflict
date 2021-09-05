@@ -139,7 +139,10 @@ public abstract class CardUI : MonoBehaviour
 					line = "Cleave {0}";
 					break;
 				case StatType.cardShardIncome:
-                    line = "+{0} Card Shard Income";
+                    line = "+{0}<sprite index= 3> Card Shard Income";
+                    break;
+                case StatType.structureFragmentIncome:
+                    line = "+{0}<sprite index= 2> Material Fragemnt Income";
                     break;
                 case StatType.addOn:
                     line = "Add-On";

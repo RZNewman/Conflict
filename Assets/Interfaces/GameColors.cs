@@ -6,7 +6,7 @@ public static class GameColors
 {
 	public static Color attack = Color.red;
 	public static Color range = new Color(0, 1, 1);
-	public static Color move = new Color(1f, 0, 1f);
+	public static Color move = new Color(0.5f, 0, 1f);
 	public static Color defense = new Color(1, 0.75f, 0);
 	public static Color resources = new Color(0, 0, 1);
 

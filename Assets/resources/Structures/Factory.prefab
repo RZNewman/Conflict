@@ -231,7 +231,7 @@ MonoBehaviour:
   - type: 12
     value: 3
   - type: 10
-    value: 1
+    value: 2
 --- !u!114 &6247676399809486883
 MonoBehaviour:
   m_ObjectHideFlags: 0

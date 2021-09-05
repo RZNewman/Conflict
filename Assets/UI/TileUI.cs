@@ -15,6 +15,9 @@ public class TileUI : MonoBehaviour
 	public Image ghost;
 	public Image bypass;
 	public Image canAttack;
+	public Image canMove;
+	public Image canCast;
+
 	public GameObject selectorPre;
 	public GameObject info;
 
@@ -63,6 +66,8 @@ public class TileUI : MonoBehaviour
 		bypass.gameObject.SetActive(occ.stat.getBool(StatType.bypass));
 		ghost.gameObject.SetActive(occ.stat.getBool(StatType.ghost));
 		canAttack.gameObject.SetActive(occ.canAttackVisual);
+		canCast.gameObject.SetActive(occ.canCastVisual);
+		canMove.gameObject.SetActive(occ.canMoveVisual);
 	}
 
 	
