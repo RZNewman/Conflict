@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 
-public class Buff : NetworkBehaviour
+public class Buff : NetworkBehaviour, PseudoDestroy
 {
     public List<GameObject> abilitiesPre;
     public List<GameObject> abilities = new List<GameObject>();
@@ -24,17 +24,6 @@ public class Buff : NetworkBehaviour
 
     Termination removeBuff;
 
-
-
-    public void dispell()
-	{
-        removeBuff(this);
-        foreach(GameObject o in abilities)
-		{
-            Destroy(o);
-		}
-        Destroy(gameObject);
-    }
 
     public void setTerminate(Termination t)
 	{
@@ -66,5 +55,13 @@ public class Buff : NetworkBehaviour
         
     }
 
-	
+	public void PDestroy()
+	{
+        removeBuff(this);
+        foreach (GameObject o in abilities)
+        {
+            GameManager gm = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameManager>();
+            gm.delayedDestroy(o);
+        }
+    }
 }

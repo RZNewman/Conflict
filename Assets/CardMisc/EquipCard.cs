@@ -30,7 +30,6 @@ public class EquipCard : Card
 		Buff b = buff.GetComponent<Buff>();
 		buff.GetComponent<Cardmaker>().provideName(sourceCardmaker.name);
 		Unit u = target.getOccupant().GetComponent<Unit>();
-		b.initailize(u);
 
 		buff.transform.parent = u.transform;
 		buff.transform.localPosition = Vector3.zero;

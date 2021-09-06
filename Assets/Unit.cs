@@ -51,7 +51,7 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
 		if (isServer)
 		{
             spawnAbilitites();
-
+            spawnAuras();
         }
         if (isClient)
 		{
@@ -161,6 +161,11 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
             {
                 aPre.GetComponent<Ordnance>().register();
             }
+            foreach(GameObject auPre in aurasPre)
+			{
+                auPre.GetComponent<Aura>().register();
+                
+            }
         }
     }
 	#endregion
@@ -207,9 +212,13 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
 
     #endregion
     #region buffs
+    public List<GameObject> aurasPre;
     List<Buff> buffs = new List<Buff>();
+    Dictionary<Aura,Buff> aurasRecieved = new Dictionary<Aura, Buff>();
+    List<Aura> aurasEmitted = new List<Aura>();
     public void addBuff(Buff b)
 	{
+        b.initailize(this);
         //Debug.Log(b);
         buffs.Add(b);
         b.setTerminate(removeBuff);
@@ -241,12 +250,12 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
             {
                 currentHealth -= Mathf.FloorToInt(buffDict[t]);
             }
-            else if (t == StatType.moveSpeed)
-            {
-                currentMovement -= Mathf.FloorToInt(buffDict[t]);
-            }
+            //else if (t == StatType.moveSpeed)
+            //{
+            //    currentMovement -= Mathf.FloorToInt(buffDict[t]);
+            //}
         }
-
+        buffStats.removeDownstream(st);
     }
     public int equipmentCount()
 	{
@@ -261,6 +270,79 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
 
         return count;
 	}
+    public void addAura(Aura a)
+	{
+		if (!aurasRecieved.ContainsKey(a))
+		{
+            aurasRecieved.Add(a, tryEnterAura(a));
+        }
+        
+	}
+    public void removeAura(Aura a)
+    {
+		if (aurasRecieved[a])
+		{
+            gm.delayedDestroy(aurasRecieved[a].gameObject);
+		}
+        aurasRecieved.Remove(a);
+    }
+    public void updateAuras(List<Aura> newAuras)
+    {
+
+        List<Aura> toRemove = new List<Aura>();
+        List<Aura> newToUnit = new List<Aura>(newAuras);
+        foreach (Aura a in aurasRecieved.Keys)
+        {
+            if (!newAuras.Contains(a))
+            {
+                toRemove.Add(a);
+            }
+            else
+            {
+                newToUnit.Remove(a);
+            }
+        }
+        foreach (Aura a in toRemove)
+        {
+            removeAura(a);
+        }
+        foreach (Aura a in newToUnit)
+        {
+            addAura(a);
+        }
+
+        
+    }
+    Buff tryEnterAura(Aura a)
+	{
+
+        return a.tryEnterAura(loc, this);
+	}
+    void spawnAuras()
+	{
+        foreach(GameObject aura in aurasPre)
+		{
+            createAura(aura);
+		}
+	}
+
+    public void createAura(GameObject o)
+    {
+        GameObject au = Instantiate(o, transform);
+        Aura aura = au.GetComponent<Aura>();
+
+        aurasEmitted.Add(aura);
+        aura.updateLocation(loc);
+
+    }
+    public void moveAuras()
+	{
+        foreach(Aura a in aurasEmitted)
+		{
+            a.updateLocation(loc);
+		}
+	}
+
     #endregion
     #region abilities
     public List<GameObject> abilitiesPre;
@@ -285,6 +367,7 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
         NetworkIdentity netI = ab.GetComponent<NetworkIdentity>();
         abilities.Add(ord);
         NetworkServer.Spawn(ab);
+        //TODO abilities of units on board will not be registered
         RpcParentAbility(netI.netId);
         return ab;
     }

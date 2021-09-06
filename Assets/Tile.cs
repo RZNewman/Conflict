@@ -152,6 +152,35 @@ public class Tile : NetworkBehaviour
     }
 
 
+    List<Aura> auras = new List<Aura>();
+
+    public void addAura(Aura a)
+	{
+        auras.Add(a);
+        if (occupant)
+        {
+            occupant.addAura(a);
+        }
+    }
+
+    public void removeAura(Aura a)
+    {
+        auras.Remove(a);
+        if (occupant)
+        {
+            occupant.removeAura(a);
+        }
+    }
+
+    void checkAuras()
+	{
+        if (occupant)
+        {
+            occupant.updateAuras(auras);
+        }
+    }
+
+
     Dictionary<Color, Material> presets
     {
 		get
@@ -296,12 +325,16 @@ public class Tile : NetworkBehaviour
 	}
     public void occEnter(Unit o)
 	{
+        
         //Debug.Log(this);
         occupant = o;
         occupant.loc = this;
         //Debug.Log(occupant);
         //Debug.Log(unitUI);
         unitUI.activate(occupant);
+        o.moveAuras();
+        checkAuras();
+        
     }
     
     public void refeshUI()

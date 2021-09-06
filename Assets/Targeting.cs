@@ -20,7 +20,8 @@ public class Targeting : MonoBehaviour
         inArea,
         isDamaged,
         inRange,
-        inRangeBypass
+        inRangeBypass,
+        self
 
         //inMove
         //inRange
@@ -51,7 +52,7 @@ public class Targeting : MonoBehaviour
 	{
         return evaluateRules(rules, t, team, source);
 	}
-    public bool evaluateRules(Rule[] eRules,Tile t, int team, Tile source = null)
+    bool evaluateRules(Rule[] eRules,Tile t, int team, Tile source = null)
 	{
         //Debug.Log(t + " - " + team);
         foreach(Rule r in eRules)
@@ -148,6 +149,14 @@ public class Targeting : MonoBehaviour
                     }
                     result = source.rangeToTile(t, true, out didBypass) <= Mathf.FloorToInt(r.value);
                     //result = source.tilesInRange(Mathf.FloorToInt(r.value), true, team).Contains(t);
+                    break;
+                case TargetRule.self:
+                    if (!source)
+                    {
+                        result = false;
+                        break;
+                    }
+                    result = source == t;
                     break;
                 case TargetRule.isDamaged:
                     if (!t.getOccupant())
@@ -267,6 +276,32 @@ public class Targeting : MonoBehaviour
         return targets;
 	}
 
+    public List<Tile> getAuraArea(Tile source)
+	{
+        List<Tile> targets = new List<Tile>();
+        foreach (Rule r in rules)
+        {
+			if (r.inverse)
+			{
+                continue;
+			}
+            switch (r.type)
+            {
+                case TargetRule.inArea:
+                    targets = source.tilesInArea(Mathf.FloorToInt(r.value));
+                    break;
+                case TargetRule.inRange:
+
+                    targets = source.tilesInRange(Mathf.FloorToInt(r.value), false);
+                    break;
+                case TargetRule.inRangeBypass:
+
+                    targets = source.tilesInRange(Mathf.FloorToInt(r.value), true);
+                    break;
+            }
+        }
+        return targets;
+    }
 
     static bool FoundationCheck(Tile t, int team, bool addOn)
 	{

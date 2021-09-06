@@ -549,14 +549,15 @@ public class GameManager : NetworkBehaviour
     public void serverMove(Unit mover, Tile target)
 	{
         transferToTile(mover, target, true);
+        
         //RpcMoveUnit(unitID, tileID);
         pipe.RpcAddViewEvent(new ViewEvent(ViewType.unitMove, mover.netId, target.netId, Time.time));
     }
 
     public void transferToTile(Unit u, Tile t, bool onServer = false)
     {
-        if (!onServer || !isClient)
-        //if(true)
+        //if (!onServer || !isClient)
+        if(onServer || !isServer)
         {
             Tile origin = u.loc;
 
