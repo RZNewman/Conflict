@@ -62,17 +62,6 @@ public static class Operations
         EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
         return results.Count > 0;
     }
-    public static bool Contains<T>(this IEnumerable<T> listT, T  ele)
-	{
-        foreach(T t in listT)
-		{
-            if(t.Equals(t))
-			{
-                return true;
-			}
-		}
-        return false;
-	}
     public static int mod(int x, int m)
     {
         return (x % m + m) % m;
