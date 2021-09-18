@@ -296,7 +296,7 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
     #region resources
     //static readonly int RESOURCE_MAX_CAP = 6;
     //static readonly int RESOURCE_INCOME_CAP = 3;
-    static readonly float TEMPO_MULTIPLIER = 2f;
+    static readonly float TEMPO_MULTIPLIER = 1f;
     static int TM(int i)
 	{
         return Mathf.FloorToInt(i * TEMPO_MULTIPLIER);

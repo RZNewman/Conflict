@@ -56,12 +56,12 @@ public class EquipCardUI : CardUI
             Dictionary<StatType, float> sts = st.prefabStats();
             populateTitle(maker.name);
 
-            populateBody(sts, isPrefab, false, maker.GetComponent<Buff>().abilitiesPre.Select(x => x.GetComponent<Ability>()).ToArray());
+            populateBody(sts, false, maker.GetComponent<Buff>().abilitiesPre.Select(x => x.GetComponent<Ability>()).ToArray());
         }
         else
         {
             populateTitle(maker.originalName);
-            populateBody(e.GetComponent<StatHandler>().export(), isPrefab, false, e.GetComponent<Buff>().abilities.Select(x => x.GetComponent<Ability>()).ToArray());
+            populateBody(e.GetComponent<StatHandler>().export(), false, e.GetComponent<Buff>().abilities.Select(x => x.GetComponent<Ability>()).ToArray());
         }
 
 

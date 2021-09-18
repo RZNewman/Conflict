@@ -38,8 +38,8 @@ public class UnitCardUI : CardUI
 	{
         attack.text = u.stat.getStat(StatType.attack).ToString();
         range.text = u.stat.getStat(StatType.range).ToString();
-        defense.text = u.getHeath().ToString();
-        movement.text = u.getMove().ToString();
+        defense.text = u.getHeath().ToString() + "/" + u.stat.getStat(StatType.health).ToString();
+        movement.text = u.getMove().ToString()+"/"+ u.stat.getStat(StatType.moveSpeed).ToString();
         
     }
 
@@ -110,7 +110,6 @@ public class UnitCardUI : CardUI
             populateValues(sts);
             populateBody(
                 sts,
-                isPrefab,
                 true,
                 u.abilitiesPre.Select(x => x.GetComponent<Ability>()).ToArray(),
                 u.aurasPre.Select(x => x.GetComponent<Aura>()).ToArray()
@@ -122,7 +121,6 @@ public class UnitCardUI : CardUI
             populateValues(u);
             populateBody(
                 u.stat.export(),
-                isPrefab,
                 true, 
                 u.abilities.Select(x => x.GetComponent<Ability>()).ToArray(),
                 u.aurasEmitted.Select(x => x.GetComponent<Aura>()).ToArray()

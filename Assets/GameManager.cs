@@ -242,7 +242,9 @@ public class GameManager : NetworkBehaviour
         false, false, true, 
         false, false, true, 
         false, false, true, 
-        false, false, true, 
+        false, false, true,
+        false, false, true,
+        false, false, true,
     };
     void roundEndActions(PlayerGhost p)
 	{

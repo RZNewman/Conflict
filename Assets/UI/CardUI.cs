@@ -70,12 +70,12 @@ public abstract class CardUI : MonoBehaviour
         selection.SetActive(isSelected);
 	}
 
-    protected void populateBody(Dictionary<StatType, float> stats, bool isPrefab, bool skipUnitValues = true, Ability[] abils = null, Aura[] auras = null)
+    protected void populateBody(Dictionary<StatType, float> stats, bool skipUnitValues = true, Ability[] abils = null, Aura[] auras = null)
 	{
-        cardBody.text = cardText(stats, isPrefab,skipUnitValues,abils,auras);
+        cardBody.text = cardText(stats,skipUnitValues,abils,auras);
     }
 
-    public static string cardText(Dictionary<StatType, float> stats, bool isPrefab, bool skipUnitValues = true, Ability[] abils = null, Aura[] auras = null)
+    public static string cardText(Dictionary<StatType, float> stats, bool skipUnitValues = true, Ability[] abils = null, Aura[] auras = null)
 	{
         string text = "";
         int[] valueText = new int[2];
@@ -200,7 +200,7 @@ public abstract class CardUI : MonoBehaviour
 		{
             foreach (Aura au in auras)
             {
-                string desc = au.toDesc(isPrefab);
+                string desc = au.toDesc();
                 desc = Operations.Capatialize(desc);
 
                 text += "Aura: " + desc + "\n";

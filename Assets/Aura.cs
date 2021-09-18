@@ -9,10 +9,16 @@ public class Aura : Buff
 
     List<Tile> affectedArea = new List<Tile>();
 	Tile center;
+	[SyncVar]
+	public int teamInd=-1;
 
 	[ClientRpc]
 	public override void RpcAssignUnit(uint unitID)
 	{
+		if (isServer)
+		{
+			return;
+		}
 		GameObject u = NetworkIdentity.spawned[unitID].gameObject;
 		//Debug.Log("assingd");
 		transform.parent = u.transform;
@@ -53,7 +59,7 @@ public class Aura : Buff
 	
 	public Buff tryEnterAura(Tile t, Unit u)
 	{
-		if (buffGiven.GetComponent<Targeting>().evaluate(t, u.teamIndex, center)){
+		if (buffGiven.GetComponent<Targeting>().evaluate(t, teamInd, center)){
 			GameObject buff = Instantiate(buffGiven);
 			Buff b = buff.GetComponent<Buff>();
 			buff.transform.parent = u.transform;
@@ -80,21 +86,13 @@ public class Aura : Buff
 		}
 	}
 	
-	public string toDesc(bool isPrefab)
+	public string toDesc()
 	{
 		string desc;
-		if (isPrefab)
-		{
-			desc = string.Format("grant '{0}'",
-				CardUI.cardText(buffGiven.GetComponent<StatHandler>().prefabStats(), isPrefab,false).Replace('\n', ',')
-				);
-		}
-		else
-		{
-			desc = string.Format("grant '{0}'",
-				CardUI.cardText(buffGiven.GetComponent<StatHandler>().export(), isPrefab, false).Replace('\n', ',')
-				);
-		}
+
+		desc = string.Format("grant '{0}'",
+			CardUI.cardText(buffGiven.GetComponent<StatHandler>().prefabStats(),false).Replace('\n', ',')
+			);
 
 		
 

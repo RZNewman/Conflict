@@ -333,6 +333,7 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
         Aura aura = au.GetComponent<Aura>();
 
         aurasEmitted.Add(aura);
+        aura.teamInd = teamIndex;
         aura.updateLocation(loc);
         NetworkServer.Spawn(au);
         aura.RpcAssignUnit(netId);
@@ -577,7 +578,7 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
             currentMovement= 0;
 		}
         int remainingHP = dealDamage(tar);
-        if(remainingHP == 0 && st.getBool(StatType.bloodlust))
+        if(remainingHP <= 0 && st.getBool(StatType.bloodlust))
 		{
             currentAttacks++;
 		}
@@ -618,22 +619,22 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
             currentMovement = 0;
 		}
 	}
-    void tryRetaliation(Unit tar, int range, bool didBypass)
-	{
-        int maxRange = st.getStat(StatType.range);
-		if (range < 1)
-		{
-            range = 1;
-		}
-        if (maxRange >= range && (!didBypass || st.getBool(StatType.bypass))){
-            dealRetailation(tar);
-        }
+ //   void tryRetaliation(Unit tar, int range, bool didBypass)
+	//{
+ //       int maxRange = st.getStat(StatType.range);
+	//	if (range < 1)
+	//	{
+ //           range = 1;
+	//	}
+ //       if (maxRange >= range && (!didBypass || st.getBool(StatType.bypass))){
+ //           dealRetailation(tar);
+ //       }
         
-	}
-    void dealRetailation(Unit tar)
-    {
-        tar.takeDamage(st.getStat(StatType.attack), st.getBool(StatType.piercing), damageSource.retaliation);
-    }
+	//}
+ //   void dealRetailation(Unit tar)
+ //   {
+ //       tar.takeDamage(st.getStat(StatType.attack), st.getBool(StatType.piercing), damageSource.retaliation);
+ //   }
     [Server]
     public int takeDamage(int d,bool piercing, damageSource type)
 	{
