@@ -511,20 +511,18 @@ public class GameManager : NetworkBehaviour
         Tile target = NetworkIdentity.spawned[tileID].GetComponent<Tile>();
 
 
-        bool walking = !(mover.type == Unit.unitType.flying);
 
-
-        int dist = origin.distToTile(target, walking, mover.teamIndex, mover.stat.getBool(StatBlock.StatType.ghost));
+        int dist = origin.distToTile(target, mover.type, mover.teamIndex, mover.stat.getBool(StatBlock.StatType.ghost));
         //Debug.Log(dist);
 
         if  (
             mover
             && !target.getOccupant()
-            && (target.isWalk || !walking)
+            && dist != -1
 
             //&& origin.isNeighbor(target)
             //&& mover.moveRemaining > 0 
-            && dist > 0
+            //&& dist > 0
             && mover.moveRemaining >= dist
             
             && (!mover.isStructure || target.isFoundation)

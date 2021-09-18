@@ -108,13 +108,25 @@ public class UnitCardUI : CardUI
             Dictionary<StatType, float> sts = st.prefabStats();
             populateTitle(maker.name);
             populateValues(sts);
-            populateBody(sts, true, u.abilitiesPre.Select(x => x.GetComponent<Ability>()).ToArray());
+            populateBody(
+                sts,
+                isPrefab,
+                true,
+                u.abilitiesPre.Select(x => x.GetComponent<Ability>()).ToArray(),
+                u.aurasPre.Select(x => x.GetComponent<Aura>()).ToArray()
+                );
         }
 		else
 		{
             populateTitle( maker.originalName);
             populateValues(u);
-            populateBody(u.stat.export(), true, u.abilities.Select(x => x.GetComponent<Ability>()).ToArray());
+            populateBody(
+                u.stat.export(),
+                isPrefab,
+                true, 
+                u.abilities.Select(x => x.GetComponent<Ability>()).ToArray(),
+                u.aurasEmitted.Select(x => x.GetComponent<Aura>()).ToArray()
+                );
         }
         
         populateType(u);      

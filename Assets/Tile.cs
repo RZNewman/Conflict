@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 using static SelectorUI;
+using UnityEditor;
+using static Unit;
+using Priority_Queue;
 
 public class Tile : NetworkBehaviour
 {
@@ -133,10 +136,9 @@ public class Tile : NetworkBehaviour
     #endregion
     Unit occupant;
     Collider col;
-    float tileHeight;
+
+    float baseHeight;
     TileUI unitUI;
-    public bool isWalk = true;
-    public bool isSight = true;
     public int teamDeploy = -1;
     public bool isFoundation = false;
     
@@ -144,13 +146,19 @@ public class Tile : NetworkBehaviour
     void Start()
     {
         col = GetComponent<Collider>();
-        tileHeight = col.bounds.extents.y;
+        baseHeight = col.bounds.extents.y;
         unitUI = transform.GetChild(0).GetComponent<TileUI>();
         //Debug.Log(unitUI);
-        fillPresets();
-        colorSelf();
+        //colorSelf();
     }
 
+    float tileHeight
+	{
+		get
+		{
+            return baseHeight + terrainHeight;
+		}
+	}
 
     List<Aura> auras = new List<Aura>();
 
@@ -181,132 +189,199 @@ public class Tile : NetworkBehaviour
     }
 
 
-    Dictionary<Color, Material> presets
-    {
-		get
+
+	#region terrian
+    public enum terrainType
+	{
+        normal,
+        mountain,
+        wall,
+        smoke,
+        hill,
+        forest,
+        launchpad
+	}
+    //TODO Rpc visuals
+    [SyncVar]
+    public terrainType type;
+    terrainType instancedType= terrainType.normal;
+    GameObject terrrainObj;
+	
+
+
+	public Material baseMat;
+    public Material foundationMat;
+    public GameObject tileObj;
+    public GameObject moutainPre;
+    public GameObject wallPre;
+    public GameObject smokePre;
+    public GameObject hillPre;
+    public GameObject forestPre;
+    public GameObject launchpadPre;
+
+
+    public void checkTypeVis(bool callEditor =false)
+	{
+		if (type != instancedType)
 		{
-			if (isFoundation)
+            instancedType = type;
+            List<GameObject> tObjs = getVisuals();
+            if (tObjs.Count > 0)
 			{
-                return presetsFound;
+                foreach(GameObject o in tObjs)
+				{
+                    if (callEditor)
+                    {
+                        DestroyImmediate(o);
+                    }
+                    else
+                    {
+                        Destroy(o);
+                    }
+                }
+                
+                
 			}
+            GameObject pre = getTypePre();
+			if (pre)
+			{
+                //if (callEditor)
+                //{
+                //    tileObj = Instantiate(pre,transform.position,Quaternion.identity);
+                //}
+                //else
+                //{
+                //    tileObj = Instantiate(pre, gameObject.transform);
+                //}
+                terrrainObj = Instantiate(pre, gameObject.transform);
+
+
+            }
 			else
 			{
-                return presetsBase;
+                terrrainObj = null;
+
+            }
+            
+		}
+	}
+
+	public void resetState()
+	{
+        instancedType = terrainType.normal;
+	}
+    
+    List<GameObject> getVisuals()
+	{
+        List<GameObject> children = new List<GameObject>();
+        foreach (Transform t in transform)
+		{
+            if (t.tag == "TileVis"){
+                children.Add(t.gameObject);
 			}
 		}
-
-    }
-
-    static Dictionary<Color, Material> presetsBase;
-    static Dictionary<Color, Material> presetsFound;
+        return children;
+	}
 
 
-    public Material baseMat;
-    public Material foundationMat;
 
-    public void fillPresets()
+	GameObject getTypePre()
 	{
-        if(presetsBase == null)
+		switch (type)
 		{
-            presetsBase = new Dictionary<Color, Material>();
-
-        }
-        if (presetsFound == null)
+            case terrainType.mountain:
+                return moutainPre;
+            case terrainType.smoke:
+                return smokePre;
+            case terrainType.wall:
+                return wallPre;
+            case terrainType.hill:
+                return hillPre;
+            case terrainType.forest:
+                return forestPre;
+            case terrainType.launchpad:
+                return launchpadPre;
+            default:
+                return null;
+		}
+	}
+    public int getTerrainWalkCost(unitType u)
+    {
+        switch (type, u)
         {
-            presetsFound = new Dictionary<Color, Material>();
-
+            case (terrainType.normal, var _):
+                return 1;
+            case (terrainType.smoke, var _):
+                return 1;
+            case (terrainType.launchpad, var _):
+                return 1;     
+            case (terrainType.hill, unitType.flying):
+                return 1;
+            case (terrainType.hill, unitType.light):
+                return 2;
+            case (terrainType.hill, unitType.heavy):
+                return 3;
+            case (terrainType.forest, unitType.flying):
+                return 1;
+            case (terrainType.forest, unitType.light):
+                return 2;
+            case (terrainType.forest, unitType.heavy):
+                return 3;
+            case (terrainType.mountain, unitType.flying):
+                return 2;
+            case (terrainType.wall, unitType.flying):
+                return 2;
+            default:
+                return -1;
         }
-        //baseColor = GetComponent<MeshRenderer>().sharedMaterial;
-        tryAddPreset(Color.white);
-        tryAddPreset(GameColors.smokescreen);
-        tryAddPreset(GameColors.barricade);
-        tryAddPreset(GameColors.deployfield);
-        tryAddPreset(GameColors.structure);
-        tryAddPreset(GameColors.mountain);
-        //colorPresets();
-
-
-
     }
-    void tryAddPreset(Color c)
+    float terrainHeight
 	{
-		if (!presetsBase.ContainsKey(c))
+		get
 		{
-            //Debug.Log(presets);
-            presetsBase.Add(c, new Material(baseMat));
-            presetsBase[c].color = c;
-            //Debug.Log("added");
-        }
-        else if (!presetsBase[c])
-		{
-            presetsBase[c] = new Material(baseMat);
-            presetsBase[c].color = c;
-        }
-        if (!presetsFound.ContainsKey(c))
+			switch (type)
+			{
+                case terrainType.mountain:
+                    return 0.6f;
+                case terrainType.wall:
+                    return 0.4f;
+                case terrainType.hill:
+                    return 0.3f;
+                default:
+                    return 0;
+			}
+		}
+	}
+
+
+ //   public bool isWalk
+	//{
+	//	get
+	//	{
+ //           switch (type){
+ //               case terrainType.wall:
+ //               case terrainType.mountain:
+ //                   return false;
+ //               default:
+ //                   return true;
+	//		}
+	//	}
+	//}
+    public bool isSight
+    {
+        get
         {
-            //Debug.Log(presets);
-            presetsFound.Add(c, new Material(foundationMat));
-            presetsFound[c].color = c;
-            //Debug.Log("added");
-        }
-        else if (!presetsFound[c])
-        {
-            presetsFound[c] = new Material(foundationMat);
-            presetsFound[c].color = c;
-        }
-
-    }
-
-
-    public void colorSelf(bool callEditor =false)
-	{
-
-        fillPresets();
-
-        if (!isSight && !isWalk)
-        {
-            //GetComponent<MeshRenderer>().material.color = GameColors.smokescreen;
-            GetComponent<MeshRenderer>().material = presets[GameColors.mountain];
-        }
-        else if (!isSight)
-        {
-            //GetComponent<MeshRenderer>().material.color = GameColors.smokescreen;
-            GetComponent<MeshRenderer>().material = presets[GameColors.smokescreen];
-        }
-        else if (!isWalk)
-		{
-            //GetComponent<MeshRenderer>().material.color = GameColors.barricade;
-            GetComponent<MeshRenderer>().material = presets[GameColors.barricade];
-        }
-        else if (teamDeploy != -1)
-        {
-            //GetComponent<MeshRenderer>().material.color = GameColors.deployfield;
-            GetComponent<MeshRenderer>().material = presets[GameColors.deployfield];
-        }
-
-		else
-		{
-            //GetComponent<MeshRenderer>().material.color = Color.white;
-            GetComponent<MeshRenderer>().material = presets[Color.white];
-
-        }
-
-
-        float localY = 0.2f;
-		if (!isWalk)
-		{
-            localY = 0.6f;
-        }
-        transform.localScale = new Vector3(1, localY, 1);
-
-		if (!callEditor)
-		{
-            unitUI.gameObject.transform.localScale = new Vector3(1, 1 / localY, 1);
-
+            switch (type)
+            {
+                case terrainType.smoke:
+                case terrainType.mountain:
+                    return false;
+                default:
+                    return true;
+            }
         }
     }
-
-
+    #endregion
     // Update is called once per frame
     void Update()
     {
@@ -370,7 +445,7 @@ public class Tile : NetworkBehaviour
 
 		if (occupant)
 		{
-            List<Tile> moveSelect = tilesInMove(occupant.getMove(), !(occupant.type == Unit.unitType.flying), occupant.teamIndex,occupant.isStructure,occupant.stat.getBool(StatBlock.StatType.ghost));
+            List<Tile> moveSelect = tilesInMove(occupant.getMove(), occupant.type , occupant.teamIndex,occupant.stat.getBool(StatBlock.StatType.ghost));
             foreach (Tile t in moveSelect)
             {
                 selected.Add(t.unitUI.select(SelectType.move,isHover));
@@ -420,7 +495,7 @@ public class Tile : NetworkBehaviour
 	//{
  //       unitUI.deselect();
 	//}
-    List<Tile> tilesInMove(int dist, bool walking, int team, bool isStructure, bool ghost)
+    List<Tile> tilesInMove(int dist, unitType uType, int team, bool ghost)
 	{
         List<Tile> selected = new List<Tile>();
         Queue<Tile> search = new Queue<Tile>();
@@ -431,18 +506,50 @@ public class Tile : NetworkBehaviour
         while (search.Count > 0)
         {
             Tile t = search.Dequeue();
-            if ((!walking || t.isWalk) && !t.getOccupant() && found[t] <= dist && (!isStructure || t.isFoundation))
+            if (
+                !t.getOccupant() 
+                && found[t] <= dist 
+                && (!(uType == unitType.structure) || t.isFoundation)
+                )
 			{
                 selected.Add(t);
 			}
-            if ((!walking || t.isWalk) && (!t.getOccupant() || t.getOccupant().teamIndex == team || ghost) && found[t] < dist && (!isStructure || t.isFoundation))
+            if (
+                (!t.getOccupant() || t.getOccupant().teamIndex == team || ghost) 
+                && (!(uType == unitType.structure) || t.isFoundation)
+                )
             {
                 foreach (Tile n in t.neigh)
                 {
-                    if (n && !found.ContainsKey(n))
+                    if (n)
                     {
-                        found.Add(n, found[t] + 1);
-                        search.Enqueue(n);
+                        int connectionDistance = n.getTerrainWalkCost(uType);
+                        int neighDist = found[t] + connectionDistance;
+                        bool canProgress = connectionDistance != -1 && neighDist <= dist;
+						if (canProgress)
+						{
+                            if (!found.ContainsKey(n))
+                            {
+                                search.Enqueue(n);
+                                found.Add(n, neighDist);
+                            }
+							else
+							{
+                                if(found[n] > neighDist)
+								{
+                                    found[n] = neighDist;
+									if (!search.Contains(n))
+									{
+                                        search.Enqueue(n);
+									}
+								}
+							}
+
+
+                            
+                        }
+                        
+                        
                     }
                 }
             }
@@ -452,28 +559,77 @@ public class Tile : NetworkBehaviour
         
         return selected;
     }
-    public int distToTile(Tile target, bool walking, int team, bool ghost)
+    public int distToTile(Tile target, unitType uType, int team, bool ghost)
 	{
-        //TODO A*
-        Queue<Tile> search = new Queue<Tile>();
+		if (this == target)
+		{
+            return 0;
+		}
+        SimplePriorityQueue<Tile, int> search = new SimplePriorityQueue<Tile, int>();
         Dictionary<Tile, int> found = new Dictionary<Tile, int>();
-        search.Enqueue(this);
+        int h(Tile t)
+		{
+            return Mathf.RoundToInt(
+                Mathf.Abs( t.transform.position.x - target.transform.position.x)
+                +
+                Mathf.Abs(t.transform.position.z - target.transform.position.z)
+                );
+		}
+        int e(Tile t)
+		{
+            return found[t] + h(t);
+		}
+
+        //Queue<Tile> search = new Queue<Tile>();
         found.Add(this, 0);
+        search.Enqueue(this,e(this));
+        
 		while (search.Count > 0)
 		{
             Tile t = search.Dequeue();
-            if(t == target)
-			{
-                return found[t];
-			}
-			if ((!walking || t.isWalk) && (!t.getOccupant() || t.getOccupant().teamIndex == team || ghost) )
+			if (!t.getOccupant() || t.getOccupant().teamIndex == team || ghost) 
 			{
                 foreach (Tile n in t.neigh)
                 {
-                    if (n && !found.ContainsKey(n))
+                    if (n)
                     {
-                        found.Add(n, found[t] + 1);
-                        search.Enqueue(n);
+                        
+                        int connectionDistance = n.getTerrainWalkCost(uType);
+                        int neighDist = found[t] + connectionDistance;
+                        bool canProgress = connectionDistance != -1;
+
+                        if (n == target)
+                        {
+                            return canProgress? neighDist : -1;
+                        }
+
+                        if (canProgress)
+                        {
+                            if (!found.ContainsKey(n))
+                            {
+                                found.Add(n, neighDist);
+                                search.Enqueue(n, e(n));
+                                
+                            }
+                            else
+                            {
+                                if (found[n] > neighDist)
+                                {
+                                    found[n] = neighDist;
+                                    if (!search.Contains(n))
+                                    {
+                                        search.Enqueue(n, e(n));
+                                    }
+									else
+									{
+                                        search.UpdatePriority(n, e(n));
+									}
+                                }
+                            }
+
+
+
+                        }
                     }
                 }
             }

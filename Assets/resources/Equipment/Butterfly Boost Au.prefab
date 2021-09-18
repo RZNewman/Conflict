@@ -47,9 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  statsList:
-  - type: 1
-    value: 1
+  statsList: []
 --- !u!114 &6103810702998502902
 MonoBehaviour:
   m_ObjectHideFlags: 0

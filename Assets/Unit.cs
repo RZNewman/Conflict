@@ -215,7 +215,8 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
     public List<GameObject> aurasPre;
     List<Buff> buffs = new List<Buff>();
     Dictionary<Aura,Buff> aurasRecieved = new Dictionary<Aura, Buff>();
-    List<Aura> aurasEmitted = new List<Aura>();
+    [HideInInspector]
+    public List<Aura> aurasEmitted = new List<Aura>();
     public void addBuff(Buff b)
 	{
         b.initailize(this);
@@ -333,6 +334,8 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
 
         aurasEmitted.Add(aura);
         aura.updateLocation(loc);
+        NetworkServer.Spawn(au);
+        aura.RpcAssignUnit(netId);
 
     }
     public void moveAuras()

@@ -9,7 +9,7 @@ public class Buff : NetworkBehaviour, PseudoDestroy
     public List<GameObject> abilities = new List<GameObject>();
 
     [ClientRpc]
-    public void RpcAssignUnit(uint unitID)
+    public virtual void RpcAssignUnit(uint unitID)
     {
         GameObject u = NetworkIdentity.spawned[unitID].gameObject;
         //Debug.Log("assingd");

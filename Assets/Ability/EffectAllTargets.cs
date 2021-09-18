@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using static Targeting;
 public class EffectAllTargets : Ability
 {
 	public override bool cast(Tile target, int team, Tile source)

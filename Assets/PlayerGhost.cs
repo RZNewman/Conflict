@@ -296,12 +296,17 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
     #region resources
     //static readonly int RESOURCE_MAX_CAP = 6;
     //static readonly int RESOURCE_INCOME_CAP = 3;
+    static readonly float TEMPO_MULTIPLIER = 2f;
+    static int TM(int i)
+	{
+        return Mathf.FloorToInt(i * TEMPO_MULTIPLIER);
+	}
     public void refreshResources()
 	{
-        currentResources += st.getStat(StatType.supplyIncome);
-		if (currentResources > st.getStat(StatType.supplyMax))
+        currentResources += TM(st.getStat(StatType.supplyIncome));
+		if (currentResources > TM(st.getStat(StatType.supplyMax)))
 		{
-            currentResources = st.getStat(StatType.supplyMax);
+            currentResources = TM(st.getStat(StatType.supplyMax));
 		}
 
         currentfragments += st.getStat(StatType.structureFragmentIncome);
@@ -311,7 +316,7 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
             currentMaterials += 1;
 		}
 
-        currentShards += st.getStat(StatType.cardShardIncome);
+        currentShards += TM(st.getStat(StatType.cardShardIncome));
         int cardsToDraw = 0;
         while (currentShards >= 6)
         {
@@ -563,7 +568,7 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
                         }
                         else
                         {
-							if (inp.target.isWalk || unitCurrent.type == Unit.unitType.flying)
+							if (inp.target.getTerrainWalkCost(unitCurrent.type) != -1)
 							{
                                 //gm.move(unitCurrent, inp.target);
                                 CmdPawnMove(unitCurrent.netId, inp.target.netId);

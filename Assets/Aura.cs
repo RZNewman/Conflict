@@ -10,7 +10,20 @@ public class Aura : Buff
     List<Tile> affectedArea = new List<Tile>();
 	Tile center;
 
-    public void updateLocation(Tile newCenter)
+	[ClientRpc]
+	public override void RpcAssignUnit(uint unitID)
+	{
+		GameObject u = NetworkIdentity.spawned[unitID].gameObject;
+		//Debug.Log("assingd");
+		transform.parent = u.transform;
+		transform.localPosition = Vector3.zero;
+
+
+		Unit un = u.GetComponent<Unit>();
+		un.aurasEmitted.Add(this);
+	}
+	[Server]
+	public void updateLocation(Tile newCenter)
 	{
 		center = newCenter;
         List<Tile> newArea = buffGiven.GetComponent<Targeting>().getAuraArea(center);
@@ -60,6 +73,27 @@ public class Aura : Buff
 			NetworkClient.RegisterPrefab(buffGiven);
 
 		}
+	}
+	
+	public string toDesc(bool isPrefab)
+	{
+		string desc;
+		if (isPrefab)
+		{
+			desc = string.Format("grant '{0}'",
+				CardUI.cardText(buffGiven.GetComponent<StatHandler>().prefabStats(), isPrefab,false).Replace('\n', ',')
+				);
+		}
+		else
+		{
+			desc = string.Format("grant '{0}'",
+				CardUI.cardText(buffGiven.GetComponent<StatHandler>().export(), isPrefab, false).Replace('\n', ',')
+				);
+		}
+
+		
+
+		return desc + " " + buffGiven.GetComponent<Targeting>().targetingDesc(false, true);
 	}
 
 

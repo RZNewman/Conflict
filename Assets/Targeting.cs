@@ -86,7 +86,7 @@ public class Targeting : MonoBehaviour
                         result = false;
                         break;
                     }
-                    if (!t.isWalk)
+                    if (t.getTerrainWalkCost(Unit.unitType.structure) == -1)
                     {
                         result = false;
                         break;
@@ -324,7 +324,7 @@ public class Targeting : MonoBehaviour
                 if(team == occTeam)
 				{
                     teamPresent = true;
-					if (t.getOccupant().isStructure) 
+					if (t.getOccupant().isStructure && !t.getOccupant().stat.getBool(StatType.addOn)) 
                     {
                         structureExists = true;
 						//Debug.Log("Structure Exists - " + t);
@@ -355,7 +355,120 @@ public class Targeting : MonoBehaviour
         return FoundationCheckRecurse(t) && teamPresent && (!addOn || structureExists);
     }
 
-    
+    public enum descMode
+    {
+        normal,
+        suffix
+    }
+    public string targetingDesc(bool sayTarget, bool plural, string specifier = "to", descMode mode = descMode.normal)
+    {
+        string desc = "<prefix><noun><suffix>";
+        string noun = "tile";
+        string prefix = "";
+        string suffix = "";
+        if (rules.Length == 0)
+        {
+            return "";
+        }
+
+        foreach (Rule r in rules)
+        {
+            switch (r.type)
+            {
+                case TargetRule.isOccupied:
+                    if (!r.inverse)
+                    {
+                        noun = "unit";
+                    }
+                    break;
+                case TargetRule.isDamaged:
+                    string damaged = "damaged ";
+                    if (r.inverse)
+                    {
+                        damaged = "non-" + damaged;
+                    }
+                    prefix = damaged + prefix;
+                    break;
+                case TargetRule.isAlly:
+                    if (!r.inverse)
+                    {
+                        prefix = "allied " + prefix;
+                    }
+                    else
+                    {
+                        prefix = "enemy " + prefix;
+                    }
+                    break;
+                case TargetRule.unitType:
+                    string type = ((Unit.unitType)(Mathf.FloorToInt(r.value))).ToString();
+                    if (r.inverse)
+                    {
+                        type = "non-" + type;
+                    }
+                    prefix = prefix + type + " ";
+                    break;
+                case TargetRule.self:
+                    string self = "self";
+                    if (r.inverse)
+                    {
+                        self = "non-" + self;
+                    }
+                    prefix = prefix + self + " ";
+                    break;
+                case TargetRule.inArea:
+                    string area = "in area " + Mathf.FloorToInt(r.value);
+                    if (r.inverse)
+                    {
+                        area = "not " + area;
+                    }
+                    suffix += " " + area;
+                    break;
+                case TargetRule.inRange:
+                    string range = "in range " + Mathf.FloorToInt(r.value);
+                    if (r.inverse)
+                    {
+                        area = "not " + range;
+                    }
+                    suffix += " " + range;
+                    break;
+                case TargetRule.inRangeBypass:
+                    string rangeB = "in bypass range " + Mathf.FloorToInt(r.value);
+                    if (r.inverse)
+                    {
+                        area = "not " + rangeB;
+                    }
+                    suffix += " " + rangeB;
+                    break;
+            }
+        }
+        
+        if (plural)
+        {
+            noun += "s";
+        }
+        if (mode == descMode.normal)
+        {
+            desc = desc.Replace("<noun>", noun);
+            desc = desc.Replace("<prefix>", prefix);
+            desc = desc.Replace("<suffix>", suffix);
+            string toStatement = specifier + " ";
+            if (sayTarget)
+            {
+                toStatement += "target ";
+            }
+            desc = toStatement + desc;
+        }
+        else if (mode == descMode.suffix)
+        {
+            desc = desc.Replace("<noun>", "");
+            desc = desc.Replace("<prefix>", "");
+            desc = desc.Replace("<suffix>", suffix);
+        }
+
+
+
+        return desc.Trim();
+    }
 }
 
 

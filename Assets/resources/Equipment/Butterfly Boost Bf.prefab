@@ -97,6 +97,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rules:
+  - type: 0
+    inverse: 0
+    value: 0
   - type: 3
     inverse: 0
     value: 0

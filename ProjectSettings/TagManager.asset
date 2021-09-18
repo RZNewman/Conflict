@@ -8,6 +8,7 @@ TagManager:
   - StructureBoard
   - Mulligan
   - DeckExport
+  - TileVis
   layers:
   - Default
   - TransparentFX
