@@ -6,6 +6,7 @@ using Mirror;
 public class Buff : NetworkBehaviour, PseudoDestroy
 {
     public List<GameObject> abilitiesPre;
+    [HideInInspector]
     public List<GameObject> abilities = new List<GameObject>();
 
     [ClientRpc]

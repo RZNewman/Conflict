@@ -45,6 +45,11 @@ public class Aura : Buff
 		}
 		affectedArea = newArea;
 	}
+	[Server]
+	public void bindTile(Tile t)
+	{
+		t.addAura(this);
+	}
 	
 	public Buff tryEnterAura(Tile t, Unit u)
 	{

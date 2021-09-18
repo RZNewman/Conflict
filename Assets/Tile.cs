@@ -328,9 +328,9 @@ public class Tile : NetworkBehaviour
             case (terrainType.forest, unitType.heavy):
                 return 3;
             case (terrainType.mountain, unitType.flying):
-                return 2;
+                return 1;
             case (terrainType.wall, unitType.flying):
-                return 2;
+                return 1;
             default:
                 return -1;
         }
@@ -342,9 +342,9 @@ public class Tile : NetworkBehaviour
 			switch (type)
 			{
                 case terrainType.mountain:
-                    return 0.6f;
+                    return 0.5f;
                 case terrainType.wall:
-                    return 0.4f;
+                    return 0.3f;
                 case terrainType.hill:
                     return 0.3f;
                 default:

@@ -41,9 +41,9 @@ public class UnitCard : Card
         GameObject pawn = Instantiate(sourceCardmaker);
         Unit u = pawn.GetComponent<Unit>();
         u.initialize(team);
-        u.provideName(sourceCardmaker.name);
-        target.assignUnit(u);             
+        u.provideName(sourceCardmaker.name);                     
         NetworkServer.Spawn(pawn);
+        target.assignUnit(u);
         gm.viewPipe.RpcAddViewEvent(new ViewPipeline.ViewEvent(ViewPipeline.ViewType.unitPlay, u.netId, target.netId, Time.time));
         //target.RpcAssignUnit(u.netId, false);
         //Destroy(gameObject);

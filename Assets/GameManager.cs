@@ -63,6 +63,7 @@ public class GameManager : NetworkBehaviour
     {
 
         GetComponent<GameGrid>().initialize();
+        initializeTerrain();
         drawOpeningHand();
         foreach (uint playerID in teams.Keys)
         { 
@@ -213,28 +214,27 @@ public class GameManager : NetworkBehaviour
 
         }
     }
-    public int resource_rate = 1;
-    public int card_rate = 2;
     //public int max_income_rate = 4;
     //public int max_cap_rate = 2;
     public static bool[] maxIncome = new bool[]        
     { 
         false, true,
-        false, false, true,
+        false, true,
+        false, true,
 
     };
     public static bool[] maxCapacity = new bool[]      
     { 
-        false, true, 
-        false, true, 
-        false, true, 
-        false, true, 
-        false, true, 
-        false, true,
-        false, true,
-        false, true,
-        false, true,
-        false, true,
+        true, true, 
+        true, true, 
+        true, true, 
+        true, true, 
+        true, true, 
+        true, true,
+        true, true,
+        true, true,
+        true, true,
+        true, true,
     };
     public static bool[] maxSpendLimit = new bool[]    
     {   
@@ -257,10 +257,9 @@ public class GameManager : NetworkBehaviour
 			p.increaseMaxResources();
 		}
         //Debug.Log(roundCounter % resource_rate);
-        if (roundCounter % resource_rate == 0)
-        {
-            p.refreshResources();
-        }
+
+        p.refreshResources();
+
         if(roundInd < maxSpendLimit.Length && maxSpendLimit[roundInd])
 		{
             p.increaseSpendResources();
@@ -415,6 +414,42 @@ public class GameManager : NetworkBehaviour
 
         }
     }
+    #region auras
+    public GameObject ForestAuraPre;
+    public GameObject HillAuraPre;
+    public GameObject LaunchpadAuraPre;
+
+    void initializeTerrain()
+	{
+        GameObject auForest = Instantiate(ForestAuraPre, transform);
+        Aura auraForest = auForest.GetComponent<Aura>();
+        GameObject auHill = Instantiate(HillAuraPre, transform);
+        Aura auraHill = auHill.GetComponent<Aura>();
+        GameObject auLaunchpad = Instantiate(LaunchpadAuraPre, transform);
+        Aura auraLaunchpad = auLaunchpad.GetComponent<Aura>();
+
+        foreach(Tile t in GetComponent<GameGrid>().allTiles)
+		{
+			switch (t.type)
+			{
+                case Tile.terrainType.hill:
+                    auraHill.bindTile(t);
+                    break;
+                case Tile.terrainType.forest:
+                    auraForest.bindTile(t);
+                    break;
+                case Tile.terrainType.launchpad:
+                    auraLaunchpad.bindTile(t);
+                    break;
+            }
+		}
+
+        NetworkServer.Spawn(auForest);
+        NetworkServer.Spawn(auHill);
+        NetworkServer.Spawn(auLaunchpad);
+
+    }
+    #endregion
     // Update is called once per frame
     void Update()
     {

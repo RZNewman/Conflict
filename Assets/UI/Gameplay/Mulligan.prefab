@@ -78,7 +78,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Please Select Cards to Mulligan
+  m_Text: Select Cards to Redraw
 --- !u!1 &4227306661195454238
 GameObject:
   m_ObjectHideFlags: 0
@@ -324,4 +324,4 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Button
+  m_Text: Redraw
