@@ -51,7 +51,7 @@ public class DeckbuildingUI : MonoBehaviour
 
     string currentEditingDeck="";
     DeckUI currentDeckUI;
-
+    Dictionary<string, DeckUI> deckObjs = new Dictionary<string, DeckUI>();
 
     CardInspector inspect;
 
@@ -62,6 +62,7 @@ public class DeckbuildingUI : MonoBehaviour
         mainDeckMax.text = GameConstants.mainDeckSize.ToString();
         strcDeckMax.text = GameConstants.structureDeckSize.ToString();
         createPlayableCards();
+        selectDeck(DeckRW.getDefaultDeck());
         //LoadDeck();
     }
 
@@ -120,6 +121,7 @@ public class DeckbuildingUI : MonoBehaviour
             GameObject d = Instantiate(deckPre, decksMadeList.transform);
             DeckUI dui = d.GetComponent<DeckUI>();
             dui.assignName(decksMade[i], this);
+            deckObjs.Add(decksMade[i], dui);
         }
         
         //foreach(GameObject c in deckCards.main)
@@ -241,14 +243,21 @@ public class DeckbuildingUI : MonoBehaviour
         swapMode(deckType.main);
 
 	}
-    public void selectDeck(string deck, DeckUI dui)
+    public void selectDeck(string deck)
 	{
         if(currentDeckUI)
 		{
-            currentDeckUI.deselect();
+            currentDeckUI.select(false);
 		}
-        currentEditingDeck = deck;
-        currentDeckUI = dui;
+		if (deckObjs.ContainsKey(deck))
+		{
+            DeckUI dui = deckObjs[deck];
+            dui.select(true);
+            currentEditingDeck = deck;
+            currentDeckUI = dui;
+            exportDeck();
+        }
+        
     }
     public void exportDeck()
 	{
@@ -260,7 +269,7 @@ public class DeckbuildingUI : MonoBehaviour
             exp = Instantiate(deckExportPre);
         }
         exp.GetComponent<DeckExport>().holdDeck(DeckRW.loadDeck(currentEditingDeck));
-            
+        DeckRW.setDefaultDeck(currentEditingDeck);
             
 
 	}
@@ -272,15 +281,12 @@ public class DeckbuildingUI : MonoBehaviour
             GameObject d = Instantiate(deckPre, decksMadeList.transform);
             DeckUI dui = d.GetComponent<DeckUI>();
             dui.assignName(currentEditingDeck, this);
+            currentDeckUI = dui;
         }
 
         resetDeckCounters();
-        currentEditingDeck = "";
-        if (currentDeckUI)
-        {
-            currentDeckUI.deselect();
-        }
         swapMode(deckType.deck);
+        selectDeck(currentEditingDeck);
 	}
 
     void resetDeckCounters()

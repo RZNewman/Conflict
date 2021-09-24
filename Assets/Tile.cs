@@ -114,7 +114,10 @@ public class Tile : NetworkBehaviour
         u.visibility(Unit.visType.none, Unit.visType.on);
         u.visibility(Unit.visType.off, Unit.visType.on);
         alignOcc();
-        
+		if (isServer)
+		{
+            u.lateInit();
+		}
     }
     public void alignOcc()
     {
@@ -407,8 +410,13 @@ public class Tile : NetworkBehaviour
         //Debug.Log(occupant);
         //Debug.Log(unitUI);
         unitUI.activate(occupant);
-        o.moveAuras();
-        checkAuras();
+
+		if (isServer)
+		{
+            o.moveAuras();
+            checkAuras();
+        }
+        
         
     }
     

@@ -6,6 +6,8 @@ using UnityEngine;
 public static class DeckRW 
 {
 	static readonly string deckKey = "LocalDecks";
+	static readonly string deckKeyDefault = "LocalDeckDefault";
+	static readonly string[] protectedKeys = new string[] { deckKey, deckKeyDefault };
 	static readonly string deckDefault = "New Deck";
 	public static string[] getDecks()
 	{
@@ -25,7 +27,7 @@ public static class DeckRW
 	{
 		bool isNew =false;
 		string tempName = name.Replace(',', 'x');
-		if (tempName == deckKey || tempName.Trim() == "")
+		if (protectedKeys.Contains(tempName) || tempName.Trim() == "")
 		{
 			tempName = deckDefault;
 		} 
@@ -45,7 +47,7 @@ public static class DeckRW
 	public static Dictionary<int, int>[] loadDeck(string name)
 	{
 		//string tempName = name.Replace(',', 'x');
-		if (PlayerPrefs.HasKey(name))
+		if (name != "" && PlayerPrefs.HasKey(name))
 		{
 			string deck = PlayerPrefs.GetString(name);
 
@@ -53,7 +55,29 @@ public static class DeckRW
 			//return deck.Split('|').Select(x => x.Split('-')).ToDictionary(x => int.Parse(x[0]), x => int.Parse(x[1]));
 		}
 
-		return new Dictionary<int, int>[2];
+		Dictionary<int, int>[] def = new Dictionary<int, int>[2];
+		def[0] = new Dictionary<int, int>();
+		def[1] = new Dictionary<int, int>();
+		return def;
+	}
+
+	public static string getDefaultDeck()
+	{		
+		
+		if (PlayerPrefs.HasKey(deckKeyDefault))
+		{
+			return  PlayerPrefs.GetString(deckKeyDefault);
+		}
+
+		return "";
+		
+	}
+	public static void setDefaultDeck(string deck)
+	{
+
+		PlayerPrefs.SetString(deckKeyDefault, deck);
+		PlayerPrefs.Save();
+
 	}
 
 	public static Dictionary<int, int>[] readDeck(string deckFormattedStr)
@@ -62,6 +86,10 @@ public static class DeckRW
 	}
 	public static string writeDeck(Dictionary<int, int> main, Dictionary<int, int> strc)
 	{
+		if(main.Count() ==0 || strc.Count() == 0)
+		{
+			return "&";
+		}
 		string mainDeckStr = string.Join("|", main.Select(x => x.Key.ToString() + "-" + x.Value.ToString()));
 		string strcDeckStr = string.Join("|", strc.Select(x => x.Key.ToString() + "-" + x.Value.ToString()));
 		return mainDeckStr + "&" + strcDeckStr;

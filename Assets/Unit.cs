@@ -145,11 +145,16 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
         teamRotation();
         //teamColor();
 
+        
+        //refresh();
+    }
+    [Server]
+    public void lateInit()
+	{
         if (st.getBool(StatType.charge))
-		{
+        {
             refresh();
         }
-        //refresh();
     }
     [Client]
     public override void register() //prefab
@@ -562,6 +567,10 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
     public void cast()
     {
         currentCasts -= 1;
+        if (hasMoved && !st.getBool(StatType.agile))
+        {
+            currentMovement = 0;
+        }
     }
     [Server]
     public void move(int dist)

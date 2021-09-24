@@ -18,10 +18,11 @@ public class DeckUI : MonoBehaviour, IPointerClickHandler
         controller = ct;
 
     }
-    public void deselect()
-	{
-        selector.SetActive(false);
-	}
+
+    public void select(bool s )
+    {
+        selector.SetActive(s);
+    }
 
     // Update is called once per frame
     void Update()
@@ -32,7 +33,6 @@ public class DeckUI : MonoBehaviour, IPointerClickHandler
 	public void OnPointerClick(PointerEventData eventData)
 	{
         
-        controller.selectDeck(deckName, this);
-        selector.SetActive(true);
+        controller.selectDeck(deckName);
     }
 }

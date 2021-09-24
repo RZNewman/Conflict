@@ -310,10 +310,13 @@ MonoBehaviour:
   syncInterval: 0.1
   resourceCost: 5
   cardArt: {fileID: 0}
-  unitName: 
+  playEffectPre: {fileID: 0}
+  originalName: 
   type: 1
   loc: {fileID: 0}
   teamIndex: 0
+  aurasPre: []
+  aurasEmitted: []
   abilitiesPre:
   - {fileID: 1458428099633234168, guid: 7d8de3c02ddadb34faf6c4d7f5419f34, type: 3}
   abilities: []
@@ -335,11 +338,11 @@ MonoBehaviour:
   - type: 0
     value: 6
   - type: 1
-    value: 2
+    value: 1
   - type: 3
     value: 1
   - type: 2
-    value: 2
+    value: 3
 --- !u!114 &6247676399809486883
 MonoBehaviour:
   m_ObjectHideFlags: 0

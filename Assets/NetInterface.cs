@@ -14,6 +14,7 @@ public class NetInterface : MonoBehaviour
 	{
         NetworkManager nm = FindObjectOfType<NetworkManager>();
         nm.networkAddress = ConfReader.Value("serverip");
+        Debug.Log(nm.networkAddress);
         nm.StartClient();
 
     }

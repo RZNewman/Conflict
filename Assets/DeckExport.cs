@@ -8,6 +8,7 @@ public class DeckExport : MonoBehaviour
     void Start()
     {
         DontDestroyOnLoad(gameObject);
+        holdDeck(DeckRW.loadDeck(DeckRW.getDefaultDeck()));
     }
     Dictionary<int, int>[] heldDeck;
     public void holdDeck(Dictionary<int, int>[] deck)
@@ -25,7 +26,7 @@ public class DeckExport : MonoBehaviour
             Debug.Log(i.Key + " - " + i.Value);
 		}
         Debug.Log("Structures");
-        foreach (KeyValuePair<int, int> i in heldDeck[0])
+        foreach (KeyValuePair<int, int> i in heldDeck[1])
         {
             Debug.Log(i.Key + " - " + i.Value);
         }

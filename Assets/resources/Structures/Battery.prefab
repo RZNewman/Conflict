@@ -131,7 +131,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  resourceCost: 5
+  resourceCost: 4
   cardArt: {fileID: 0}
   playEffectPre: {fileID: 0}
   originalName: 
