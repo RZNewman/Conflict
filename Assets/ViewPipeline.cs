@@ -132,6 +132,7 @@ public class ViewPipeline : NetworkBehaviour
 			switch (incomingViews[0].type)
 			{
 				case ViewType.beginTurn:
+				case ViewType.endTurn:
 				case ViewType.objDeath:
 					enterView();
 					exitView();

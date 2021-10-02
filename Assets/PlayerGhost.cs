@@ -5,6 +5,7 @@ using Mirror;
 using static StatBlock;
 using UnityEditor;
 using System.Linq;
+using static Card;
 
 public class PlayerGhost : NetworkBehaviour, TeamOwnership
 {
@@ -76,32 +77,24 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
 		{
 			if (toMulligan.Contains(c))
 			{
-                c.setSelection(false);
+                c.setSelection(selectType.none);
                 toMulligan.Remove(c);
 			}
 			else
 			{
-                c.setSelection(true);
+                c.setSelection(selectType.active);
                 toMulligan.Add(c);
             }
 		}
 		else if (myTurn)
 		{
-            int cost = c.resourceCost;
             //Debug.Log(cost);
             if (c == cardCurrent)
             {
                 state = targetState.Free;
                 setTargetCard(null);
             }
-            else if (
-                (
-                    !c.costsMaterial && cost <= currentResources
-                    ||
-                    c.costsMaterial && cost <= currentMaterials
-                )
-                
-                && cost <= st.getStat(StatType.resourceSpend))
+            else if (canAfford(c))
             {
                 state = targetState.Card;
                 //setTargetAbility(null);
@@ -111,6 +104,16 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
         }
         
 
+	}
+    bool canAfford(Card c)
+	{
+        return (
+                    !c.costsMaterial && c.resourceCost <= currentResources
+                    ||
+                    c.costsMaterial && c.resourceCost <= currentMaterials
+                )
+
+                && c.resourceCost <= st.getStat(StatType.resourceSpend);
 	}
     public void mulligan()
 	{
@@ -383,11 +386,13 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
 		{
             currentResources -= i;
         }
-        
-	}
+        updatePlayableCards();
+
+    }
     public void gainResources(int i)
 	{
         currentResources += i;
+        updatePlayableCards();
     }
     void refreshResourceUI(int oldVal, int newVal)
 	{
@@ -454,6 +459,8 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
             Instantiate(cameraPre, transform);
             StatHandler.Refresh reUI = FindObjectOfType<ResourceUI>().refresh;
             st.addRefresh(reUI);
+            reUI = updatePlayableCards;
+            st.addRefresh(reUI);
             inspect = FindObjectOfType<CardInspector>();
             UIturn = FindObjectOfType<TurnIndicatorUI>();
             abilPanel = FindObjectOfType<UnitAbilityUI>();
@@ -506,8 +513,36 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
             state = targetState.Free;
             
         }
+        updatePlayableCards();
         UIturn.setTurn(isTurn);
 
+    }
+
+    void updatePlayableCards()
+	{
+        foreach(Card c in FindObjectsOfType<Card>())
+		{
+            updateCardSelection(c);
+
+        }
+	}
+    void updateCardSelection(Card c)
+	{
+        if (!myTurn)
+        {
+            c.setSelection(selectType.none);
+        }
+        else
+        {
+            if (canAfford(c))
+            {
+                c.setSelection(selectType.playable);
+            }
+            else
+            {
+                c.setSelection(selectType.none);
+            }
+        }
     }
 
     // Update is called once per frame
@@ -731,11 +766,12 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
     {
         if (cardCurrent != null)
         {
-            cardCurrent.setSelection(false);
+            updateCardSelection(cardCurrent);
+
         }
         if (c != null)
         {
-            c.setSelection(true);
+            c.setSelection(selectType.active);
         }
         cardCurrent = c;
     }

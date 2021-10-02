@@ -175,7 +175,7 @@ public class GameManager : NetworkBehaviour
     void setTeamUI(bool isTurn)
     {
         if (currentTurn == -1) { return; }
-        if ( teams.Count <= 1) { return; }
+        //if ( teams.Count <= 1) { return; }
 
         foreach (uint playerID in teams.Keys)
         {

@@ -38,6 +38,7 @@ public abstract class Card : NetworkBehaviour, IPointerEnterHandler, IPointerExi
         cardBody = Instantiate(mkr.findCardTemplate(), transform);
         cardBody.GetComponent<CardUI>().populateSelf(mkr, true);
         resourceCost = mkr.resourceCost;
+        colorSelection();
     }
 
     [Server]
@@ -141,10 +142,44 @@ public abstract class Card : NetworkBehaviour, IPointerEnterHandler, IPointerExi
 	{
         return team;
 	}
-    public void setSelection(bool isSelected)
+    public enum selectType
+	{
+        none,
+        playable,
+        active
+	}
+    selectType sType = selectType.none;
+    public void setSelection(selectType t)
     {
-        cardBody.GetComponent<CardUI>().select(isSelected);
+
+        sType = t;
+        colorSelection();
+
+
+
     }
+    void colorSelection()
+	{
+		if (cardBody)
+		{
+            CardUI cui = cardBody.GetComponent<CardUI>();
+            switch (sType)
+            {
+                case selectType.none:
+                    cui.select(false, Color.black);
+                    break;
+                case selectType.playable:
+                    cui.select(true, Color.yellow);
+                    break;
+                case selectType.active:
+                    cui.select(true, Color.green);
+                    break;
+
+            }
+        }
+        
+    }
+
 
     [TargetRpc]
     public void TargetSetRule(NetworkConnection con, Targeting.Rule[] r)

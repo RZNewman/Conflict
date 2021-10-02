@@ -65,9 +65,11 @@ public abstract class CardUI : MonoBehaviour
         cardCost.setCost(mkr.resourceCost.ToString(), new CostUI.costTypes(true,true,false));
         //cardCost.transform.parent.GetComponent<Image>().color = GameColors.resources;
     }
-    public void select(bool isSelected)
+    public void select(bool isSelected, Color c)
 	{
         selection.SetActive(isSelected);
+        c.a = 0.6f;
+        selection.GetComponent<Image>().color = c;
 	}
 
     protected void populateBody(Dictionary<StatType, float> stats, bool skipUnitValues = true, Ability[] abils = null, Aura[] auras = null)
