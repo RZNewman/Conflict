@@ -544,7 +544,8 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
             }
         }
     }
-
+    bool isFixating = false;
+    Vector3 preFixPosition;
     // Update is called once per frame
     void Update()
     {
@@ -715,11 +716,21 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
 
         if (gm.viewPipe.isFixating)
 		{
+			if (!isFixating)
+			{
+                preFixPosition = transform.position;
+                isFixating = true;
+			}
             transform.position = gm.viewPipe.fixation - camForward * Mathf.Abs((transform.position.y - gm.viewPipe.fixation.y)/ camForward.y); 
 
         }
 		else
 		{
+			if (isFixating)
+			{
+                transform.position = preFixPosition;
+                isFixating = false;
+			}
             transform.position += (transform.right * inp.pan.x + transform.forward * inp.pan.y) * transform.position.y;
         }
         

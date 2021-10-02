@@ -3,21 +3,34 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 using System.Linq;
+using UnityEngine.UI;
 
 public class NetInterface : MonoBehaviour
 {
     public GameObject main;
     public GameObject tutorial;
     public GameObject next;
+    public InputField inp;
 
-    public void connectToBetaAddress()
+
+	private void Start()
+	{
+        setBetaAddress();
+	}
+	public void connectToAddress()
 	{
         NetworkManager nm = FindObjectOfType<NetworkManager>();
-        nm.networkAddress = ConfReader.Value("serverip");
+        nm.networkAddress = inp.text;
         Debug.Log(nm.networkAddress);
         nm.StartClient();
 
     }
+    public void setBetaAddress()
+    {
+        inp.text = ConfReader.Value("serverip");
+
+    }
+    
     public void Host()
     {
         NetworkManager nm = FindObjectOfType<NetworkManager>();
