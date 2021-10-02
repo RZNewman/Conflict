@@ -76,7 +76,7 @@ public class OrdSqUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler
     }
 	private void Start()
 	{
-        gm = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameManager>();
+        gm = GameObject.FindGameObjectWithTag("GameController")?.GetComponent<GameManager>();
     }
     public void intialize(Ordnance o)
 	{

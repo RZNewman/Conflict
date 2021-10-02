@@ -124,6 +124,7 @@ public class CardInspector : MonoBehaviour
                 {
                     //generateKeywordDesc(u.stat.export());
                     visualsUnit.populateSelf(u, isPre);
+                    visualsUnit.showDescriptors();
                     visualsUnit.gameObject.SetActive(true);
                 }
                 else if (o)

@@ -15,8 +15,6 @@ public static class ConfReader
 			return;
 		}
 		TextAsset data = Resources.Load(confFile) as TextAsset;
-		Debug.Log(data);
-		Debug.Log(data.text);
 		string[] lines = data.text.Split('\n');
 		foreach(string line in lines)
 		{

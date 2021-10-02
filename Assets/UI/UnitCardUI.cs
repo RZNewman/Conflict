@@ -12,6 +12,7 @@ public class UnitCardUI : CardUI
     public Text movement;
     public Text range;
     public Text type;
+    public GameObject descriptors;
     // Start is called before the first frame update
     void Start()
     {
@@ -36,11 +37,16 @@ public class UnitCardUI : CardUI
     }
     public void populateValues(Unit u)
 	{
+        
         attack.text = u.stat.getStat(StatType.attack).ToString();
         range.text = u.stat.getStat(StatType.range).ToString();
         defense.text = u.getHeath().ToString() + "/" + u.stat.getStat(StatType.health).ToString();
         movement.text = u.getMove().ToString()+"/"+ u.stat.getStat(StatType.moveSpeed).ToString();
         
+    }
+    public void showDescriptors()
+	{
+        descriptors.SetActive(true);
     }
 
     public void populateType(Unit u)
