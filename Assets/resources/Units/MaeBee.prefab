@@ -119,11 +119,14 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   resourceCost: 8
-  cardArt: {fileID: 21300000, guid: a910a736486bbe84ca6ae89263b2037d, type: 3}
-  unitName: 
+  cardArt: {fileID: 0}
+  playEffectPre: {fileID: 0}
+  originalName: 
   type: 3
   loc: {fileID: 0}
   teamIndex: 0
+  aurasPre: []
+  aurasEmitted: []
   abilitiesPre: []
   abilities: []
 --- !u!114 &1912627563771565748

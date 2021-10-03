@@ -620,7 +620,7 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
 	{
         return tar.takeDamage(st.getStat(StatType.attack),st.getBool(StatType.piercing), damageSource.attack);
 	}
-    void getSlowed(int slow)
+    public void getSlowed(int slow)
 	{
         currentMovement -= slow;
         if(currentMovement < 0)
@@ -628,6 +628,11 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
             currentMovement = 0;
 		}
 	}
+    public void addAttacks(int attacks)
+	{
+        currentAttacks += attacks;
+
+    }
  //   void tryRetaliation(Unit tar, int range, bool didBypass)
 	//{
  //       int maxRange = st.getStat(StatType.range);
