@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using static Targeting;
-
 public class EffectMultiple : Ability
 {
 	public override bool cast(Tile target, int team, Tile source)
@@ -10,7 +9,7 @@ public class EffectMultiple : Ability
 		bool onevalid = false;
 		List<Tile> ts = GetComponent<Targeting>().evaluateTargets(team, source);
 
-		foreach (Tile t in ts)
+		foreach(Tile t in ts)
 		{
 			onevalid = true;
 			foreach (Transform child in transform)
@@ -18,7 +17,7 @@ public class EffectMultiple : Ability
 				Ability ab = child.GetComponent<Ability>();
 
 				ab.cast(t, team, source);
-
+				
 			}
 		}
 		return onevalid;
@@ -39,12 +38,12 @@ public class EffectMultiple : Ability
 			}
 			else
 			{
-				desc += " and " + ab.toDesc(false, true);
+				desc+= " and "+ ab.toDesc(false, true);
 			}
-
+			
 
 		}
-		return desc + " " + targetingDesc(sayTarget, true, "to", descMode.suffix);
+		return desc + " " + targetingDesc(sayTarget, false,"to");
 
 	}
 

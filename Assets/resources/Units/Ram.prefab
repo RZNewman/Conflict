@@ -122,6 +122,8 @@ MonoBehaviour:
   type: 1
   loc: {fileID: 0}
   teamIndex: 0
+  aurasPre: []
+  aurasEmitted: []
   abilitiesPre: []
   abilities: []
 --- !u!114 &1912627563771565748
@@ -146,7 +148,7 @@ MonoBehaviour:
   - type: 3
     value: 1
   - type: 2
-    value: 3
+    value: 4
 --- !u!114 &6247676399809486883
 MonoBehaviour:
   m_ObjectHideFlags: 0

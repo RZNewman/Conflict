@@ -4,5 +4,5 @@ using UnityEngine;
 
 public interface PseudoDestroy 
 {
-	public abstract void PDestroy();
+	public abstract void PDestroy(bool isSev);
 }

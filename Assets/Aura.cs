@@ -9,24 +9,28 @@ public class Aura : Buff
 
     List<Tile> affectedArea = new List<Tile>();
 	Tile center;
-	[SyncVar]
-	public int teamInd=-1;
+
 
 	[ClientRpc]
-	public override void RpcAssignUnit(uint unitID)
+	public override void RpcAssignParent(uint parentID)
 	{
+		
+		GameObject u = NetworkIdentity.spawned[parentID].gameObject;
+		//Debug.Log("assingd");
+		transform.parent = u.transform;
+		transform.localPosition = Vector3.zero;
+		visuals = Instantiate(visualsPre, u.transform);
+
 		if (isServer)
 		{
 			return;
 		}
-		GameObject u = NetworkIdentity.spawned[unitID].gameObject;
-		//Debug.Log("assingd");
-		transform.parent = u.transform;
-		transform.localPosition = Vector3.zero;
-
-
 		Unit un = u.GetComponent<Unit>();
-		un.aurasEmitted.Add(this);
+		if (un)
+		{
+			un.aurasEmitted.Add(this);
+		}
+		
 	}
 	[Server]
 	public void updateLocation(Tile newCenter)
@@ -52,6 +56,15 @@ public class Aura : Buff
 		affectedArea = newArea;
 	}
 	[Server]
+	void removeFromTiles()
+	{
+		
+		foreach (Tile t in affectedArea)
+		{
+			t.removeAura(this);
+		}
+	}
+	[Server]
 	public void bindTile(Tile t)
 	{
 		t.addAura(this);
@@ -64,9 +77,10 @@ public class Aura : Buff
 			Buff b = buff.GetComponent<Buff>();
 			buff.transform.parent = u.transform;
 			buff.transform.localPosition = Vector3.zero;
+			b.setTeam(teamInd);
 			u.addBuff(b);
 			NetworkServer.Spawn(buff);
-			b.RpcAssignUnit(u.netId);
+			b.RpcAssignParent(u.netId);
 			return b;
 		}
 		return null;
@@ -86,17 +100,41 @@ public class Aura : Buff
 		}
 	}
 	
-	public string toDesc()
+	public override string toDesc()
 	{
 		string desc;
 
-		desc = string.Format("grant '{0}'",
-			CardUI.cardText(buffGiven.GetComponent<StatHandler>().prefabStats(),false).Replace('\n', ',')
+		desc = string.Format("grant {0}",
+			buffGiven.GetComponent<Buff>().toDesc()
 			);
+		desc += " " + buffGiven.GetComponent<Targeting>().targetingDesc(false, true);
+		if (maxDuration > 0)
+		{
+			desc += " for " + maxDuration + " round" + (maxDuration > 1 ? "s" : "");
+		}
 
-		
 
-		return desc + " " + buffGiven.GetComponent<Targeting>().targetingDesc(false, true);
+		return desc;
+	}
+	public override void PDestroy(bool isSev)
+	{
+		if (isSev)
+		{
+			removeBuff(this);
+			foreach (GameObject o in abilities)
+			{
+				gm.delayedDestroy(o);
+			}
+			removeFromTiles();
+		}
+		else
+		{
+			if (visuals)
+			{
+				Destroy(visuals);
+			}
+		}
+
 	}
 
 

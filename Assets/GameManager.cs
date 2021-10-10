@@ -112,7 +112,7 @@ public class GameManager : NetworkBehaviour
         cleanupStaging.Add(o);
         foreach(PseudoDestroy pd in o.GetComponentsInChildren<PseudoDestroy>())
 		{
-            pd.PDestroy();
+            pd.PDestroy(true);
 		}
         StartCoroutine(sendDestroyLater(0.2f, o.GetComponent<NetworkIdentity>().netId));
 		if (!isClient)
@@ -165,6 +165,7 @@ public class GameManager : NetworkBehaviour
         }
         refreshUnits(refreshTeam);
         playerRoundEnd(refreshTeam);
+        tickBuffs(currentTurn);
         if(currentTurn == 0)
 		{
             roundCounter++;
@@ -357,7 +358,7 @@ public class GameManager : NetworkBehaviour
 
     }
     [Server]
-    public void refreshUnits(int team)
+    void refreshUnits(int team)
     {
         if (team == -1) { return; }
 
@@ -368,6 +369,20 @@ public class GameManager : NetworkBehaviour
                 u.refresh();
             }
             
+        }
+    }
+    [Server]
+    void tickBuffs(int team)
+    {
+        if (team == -1) { return; }
+
+        foreach (Buff b in FindObjectsOfType<Buff>())
+        {
+            if (b.getTeam() == team)
+            {
+                b.tick();
+            }
+
         }
     }
     [Client]

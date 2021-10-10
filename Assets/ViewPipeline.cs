@@ -205,7 +205,7 @@ public class ViewPipeline : NetworkBehaviour
 				obj = NetworkIdentity.spawned[incomingViews[0].sourceID].gameObject;
 				foreach (PseudoDestroy pd in obj.GetComponentsInChildren<PseudoDestroy>())
 				{
-					pd.PDestroy();
+					pd.PDestroy(false);
 				}
 				obj.SetActive(false);
 				break;

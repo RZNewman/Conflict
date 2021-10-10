@@ -41,7 +41,7 @@ public class UnitCardUI : CardUI
         attack.text = u.stat.getStat(StatType.attack).ToString();
         range.text = u.stat.getStat(StatType.range).ToString();
         defense.text = u.getHeath().ToString() + "/" + u.stat.getStat(StatType.health).ToString();
-        movement.text = u.getMove().ToString()+"/"+ u.stat.getStat(StatType.moveSpeed).ToString();
+        movement.text = u.getMove().ToString()+"/"+ Mathf.Max(0, u.stat.getStat(StatType.moveSpeed)).ToString();
         
     }
     public void showDescriptors()

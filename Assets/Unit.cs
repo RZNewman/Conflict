@@ -177,6 +177,10 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
 	public void refresh()
 	{
         currentMovement= st.getStat(StatType.moveSpeed);
+		if (currentMovement < 0)
+		{
+            currentMovement = 0;
+		}
         currentAttacks= 1;
         currentCasts = 1;
         currentHealth += stat.getStat(StatType.regen);
@@ -241,10 +245,12 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
 			//	currentMovement += Mathf.FloorToInt(buffDict[t]);
 			//}
 		}
+        
         st.addUpstream(buffStats);
+        checkAlive();
         //Debug.Log(st.getStat(StatType.attack));
     }
-
+    [Server]
     public void removeBuff(Buff b)
     {
         buffs.Remove(b);
@@ -261,7 +267,9 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
             //    currentMovement -= Mathf.FloorToInt(buffDict[t]);
             //}
         }
+        
         buffStats.removeDownstream(st);
+        checkAlive();
     }
     public int equipmentCount()
 	{
@@ -336,12 +344,12 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
     {
         GameObject au = Instantiate(o, transform);
         Aura aura = au.GetComponent<Aura>();
-
+        aura.initailize();
         aurasEmitted.Add(aura);
-        aura.teamInd = teamIndex;
+        aura.setTeam(teamIndex);
         aura.updateLocation(loc);
         NetworkServer.Spawn(au);
-        aura.RpcAssignUnit(netId);
+        aura.RpcAssignParent(netId);
 
     }
     public void moveAuras()
@@ -666,17 +674,21 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
             d = 0;
         }
         currentHealth -=d;
-		if (currentHealth <= 0)
-		{
-            //Destroy(gameObject);
-            killSelf();
-		}
+        checkAlive();
         return currentHealth;
 		//else
 		//{
   //          loc.refeshUI();
 		//}
 	}
+    void checkAlive()
+	{
+        if (currentHealth <= 0)
+        {
+            //Destroy(gameObject);
+            killSelf();
+        }
+    }
     public void killSelf()
 	{
         gm.delayedDestroy(gameObject);
@@ -691,6 +703,11 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
 
         }
 	}
+    public void setHealth(int h)
+    {
+        currentHealth = h;
+
+    }
     public void changeMovement(int m)
     {
         currentMovement += m;
@@ -703,13 +720,13 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
     }
     #endregion
 
-    public void PDestroy()
+    public void PDestroy(bool isSev)
 	{
 		if (loc)
 		{
             loc.occExit();
         }
-		if (isClient)
+		if (!isServer)
 		{
             st.removeRefresh(reUI);
 		}

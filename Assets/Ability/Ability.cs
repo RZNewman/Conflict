@@ -29,8 +29,25 @@ public abstract class Ability : MonoBehaviour
 		}
 		return "";
 	}
+
+	public void register()
+	{
+		onRegister();
+		foreach (Transform child in transform)
+		{
+			Ability ab = child.GetComponent<Ability>();
+
+			ab.register();
+
+		}
+	}
+	protected virtual void onRegister()
+	{
+		//do nothing!
+	}
 	public abstract string toDesc(bool sayTarget  = true, bool plural  =false);
 	public abstract bool cast(Tile target, int team, Tile source);
+
 
 
 }

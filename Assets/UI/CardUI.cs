@@ -95,16 +95,16 @@ public abstract class CardUI : MonoBehaviour
                     valueText[0] = (int)stats[t];
                     break;
                 case StatType.range:
-                    line = "+{0} Range";
+                    line = "{0} Range";
                     break;
                 case StatType.moveSpeed:
-                    line = "+{0} Starting Movement";
+                    line = "{0} Starting Movement";
                     break;
                 case StatType.supplyMax:
-                    line = "+{0} Max Supply";
+                    line = "{0} Max Supply";
                     break;
                 case StatType.supplyIncome:
-                    line = "+{0}<sprite index= 1> Supply Income";
+                    line = "{0}<sprite index= 1> Supply Income";
                     break;
                 case StatType.armor:
                     line = "Armor {0}";
@@ -146,16 +146,16 @@ public abstract class CardUI : MonoBehaviour
 					line = "Cleave {0}";
 					break;
 				case StatType.cardShardIncome:
-                    line = "+{0}<sprite index= 3> Card Shard Income";
+                    line = "{0}<sprite index= 3> Card Shard Income";
                     break;
                 case StatType.structureFragmentIncome:
-                    line = "+{0}<sprite index= 2> Material Fragemnt Income";
+                    line = "{0}<sprite index= 2> Material Fragemnt Income";
                     break;
                 case StatType.addOn:
                     line = "Add-On";
                     break;
                 case StatType.resourceSpend:
-                    line = "+{0}<sprite index= 0> Power Limit";
+                    line = "{0}<sprite index= 0> Power Limit";
                     break;
                 default:
                     line = "";
@@ -181,7 +181,7 @@ public abstract class CardUI : MonoBehaviour
             {
                 string atkcolor = ColorUtility.ToHtmlStringRGB(GameColors.attack);
                 string defcolor = ColorUtility.ToHtmlStringRGB(GameColors.defense);
-                string valueLine = "+<color=#" + atkcolor + ">" + valueText[0] + "</color>/<color=#" + defcolor + ">" + valueText[1] + "</color>\n";
+                string valueLine = "<color=#" + atkcolor + ">" + valueText[0] + "</color>/<color=#" + defcolor + ">" + valueText[1] + "</color>\n";
                 valueLines = valueLine + valueLines;
             }
             

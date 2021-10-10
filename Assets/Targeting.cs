@@ -21,7 +21,8 @@ public class Targeting : MonoBehaviour
         isDamaged,
         inRange,
         inRangeBypass,
-        self
+        self,
+        currentHPGT
 
         //inMove
         //inRange
@@ -165,6 +166,14 @@ public class Targeting : MonoBehaviour
                         break;
                     }
                     result = t.getOccupant().isDamaged;
+                    break;
+                case TargetRule.currentHPGT:
+                    if (!t.getOccupant())
+                    {
+                        result = false;
+                        break;
+                    }
+                    result = t.getOccupant().getHeath() > r.value;
                     break;
                 default:
 
@@ -366,10 +375,10 @@ public class Targeting : MonoBehaviour
         string noun = "tile";
         string prefix = "";
         string suffix = "";
-        if (rules.Length == 0)
-        {
-            return "";
-        }
+        //if (rules.Length == 0)
+        //{
+        //    return "";
+        //}
 
         foreach (Rule r in rules)
         {
@@ -412,8 +421,26 @@ public class Targeting : MonoBehaviour
                     if (r.inverse)
                     {
                         self = "non-" + self;
+                        prefix = prefix + self + " ";
                     }
-                    prefix = prefix + self + " ";
+					else
+					{
+                        noun = self;
+					}
+                    
+                    break;
+                case TargetRule.currentHPGT:
+                    string currentHP = "with heath ";
+                    int num = Mathf.FloorToInt( r.value);
+                    if (r.inverse)
+                    {
+                        currentHP += "less than " + (num + 1) + " ";
+                    }
+					else
+					{
+                        currentHP += "greater than " + num + " ";
+                    }
+                    suffix = " "+ currentHP + suffix;
                     break;
                 case TargetRule.inArea:
                     string area = "in area " + Mathf.FloorToInt(r.value);

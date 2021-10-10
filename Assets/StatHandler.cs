@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 using static StatBlock;
+using System.Linq;
 
 public class StatHandler : NetworkBehaviour, PseudoDestroy
 {
@@ -40,6 +41,7 @@ public class StatHandler : NetworkBehaviour, PseudoDestroy
         Downstream.Remove(down);
         down._removeUpstream(this);
     }
+    [Server]
     void terminateStreams()
 	{
 
@@ -192,9 +194,13 @@ public class StatHandler : NetworkBehaviour, PseudoDestroy
     {
         
     }
-	public void PDestroy()
+	public void PDestroy(bool isSev)
 	{
-        terminateStreams();
+		if (isSev)
+		{
+            terminateStreams();
+        }
+        
 	}
 	public int getStat(StatType s, bool baseStatCard = false)
 	{
@@ -270,6 +276,28 @@ public class StatHandler : NetworkBehaviour, PseudoDestroy
         refreshDownstream();
         
         
+    }
+    public void setPrefabStat(StatType type, int val)
+    {
+        bool found = false;
+        for(int i =0; i< statsList.Length; i++)
+		{
+            
+            if(statsList[i].type == type)
+			{
+                statsList[i].value = val;
+                found = true;
+                break;
+			}
+		}
+		if (!found)
+		{
+            Stat st = new Stat(type, val);
+
+            statsList = statsList.Concat(new Stat[] { st }).ToArray();
+		}
+
+
     }
     void modifyStatsStream(SyncDictionary<StatType, float> newStats)
     {

@@ -33,11 +33,12 @@ public class EquipCard : Card
 
 		buff.transform.parent = u.transform;
 		buff.transform.localPosition = Vector3.zero;
+		b.setTeam(team);
 		u.addBuff(b);
 		//u.initialize(team, unitPre.name);
 		//target.assignUnit(u);
 		NetworkServer.Spawn(buff);
-		b.RpcAssignUnit(target.getOccupant().netId);
+		b.RpcAssignParent(u.netId);
 		gm.viewPipe.RpcAddViewEvent(new ViewPipeline.ViewEvent(ViewPipeline.ViewType.playEffect, b.netId, target.netId, Time.time));
 		//Destroy(gameObject);
 	}

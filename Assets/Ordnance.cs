@@ -35,9 +35,10 @@ public class Ordnance : Cardmaker, TeamOwnership, PseudoDestroy
             NetworkClient.RegisterPrefab(gameObject);
             
         }
+        GetComponent<Ability>().register();
     }
-    public void PDestroy()
-	{
+    public void PDestroy(bool isSev)
+    {
 		if (caster)
 		{
             caster.removeAbility(this);
