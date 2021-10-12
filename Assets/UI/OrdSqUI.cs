@@ -33,7 +33,7 @@ public class OrdSqUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler
 
 	#region function part
 	GameManager gm;
-    public Ordnance ability;
+    public AbilityRoot ability;
     bool hovered= false;
     bool inspecting = false;
     float currentTime = 0;
@@ -78,7 +78,7 @@ public class OrdSqUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler
 	{
         gm = GameObject.FindGameObjectWithTag("GameController")?.GetComponent<GameManager>();
     }
-    public void intialize(Ordnance o)
+    public void intialize(AbilityRoot o)
 	{
         ability = o;
         buildGraphic();

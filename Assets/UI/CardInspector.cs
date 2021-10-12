@@ -117,8 +117,8 @@ public class CardInspector : MonoBehaviour
                 bool isPre = b.type == inspectType.cardmakerPre;
 
                 Unit u = b.obj.GetComponent<Unit>();
-                Ordnance o = b.obj.GetComponent<Ordnance>();
-                Equipment e = b.obj.GetComponent<Equipment>();
+                AbilityRoot o = b.obj.GetComponent<AbilityRoot>();
+                Buff e = b.obj.GetComponent<Buff>();
 
                 if (u)
                 {

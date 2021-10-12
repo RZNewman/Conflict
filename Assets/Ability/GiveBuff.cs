@@ -44,5 +44,6 @@ public class GiveBuff : Ability
             NetworkClient.RegisterPrefab(buffGiven);
 
         }
+        buffGiven.GetComponent<Buff>().register();
     }
 }

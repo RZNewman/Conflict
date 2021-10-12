@@ -11,26 +11,16 @@ public class Aura : Buff
 	Tile center;
 
 
-	[ClientRpc]
-	public override void RpcAssignParent(uint parentID)
+	protected override void CallbackRPC(GameObject u)
 	{
-		
-		GameObject u = NetworkIdentity.spawned[parentID].gameObject;
-		//Debug.Log("assingd");
-		transform.parent = u.transform;
-		transform.localPosition = Vector3.zero;
-		visuals = Instantiate(visualsPre, u.transform);
-
-		if (isServer)
+		if (isClientOnly)
 		{
-			return;
+			Unit un = u.GetComponent<Unit>();
+			if (un)
+			{
+				un.aurasEmitted.Add(this);
+			}
 		}
-		Unit un = u.GetComponent<Unit>();
-		if (un)
-		{
-			un.aurasEmitted.Add(this);
-		}
-		
 	}
 	[Server]
 	public void updateLocation(Tile newCenter)
@@ -86,13 +76,9 @@ public class Aura : Buff
 		return null;
 	}
 
-	public void register()
+	public override void register()
 	{
-		if (!NetworkClient.prefabs.ContainsValue(gameObject))
-		{
-			NetworkClient.RegisterPrefab(gameObject);
-
-		}
+		base.register();
 		if (!NetworkClient.prefabs.ContainsValue(buffGiven))
 		{
 			NetworkClient.RegisterPrefab(buffGiven);
@@ -116,25 +102,10 @@ public class Aura : Buff
 
 		return desc;
 	}
-	public override void PDestroy(bool isSev)
-	{
-		if (isSev)
-		{
-			removeBuff(this);
-			foreach (GameObject o in abilities)
-			{
-				gm.delayedDestroy(o);
-			}
-			removeFromTiles();
-		}
-		else
-		{
-			if (visuals)
-			{
-				Destroy(visuals);
-			}
-		}
 
+	protected override void CallbackPD()
+	{
+		removeFromTiles();
 	}
 
 

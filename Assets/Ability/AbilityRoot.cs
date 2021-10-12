@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Ordnance : Cardmaker, TeamOwnership, PseudoDestroy
+public class AbilityRoot : Cardmaker, TeamOwnership, PseudoDestroy
 {
 
 

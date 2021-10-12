@@ -61,14 +61,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 4984502690266783358}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e56370216aeddf4c802e187d1f3aade, type: 3}
+  m_Script: {fileID: 11500000, guid: 34eb9dad7f073774bb5f33d47bc06715, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  abilitiesPre: []
-  abilities: []
-  maxDuration: 1
+  maxDuration: 0
+  visualsPre: {fileID: 0}
 --- !u!114 &6103810702998502902
 MonoBehaviour:
   m_ObjectHideFlags: 0

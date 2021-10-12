@@ -15,7 +15,7 @@ public class OrdCardUI : CardUI
 
 	protected override void populateCost(Cardmaker mkr)
 	{
-		if (mkr.GetComponent<Ordnance>().caster)
+		if (mkr.GetComponent<AbilityRoot>().caster)
 		{
 			cardCost.setCost(mkr.resourceCost.ToString(), new CostUI.costTypes(false, true, false));
 		}
@@ -32,7 +32,7 @@ public class OrdCardUI : CardUI
     public override void populateSelf(Cardmaker maker, bool isPrefab)
     {
 		Ability ab = maker.GetComponent<Ability>();
-		Ordnance ord = maker.GetComponent<Ordnance>();
+		AbilityRoot ord = maker.GetComponent<AbilityRoot>();
 		//
 		if (ord.cardArt != null)
 		{

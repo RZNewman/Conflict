@@ -2,15 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
+using static Targeting;
 
-public class Buff : NetworkBehaviour, PseudoDestroy, TeamOwnership
+public abstract class Buff : Cardmaker, PseudoDestroy, TeamOwnership
 {
-    public List<GameObject> abilitiesPre;
-    [HideInInspector]
-    public List<GameObject> abilities = new List<GameObject>();
+    public Unit.unitType type;
+    // Start is called before the first frame update
 
     public int maxDuration = 0;
     int currentDuration;
+
+    public bool isEquipment;
 
     protected GameManager gm;
     [SyncVar]
@@ -20,7 +22,7 @@ public class Buff : NetworkBehaviour, PseudoDestroy, TeamOwnership
     protected GameObject visuals;
 
     [ClientRpc]
-    public virtual void RpcAssignParent(uint parentID)
+    public void RpcAssignParent(uint parentID)
     {
         
         
@@ -32,12 +34,13 @@ public class Buff : NetworkBehaviour, PseudoDestroy, TeamOwnership
 		{
             visuals = Instantiate(visualsPre, u.transform);
         }
-        
 
-        if (isServer)
-        {
-            return;
-        }
+
+        CallbackRPC(u);
+    }
+
+    protected virtual void CallbackRPC(GameObject u) { 
+        //do nothing
     }
     public delegate void Termination(Buff b);
     void doNothing(Buff b)
@@ -66,18 +69,8 @@ public class Buff : NetworkBehaviour, PseudoDestroy, TeamOwnership
 	{
         teamInd = t;
 	}
-    public void initailize(Unit u = null)
+    public virtual void initailize(Unit u = null)
 	{
-        StatHandler bStats = GetComponent<StatHandler>();
-        bStats.initialize();
-
-		if (u)
-		{
-            foreach (GameObject o in abilitiesPre)
-            {
-                abilities.Add(u.createAbility(o));
-            }
-        }
         
         currentDuration = maxDuration;
     }
@@ -97,27 +90,15 @@ public class Buff : NetworkBehaviour, PseudoDestroy, TeamOwnership
 		}
 	}
 
-    public virtual string toDesc()
-	{
-        string desc = CardUI.cardText(GetComponent<StatHandler>().prefabStats(), false).Replace('\n', ',');
-        desc = "'" + desc + "'";
-		if (maxDuration > 0)
-		{
-            desc += " for " + maxDuration + " round" +(maxDuration>1? "s":"");
-		}
-        return desc;
-
-    }
+    public abstract string toDesc();
+	
 
 	public virtual void PDestroy(bool isSev)
     {
 		if (isSev)
 		{
             removeBuff(this);
-            foreach (GameObject o in abilities)
-            {
-                gm.delayedDestroy(o);
-            }
+            CallbackPD();
         }
 		else
 		{
@@ -130,9 +111,63 @@ public class Buff : NetworkBehaviour, PseudoDestroy, TeamOwnership
 		
         
     }
+    protected virtual void CallbackPD()
+	{
+        //do nothing
+	}
+
+    [Client]
+    public override void register() //prefab
+    {
+        if (!NetworkClient.prefabs.ContainsValue(gameObject))
+        {
+            NetworkClient.RegisterPrefab(gameObject);
+
+        }
+    }
 
 	public int getTeam()
 	{
 		return teamInd;
 	}
+
+
+
+    public override GameObject findCardPrefab()
+    {
+        return (GameObject)Resources.Load("DynamicEquipCard", typeof(GameObject));
+    }
+    public override GameObject findCardTemplate()
+    {
+        return (GameObject)Resources.Load("EquipCardPre", typeof(GameObject));
+
+    }
+    public override Color getColor()
+    {
+
+        return GameColors.equipment;
+
+    }
+    protected override int getOrderType()
+    {
+        return 2;
+    }
+
+    public override void modifyCardAfterCreation(GameObject o)
+    {
+        EquipCard card = o.GetComponent<EquipCard>();
+        card.setCardmaker(this);
+        Targeting tar = o.GetComponent<Targeting>();
+        Rule[] mod = new Rule[tar.rules.Length];
+        for (int i = 0; i < tar.rules.Length; i++)
+        {
+            mod[i] = tar.rules[i];
+            if (mod[i].type == TargetRule.unitType)
+            {
+                mod[i].value = (int)type;
+            }
+        }
+
+        tar.rules = mod;
+    }
 }

@@ -43,5 +43,6 @@ public class CreateTileAura : Ability
             NetworkClient.RegisterPrefab(auraGiven);
 
         }
+        auraGiven.GetComponent<Buff>().register();
     }
 }

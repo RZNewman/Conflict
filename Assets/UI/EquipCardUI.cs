@@ -11,7 +11,7 @@ public class EquipCardUI : CardUI
 
 
 
-	public void populateType(Equipment e)
+	public void populateType(Buff e)
 	{
         string t = "";
 		switch (e.type)
@@ -39,7 +39,7 @@ public class EquipCardUI : CardUI
 	}
     public override void populateSelf(Cardmaker maker, bool isPrefab)
     {
-		Equipment e = maker.GetComponent<Equipment>();
+		Buff e = maker.GetComponent<Buff>();
 		//
 		if (e.cardArt != null)
 		{
@@ -49,19 +49,37 @@ public class EquipCardUI : CardUI
 		{
 			populateArt(maker.gameObject);
 		}
-
+        Dictionary<StatType, float> sts;
         if (isPrefab)
         {
             StatHandler st = maker.GetComponent<StatHandler>();
-            Dictionary<StatType, float> sts = st.prefabStats();
+            
+            if (st)
+            {
+                sts = st.prefabStats();
+            }
+			else
+			{
+                sts = new Dictionary<StatType, float>();
+			}
+
             populateTitle(maker.name);
 
-            populateBody(sts, false, maker.GetComponent<Buff>().abilitiesPre.Select(x => x.GetComponent<Ability>()).ToArray());
+            populateBody(sts, false, maker.GetComponent<BuffAbil>()?.abilitiesPre.Select(x => x.GetComponent<Ability>()).ToArray());
         }
         else
         {
+            StatHandler st = maker.GetComponent<StatHandler>();
+            if (st)
+            {
+                sts = st.export();
+            }
+            else
+            {
+                sts = new Dictionary<StatType, float>();
+            }
             populateTitle(maker.originalName);
-            populateBody(e.GetComponent<StatHandler>().export(), false, e.GetComponent<Buff>().abilities.Select(x => x.GetComponent<Ability>()).ToArray());
+            populateBody(sts, false, e.GetComponent<BuffAbil>()?.abilities.Select(x => x.GetComponent<Ability>()).ToArray());
         }
 
 

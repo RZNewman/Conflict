@@ -765,7 +765,7 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
         if(u != null)
 		{
             tilesSelectedTarget = u.loc.select(false);
-            foreach(Ordnance o in u.abilities)
+            foreach(AbilityRoot o in u.abilities)
 			{
                 //Debug.Log(o);
                 abilPanel.addAbility(o);

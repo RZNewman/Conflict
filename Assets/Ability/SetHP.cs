@@ -25,9 +25,8 @@ public class SetHP : Ability
                 GameObject buff = Instantiate(GameStaticPrefabs.AbilityBuffPre);     
                 buff.transform.parent = u.transform;
                 buff.transform.localPosition = Vector3.zero;
-                Buff b = buff.GetComponent<Buff>();
-                StatHandler st = buff.GetComponent<StatHandler>();
-                st.setPrefabStat(StatBlock.StatType.health, setHP - maxHP);
+                BuffStat b = buff.GetComponent<BuffStat>();
+                b.setPrefabStat(StatBlock.StatType.health, setHP - maxHP);
                 b.setTeam(team);
                 u.addBuff(b);
                 NetworkServer.Spawn(buff);

@@ -195,7 +195,7 @@ public abstract class CardUI : MonoBehaviour
                 string desc = ab.toDesc();
                 desc = Operations.Capatialize(desc);
 
-                text += ab.GetComponent<Ordnance>().resourceCost + ": " + desc + "\n";
+                text += ab.GetComponent<AbilityRoot>().resourceCost + ": " + desc + "\n";
 			}
 		}
         if (auras != null)

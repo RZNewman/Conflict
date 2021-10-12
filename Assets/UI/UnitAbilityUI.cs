@@ -8,10 +8,10 @@ public class UnitAbilityUI : MonoBehaviour
     List<GameObject> AbilsSqs = new List<GameObject>();
     public GameObject ordSqPre;
     
-    public void addAbility(Ordnance abilityInstance)
+    public void addAbility(AbilityRoot abilityInstance)
 	{
         GameObject abilToken = Instantiate(ordSqPre, transform);
-        abilToken.GetComponent<OrdSqUI>().intialize(abilityInstance.GetComponent<Ordnance>());
+        abilToken.GetComponent<OrdSqUI>().intialize(abilityInstance.GetComponent<AbilityRoot>());
         AbilsSqs.Add(abilToken);
         //LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
     }

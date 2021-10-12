@@ -9,9 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3838788028416608116}
-  - component: {fileID: 9215033686344939755}
-  - component: {fileID: 2364573760762706500}
   - component: {fileID: 3049260281214153928}
+  - component: {fileID: 2364573760762706500}
   - component: {fileID: 6103810702998502902}
   m_Layer: 0
   m_Name: Cluster Rockets
@@ -34,7 +33,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &9215033686344939755
+--- !u!114 &3049260281214153928
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -43,7 +42,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4984502690266783358}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7ccfa8eb28bcb4e42b88abc48e84fbe2, type: 3}
+  m_Script: {fileID: 11500000, guid: 34eb9dad7f073774bb5f33d47bc06715, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0
@@ -53,6 +52,9 @@ MonoBehaviour:
   playEffectPre: {fileID: 4927487206556695495, guid: 02a7c36c33bbb1544af77b5cf2a64004, type: 3}
   originalName: 
   type: 3
+  maxDuration: 0
+  isEquipment: 1
+  visualsPre: {fileID: 0}
 --- !u!114 &2364573760762706500
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -72,22 +74,6 @@ MonoBehaviour:
     value: 2
   - type: 32
     value: 2
---- !u!114 &3049260281214153928
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4984502690266783358}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e56370216aeddf4c802e187d1f3aade, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
-  abilitiesPre: []
-  abilities: []
 --- !u!114 &6103810702998502902
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -164,7 +164,7 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
             NetworkClient.RegisterPrefab(gameObject);
             foreach (GameObject aPre in abilitiesPre)
             {
-                aPre.GetComponent<Ordnance>().register();
+                aPre.GetComponent<AbilityRoot>().register();
             }
             foreach(GameObject auPre in aurasPre)
 			{
@@ -232,51 +232,72 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
         //Debug.Log(b);
         buffs.Add(b);
         b.setTerminate(removeBuff);
-        StatHandler buffStats = b.GetComponent<StatHandler>();
-        Dictionary<StatType, float> buffDict = buffStats.export();
-        foreach(StatType t in buffDict.Keys)
+
+		if (b.GetComponent<BuffStat>())
 		{
-            if(t == StatType.health)
-			{
-                currentHealth += Mathf.FloorToInt(buffDict[t]);
-			}
-			//else if (t == StatType.moveSpeed)
-			//{
-			//	currentMovement += Mathf.FloorToInt(buffDict[t]);
-			//}
-		}
+            StatHandler buffStats = b.GetComponent<StatHandler>();
+            Dictionary<StatType, float> buffDict = buffStats.export();
+            foreach (StatType t in buffDict.Keys)
+            {
+                if (t == StatType.health)
+                {
+                    currentHealth += Mathf.FloorToInt(buffDict[t]);
+                }
+                //else if (t == StatType.moveSpeed)
+                //{
+                //	currentMovement += Mathf.FloorToInt(buffDict[t]);
+                //}
+            }
+
+            st.addUpstream(buffStats);
+            checkAlive();
+        }
+        Aura au = b.GetComponent<Aura>();
+        if (au)
+		{
+            aurasEmitted.Add(au);
+            au.updateLocation(loc);
+        }
         
-        st.addUpstream(buffStats);
-        checkAlive();
         //Debug.Log(st.getStat(StatType.attack));
     }
     [Server]
     public void removeBuff(Buff b)
     {
         buffs.Remove(b);
-        StatHandler buffStats = b.GetComponent<StatHandler>();
-        Dictionary<StatType, float> buffDict = buffStats.export();
-        foreach (StatType t in buffDict.Keys)
+        if (b.GetComponent<BuffStat>())
         {
-            if (t == StatType.health)
+
+            StatHandler buffStats = b.GetComponent<StatHandler>();
+            Dictionary<StatType, float> buffDict = buffStats.export();
+            foreach (StatType t in buffDict.Keys)
             {
-                currentHealth -= Mathf.FloorToInt(buffDict[t]);
+                if (t == StatType.health)
+                {
+                    currentHealth -= Mathf.FloorToInt(buffDict[t]);
+                }
+                //else if (t == StatType.moveSpeed)
+                //{
+                //    currentMovement -= Mathf.FloorToInt(buffDict[t]);
+                //}
             }
-            //else if (t == StatType.moveSpeed)
-            //{
-            //    currentMovement -= Mathf.FloorToInt(buffDict[t]);
-            //}
+
+            buffStats.removeDownstream(st);
+            checkAlive();
         }
-        
-        buffStats.removeDownstream(st);
-        checkAlive();
+        Aura au = b.GetComponent<Aura>();
+        if (au)
+        {
+            aurasEmitted.Remove(au);
+        }
+
     }
     public int equipmentCount()
 	{
         int count = 0;
         foreach(Buff b in buffs)
 		{
-			if (b.GetComponent<Equipment>())
+			if (b.GetComponent<Buff>().isEquipment)
 			{
                 count += 1;
 			}
@@ -344,10 +365,8 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
     {
         GameObject au = Instantiate(o, transform);
         Aura aura = au.GetComponent<Aura>();
-        aura.initailize();
-        aurasEmitted.Add(aura);
         aura.setTeam(teamIndex);
-        aura.updateLocation(loc);
+        addBuff(aura);
         NetworkServer.Spawn(au);
         aura.RpcAssignParent(netId);
 
@@ -364,7 +383,7 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
     #region abilities
     public List<GameObject> abilitiesPre;
     [HideInInspector]
-    public List<Ordnance> abilities = new List<Ordnance>();
+    public List<AbilityRoot> abilities = new List<AbilityRoot>();
     [Server]
     void spawnAbilitites()
 	{
@@ -376,7 +395,7 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
     public GameObject createAbility(GameObject o)
 	{
         GameObject ab = Instantiate(o, transform);
-        Ordnance ord = ab.GetComponent<Ordnance>();
+        AbilityRoot ord = ab.GetComponent<AbilityRoot>();
         ord.provideName(o.name);
         ord.caster = this;
         Ability abil = ab.GetComponent<Ability>();
@@ -396,7 +415,7 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
             NetworkIdentity ab = NetworkIdentity.spawned[abID];
             ab.transform.parent = transform;
             ab.transform.localPosition = Vector3.zero;
-            Ordnance o = ab.GetComponent<Ordnance>();
+            AbilityRoot o = ab.GetComponent<AbilityRoot>();
             o.caster = this;
             if (!isServer)
 			{
@@ -409,7 +428,7 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
             
         }
 	}
-    public void removeAbility(Ordnance o)
+    public void removeAbility(AbilityRoot o)
 	{
         abilities.Remove(o);
 

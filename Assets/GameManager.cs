@@ -659,7 +659,7 @@ public class GameManager : NetworkBehaviour
         {
             return;
         }
-        Ordnance castAbility = NetworkIdentity.spawned[abilID].GetComponent<Ordnance>();
+        AbilityRoot castAbility = NetworkIdentity.spawned[abilID].GetComponent<AbilityRoot>();
         PlayerGhost player = NetworkIdentity.spawned[ownerID].GetComponent<PlayerGhost>();
         Targeting t = castAbility.GetComponent<Targeting>();
         Tile target = NetworkIdentity.spawned[tileID].GetComponent<Tile>();
