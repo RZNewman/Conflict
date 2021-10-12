@@ -576,7 +576,7 @@ public class GameManager : NetworkBehaviour
             //&& mover.moveRemaining > 0 
             //&& dist > 0
             && mover.moveRemaining >= dist
-            
+            && mover.canMove
             && (!mover.isStructure || target.isFoundation)
             )
         {

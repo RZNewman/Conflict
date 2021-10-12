@@ -9,11 +9,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3838788028416608116}
-  - component: {fileID: 2364573760762706500}
-  - component: {fileID: 3049260281214153928}
   - component: {fileID: 6103810702998502902}
+  - component: {fileID: -3024740443552070907}
   m_Layer: 0
-  m_Name: Gore Bf
+  m_Name: Gore Bf 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -33,47 +32,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2364573760762706500
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4984502690266783358}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 99d34d27de67d9a49b5a947b27fff76f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
-  statsList:
-  - type: 1
-    value: 2
-  - type: 2
-    value: -4
---- !u!114 &3049260281214153928
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4984502690266783358}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 34eb9dad7f073774bb5f33d47bc06715, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
-  resourceCost: 0
-  cardArt: {fileID: 0}
-  playEffectPre: {fileID: 0}
-  originalName: 
-  type: 0
-  maxDuration: 1
-  isEquipment: 0
-  visualsPre: {fileID: 0}
 --- !u!114 &6103810702998502902
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -91,3 +49,30 @@ MonoBehaviour:
   visible: 0
   m_AssetId: 
   hasSpawned: 0
+--- !u!114 &-3024740443552070907
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4984502690266783358}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cb2868bfe4842d40b761b95ab7a3f1b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  resourceCost: 0
+  cardArt: {fileID: 0}
+  playEffectPre: {fileID: 0}
+  originalName: 
+  type: 0
+  maxDuration: 2
+  isEquipment: 0
+  visualsPre: {fileID: 0}
+  effects:
+    movement: 1
+    attacking: 1
+    casting: 0
+    damage: 1

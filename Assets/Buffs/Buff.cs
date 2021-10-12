@@ -77,9 +77,6 @@ public abstract class Buff : Cardmaker, PseudoDestroy, TeamOwnership
 
     public void tick()
 	{
-        Debug.Log(gameObject);
-        Debug.Log(maxDuration);
-        Debug.Log(currentDuration);
         if (maxDuration > 0)
 		{
             currentDuration--;

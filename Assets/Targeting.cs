@@ -375,12 +375,12 @@ public class Targeting : MonoBehaviour
         string noun = "tile";
         string prefix = "";
         string suffix = "";
-        //if (rules.Length == 0)
-        //{
-        //    return "";
-        //}
+		if (rules.Length == 0)
+		{
+			return "";
+		}
 
-        foreach (Rule r in rules)
+		foreach (Rule r in rules)
         {
             switch (r.type)
             {

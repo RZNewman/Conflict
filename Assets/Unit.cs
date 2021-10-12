@@ -38,6 +38,8 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
     int currentAttacks;
     [SyncVar(hook = nameof(hookRefreshUI))]
     int currentCasts;
+    [SyncVar(hook = nameof(hookRefreshUIEffects))]
+    Status.Effects status = new Status.Effects();
 
 
     bool hasMoved = false;
@@ -52,6 +54,10 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
 		{
             spawnAbilitites();
             spawnAuras();
+            status.movement = true;
+            status.attacking = true;
+            status.casting = true;
+            status.damage = true;
         }
         if (isClient)
 		{
@@ -100,6 +106,10 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
 	{
         refreshUI();
 	}
+    void hookRefreshUIEffects(Status.Effects oldVal, Status.Effects newVal)
+    {
+        refreshUI();
+    }
     public void refreshUI()
 	{
 		if (loc)
@@ -226,6 +236,9 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
     Dictionary<Aura,Buff> aurasRecieved = new Dictionary<Aura, Buff>();
     [HideInInspector]
     public List<Aura> aurasEmitted = new List<Aura>();
+
+    
+    List<Status.Effects> effects = new List<Status.Effects>();
     public void addBuff(Buff b)
 	{
         b.initailize(this);
@@ -258,7 +271,12 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
             aurasEmitted.Add(au);
             au.updateLocation(loc);
         }
-        
+        BuffStatus eff = b.GetComponent<BuffStatus>();
+        if (eff)
+        {
+            effects.Add(eff.effects);
+            refreshStatus();
+        }
         //Debug.Log(st.getStat(StatType.attack));
     }
     [Server]
@@ -290,6 +308,12 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
         {
             aurasEmitted.Remove(au);
         }
+        BuffStatus eff = b.GetComponent<BuffStatus>();
+		if (eff)
+		{
+            effects.Remove(eff.effects);
+            refreshStatus();
+        }
 
     }
     public int equipmentCount()
@@ -304,6 +328,10 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
 		}
 
         return count;
+	}
+    void refreshStatus()
+	{
+        status = Status.getEffects(effects);
 	}
     public void addAura(Aura a)
 	{
@@ -528,18 +556,25 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
             return currentMovement;
 		}
 	}
+    public bool canMove
+	{
+		get
+		{
+            return status.movement;
+		}
+	}
     public bool canMoveVisual
     {
         get
         {
-            return currentMovement > 0 && gm && gm.whosTurn == teamIndex;
+            return currentMovement > 0  && canMove && gm && gm.whosTurn == teamIndex;
         }
     }
     public bool canAttack
 	{
 		get
 		{
-            return currentAttacks > 0 && st.getStat(StatType.attack) > 0;
+            return currentAttacks > 0 && st.getStat(StatType.attack) > 0 && status.attacking;
         }
 	}
     public bool canAttackVisual
@@ -553,7 +588,7 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
     {
         get
         {
-            return currentCasts > 0;
+            return currentCasts > 0 && status.casting;
         }
     }
     public bool canCastVisual
@@ -679,20 +714,24 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
     [Server]
     public int takeDamage(int d,bool piercing, damageSource type)
 	{
-		if (!piercing/*!source.getBool(StatType.piercing)*/)
+		if (status.damage)
 		{
-            d -= st.getStat(StatType.armor);
-			
-		}
-        if(type == damageSource.retaliation)
-		{
-            d -= st.getStat(StatType.overwhelm);
-		}
-        if (d < 0)
-        {
-            d = 0;
+            if (!piercing/*!source.getBool(StatType.piercing)*/)
+            {
+                d -= st.getStat(StatType.armor);
+
+            }
+            if (type == damageSource.retaliation)
+            {
+                d -= st.getStat(StatType.overwhelm);
+            }
+            if (d < 0)
+            {
+                d = 0;
+            }
+            currentHealth -= d;
         }
-        currentHealth -=d;
+		
         checkAlive();
         return currentHealth;
 		//else
