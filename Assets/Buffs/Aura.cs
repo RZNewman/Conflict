@@ -90,7 +90,7 @@ public class Aura : Buff
 	{
 		string desc;
 
-		desc = string.Format("grant {0}",
+		desc = string.Format("aura: {0}",
 			buffGiven.GetComponent<Buff>().toDesc()
 			);
 		desc += " " + buffGiven.GetComponent<Targeting>().targetingDesc(false, true);

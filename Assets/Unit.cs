@@ -613,6 +613,14 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
     {
         return currentMovement;
     }
+    public int getMoveActionable()
+	{
+        return canMove ? currentMovement : 0;
+	}
+    public Status.Effects getStatus()
+	{
+        return status;
+	}
     public int getTeam()
     {
         return teamIndex;

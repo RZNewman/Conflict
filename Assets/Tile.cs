@@ -453,7 +453,7 @@ public class Tile : NetworkBehaviour
 
 		if (occupant)
 		{
-            List<Tile> moveSelect = tilesInMove(occupant.getMove(), occupant.type , occupant.teamIndex,occupant.stat.getBool(StatBlock.StatType.ghost));
+            List<Tile> moveSelect = tilesInMove(occupant.getMoveActionable(), occupant.type , occupant.teamIndex,occupant.stat.getBool(StatBlock.StatType.ghost));
             foreach (Tile t in moveSelect)
             {
                 selected.Add(t.unitUI.select(SelectType.move,isHover));

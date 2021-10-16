@@ -28,7 +28,7 @@ public class BuffAbil : Buff
     }
     public override string toDesc()
     {
-        string desc = CardUI.cardText(GetComponent<StatHandler>().prefabStats(), false).Replace('\n', ',');
+        string desc = CardUI.cardText(GetComponent<StatHandler>().prefabStats(), Status.getDefault(), false).Replace('\n', ',');
         desc = "'" + desc + "'";
         if (maxDuration > 0)
         {

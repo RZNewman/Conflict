@@ -127,6 +127,7 @@ public class UnitCardUI : CardUI
             populateValues(u);
             populateBody(
                 u.stat.export(),
+                u.getStatus(),
                 true, 
                 u.abilities.Select(x => x.GetComponent<Ability>()).ToArray(),
                 u.aurasEmitted.Select(x => x.GetComponent<Aura>()).ToArray()

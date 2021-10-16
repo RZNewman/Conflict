@@ -74,15 +74,26 @@ public abstract class CardUI : MonoBehaviour
 
     protected void populateBody(Dictionary<StatType, float> stats, bool skipUnitValues = true, Ability[] abils = null, Aura[] auras = null)
 	{
-        cardBody.text = cardText(stats,skipUnitValues,abils,auras);
+        cardBody.text = cardText(stats,Status.getDefault(),skipUnitValues,abils,auras);
+    }
+    protected void populateBody(Dictionary<StatType, float> stats, Status.Effects status, bool skipUnitValues = true, Ability[] abils = null, Aura[] auras = null)
+    {
+        cardBody.text = cardText(stats,status, skipUnitValues, abils, auras);
     }
 
-    public static string cardText(Dictionary<StatType, float> stats, bool skipUnitValues = true, Ability[] abils = null, Aura[] auras = null)
+    public static string cardText(Dictionary<StatType, float> stats, Status.Effects status, bool skipUnitValues = true, Ability[] abils = null, Aura[] auras = null)
 	{
         string text = "";
         int[] valueText = new int[2];
         string valueLines = "";
-        
+
+        string effects = status.toString();
+		if (effects.Length > 1)
+		{
+            text += "<i>" + effects + "</i>\n";
+
+        }
+
         foreach (StatType t in stats.Keys)
 		{
             string line = "";
@@ -205,7 +216,7 @@ public abstract class CardUI : MonoBehaviour
                 string desc = au.toDesc();
                 desc = Operations.Capatialize(desc);
 
-                text += "Aura: " + desc + "\n";
+                text += desc + "\n";
             }
         }
         return text;

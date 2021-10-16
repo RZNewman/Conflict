@@ -10,7 +10,7 @@ public class GiveBuff : Ability
     {
         string desc;
 
-        desc = string.Format("grant {0}",
+        desc = string.Format("apply: {0}",
             buffGiven.GetComponent<Buff>().toDesc()
             );
 

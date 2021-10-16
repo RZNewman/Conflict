@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class Status 
+public static class Status
 {
 	[Serializable]
 	public struct Effects
@@ -18,7 +18,7 @@ public static class Status
 			bool stunned = !movement && !attacking && !casting;
 
 			string desc = "";
-			if(stunned && !damage)
+			if (stunned && !damage)
 			{
 				desc += ", Banished";
 			}
@@ -53,11 +53,11 @@ public static class Status
 			{
 				desc = desc.Substring(2);
 			}
-			
+
 			return desc;
 		}
 
-		
+
 	}
 	public static Effects getEffects(List<Effects> effects)
 	{
@@ -76,5 +76,15 @@ public static class Status
 		}
 		return e;
 	}
+	public static Effects getDefault()
+	{
+		Effects e = new Effects();
+		e.attacking = true;
+		e.movement = true;
+		e.casting = true;
+		e.damage = true;
+		return e;
+	}
+
 
 }
