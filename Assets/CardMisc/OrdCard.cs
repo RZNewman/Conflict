@@ -30,11 +30,13 @@ public class OrdCard : Card
 		ability.GetComponent<Cardmaker>().provideName(sourceCardmaker.name);
 		Ability ab = ability.GetComponent<Ability>();
 		ab.initialize();
+		
 		ab.cast(target, team, null);
 		//Destroy(ability);
 		NetworkServer.Spawn(ability);
-		gm.viewPipe.RpcAddViewEvent(new ViewPipeline.ViewEvent(ViewPipeline.ViewType.playEffect, ab.GetComponent<NetworkIdentity>().netId, target.netId, Time.time));
+		
 		gm.delayedDestroy(ability);
+		gm.viewPipe.QueueViewEvent(new ViewPipeline.ViewEvent(ViewPipeline.ViewType.playEffect, ab.GetComponent<NetworkIdentity>().netId, target.netId, Time.time), true);
 		//Destroy(gameObject);
 	}
 

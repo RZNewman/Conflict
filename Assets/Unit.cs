@@ -412,6 +412,13 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
     public List<GameObject> abilitiesPre;
     [HideInInspector]
     public List<AbilityRoot> abilities = new List<AbilityRoot>();
+
+    public List<AbilityRoot> castable
+	{
+        get {
+            return abilities.Where(ab => ab.trigger == AbilityRoot.TriggerType.none).ToList();
+		}
+	}
     [Server]
     void spawnAbilitites()
 	{
@@ -461,7 +468,17 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
         abilities.Remove(o);
 
 	}
-
+    [Server]
+    void eventAbilitites(AbilityRoot.TriggerType t, Tile target)
+	{
+        foreach(AbilityRoot ab in abilities)
+		{
+            if(ab.trigger == t)
+			{
+                ab.eventAbil(target, teamIndex, loc);
+			}
+		}
+	}
     #endregion
 
     // Update is called once per frame
@@ -560,7 +577,7 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
 	{
 		get
 		{
-            return status.movement;
+            return alive && status.movement;
 		}
 	}
     public bool canMoveVisual
@@ -574,7 +591,7 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
 	{
 		get
 		{
-            return currentAttacks > 0 && st.getStat(StatType.attack) > 0 && status.attacking;
+            return alive && currentAttacks > 0 && st.getStat(StatType.attack) > 0 && status.attacking;
         }
 	}
     public bool canAttackVisual
@@ -588,14 +605,14 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
     {
         get
         {
-            return currentCasts > 0 && status.casting;
+            return alive && currentCasts > 0 && status.casting;
         }
     }
     public bool canCastVisual
     {
         get
         {
-            return canCast && abilities.Count>0 && gm && gm.whosTurn == teamIndex;
+            return canCast && castable.Count>0 && gm && gm.whosTurn == teamIndex;
         }
     }
     public bool isDamaged
@@ -603,6 +620,13 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
 		get
 		{
             return currentHealth < st.getStat(StatType.health);
+		}
+	}
+    public bool isAlive
+	{
+		get
+		{
+            return alive;
 		}
 	}
     public int getHeath()
@@ -755,9 +779,17 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
             killSelf();
         }
     }
+    bool alive = true;
     public void killSelf()
 	{
-        gm.delayedDestroy(gameObject);
+		if (alive)
+		{
+            alive = false;
+            eventAbilitites(AbilityRoot.TriggerType.onDeath, loc);
+            gm.delayedDestroy(gameObject);
+            
+        }
+        
     }
     public void heal(int h)
 	{

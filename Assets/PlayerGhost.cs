@@ -642,7 +642,6 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
                             state = targetState.Unit;
                             setTargetAbility(null);
 
-
                         }
 
                         break;
@@ -765,7 +764,7 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
         if(u != null)
 		{
             tilesSelectedTarget = u.loc.select(false);
-            foreach(AbilityRoot o in u.abilities)
+            foreach(AbilityRoot o in u.castable)
 			{
                 //Debug.Log(o);
                 abilPanel.addAbility(o);
@@ -821,6 +820,13 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
 
         }
     }
+    public void checkUnitSelectionDeath(GameObject o)
+	{
+        if(unitCurrent?.gameObject == o)
+		{
+            setTargetUnit(null);
+		}
+	}
     [Command]
     void CmdPawnMove(uint unitID, uint tileID)
 	{        

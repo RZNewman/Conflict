@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class BuffAbil : Buff
@@ -26,13 +27,40 @@ public class BuffAbil : Buff
             gm.delayedDestroy(o);
         }
     }
-    public override string toDesc()
+    protected override void CallbackTick()
     {
-        string desc = CardUI.cardText(GetComponent<StatHandler>().prefabStats(), Status.getDefault(), false).Replace('\n', ',');
-        desc = "'" + desc + "'";
+		if (carrier)
+		{
+            foreach (GameObject o in abilities)
+            {
+                AbilityRoot ab = o.GetComponent<AbilityRoot>();
+                if (ab.trigger == AbilityRoot.TriggerType.onBuffTick)
+                {
+                    ab.eventAbil(carrier.loc, teamInd, carrier.loc);
+    
+                }
+            }
+        }
+        
+    }
+    public override string toDesc(bool isPrefab)
+    {
+        Ability[] abs;
+        int durr;
+        if (isPrefab)
+        {
+            abs = abilitiesPre.Select(x => x.GetComponent<Ability>()).ToArray();
+            durr = maxDuration;
+        }
+        else
+        {
+            abs = abilities.Select(x => x.GetComponent<Ability>()).ToArray();
+            durr = currentDuration;
+        }
+        string desc = CardUI.cardText(new Dictionary<StatBlock.StatType, float>(), Status.getDefault(), false, abs);
         if (maxDuration > 0)
         {
-            desc += " for " + maxDuration + " round" + (maxDuration > 1 ? "s" : "");
+            desc += " for " + durr + " round" + (durr > 1 ? "s" : "");
         }
         return desc;
 

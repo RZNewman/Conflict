@@ -9,9 +9,9 @@ public class GiveBuff : Ability
     public override string toDesc(bool sayTarget = true, bool plural = false)
     {
         string desc;
-
+        
         desc = string.Format("apply: {0}",
-            buffGiven.GetComponent<Buff>().toDesc()
+            buffGiven.GetComponent<Buff>().toDesc(true).Replace("\n",", ")
             );
 
         return desc + " " + targetingDesc(sayTarget, plural);

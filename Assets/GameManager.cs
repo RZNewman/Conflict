@@ -114,8 +114,9 @@ public class GameManager : NetworkBehaviour
 		{
             pd.PDestroy(true);
 		}
-        StartCoroutine(sendDestroyLater(0.2f, o.GetComponent<NetworkIdentity>().netId));
-		if (!isClient)
+        //StartCoroutine(sendDestroyLater(0.2f, o.GetComponent<NetworkIdentity>().netId));
+        pipe.QueueViewEvent(new ViewEvent(ViewType.objDeath, o.GetComponent<NetworkIdentity>().netId, 0, Time.time));
+        if (!isClient)
 		{
             o.SetActive(false);
         }
@@ -125,7 +126,7 @@ public class GameManager : NetworkBehaviour
     {
         // suspend execution for 5 seconds
         yield return new WaitForSeconds(t);
-        pipe.RpcAddViewEvent(new ViewEvent(ViewType.objDeath, id, 0, Time.time));
+        pipe.QueueViewEvent(new ViewEvent(ViewType.objDeath, id, 0, Time.time));
     }
     #region turn control
     void firstTurn()
@@ -166,6 +167,7 @@ public class GameManager : NetworkBehaviour
         refreshUnits(refreshTeam);
         playerRoundEnd(refreshTeam);
         tickBuffs(currentTurn);
+        pipe.dispatchEvents();
         if(currentTurn == 0)
 		{
             roundCounter++;
@@ -175,6 +177,7 @@ public class GameManager : NetworkBehaviour
     }
     void setTeamUI(bool isTurn)
     {
+        
         if (currentTurn == -1) { return; }
         //if ( teams.Count <= 1) { return; }
 
@@ -536,10 +539,11 @@ public class GameManager : NetworkBehaviour
             && attacker.teamIndex != defender.teamIndex
             )
         {
-            pipe.RpcAddViewEvent(new ViewEvent(ViewType.unitAttack, unitID, tileID, Time.time));
+            pipe.QueueViewEvent(new ViewEvent(ViewType.unitAttack, unitID, tileID, Time.time));
             attacker.attack(defender, dist, didBypass);
+            pipe.dispatchEvents();
             //RpcAttackUnit(unitID, tileID);
-            
+
         }
     }
     [Client]
@@ -582,6 +586,7 @@ public class GameManager : NetworkBehaviour
         {
             mover.move(dist);
             serverMove(mover,target);
+            pipe.dispatchEvents();
         }
     }
     //[ClientRpc]
@@ -601,7 +606,7 @@ public class GameManager : NetworkBehaviour
         transferToTile(mover, target, true);
         
         //RpcMoveUnit(unitID, tileID);
-        pipe.RpcAddViewEvent(new ViewEvent(ViewType.unitMove, mover.netId, target.netId, Time.time));
+        pipe.QueueViewEvent(new ViewEvent(ViewType.unitMove, mover.netId, target.netId, Time.time));
     }
 
     public void transferToTile(Unit u, Tile t, bool onServer = false)
@@ -650,6 +655,7 @@ public class GameManager : NetworkBehaviour
             player.spendResources(playedCard.resourceCost, playedCard.costsMaterial);
             playedCard.playCard(target);
             delayedDestroy(playedCard.gameObject);
+            pipe.dispatchEvents();
 		}
     }
     [Server]
@@ -675,10 +681,12 @@ public class GameManager : NetworkBehaviour
             if(castAbility.castAbil(target, castAbility.getTeam(), castAbility.caster.loc))
 			{
                 player.spendResources(castAbility.resourceCost);
-                pipe.RpcAddViewEvent(new ViewEvent(ViewType.playEffect, abilID, tileID, Time.time));
+                pipe.QueueViewEvent(new ViewEvent(ViewType.playEffect, abilID, tileID, Time.time), true);
+                pipe.dispatchEvents();
             }
             
-            
+
+
         }
     }
 	#endregion

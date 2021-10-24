@@ -7,12 +7,21 @@ public class BuffStatus : Buff
 {
     public Effects effects;
 
-	public override string toDesc()
+	public override string toDesc(bool isPrefab)
 	{
-		string desc = effects.toString();
+        int durr;
+        if (isPrefab)
+        {
+            durr = maxDuration;
+        }
+        else
+        {
+            durr = currentDuration;
+        }
+        string desc = effects.toString();
 		if (maxDuration > 0)
 		{
-			desc += " for " + maxDuration + " round" + (maxDuration > 1 ? "s" : "");
+			desc += " for " + durr + " round" + (durr > 1 ? "s" : "");
 		}
 		return desc;
 	}

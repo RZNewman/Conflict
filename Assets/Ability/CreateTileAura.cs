@@ -11,7 +11,7 @@ public class CreateTileAura : Ability
         string desc;
 
         desc = string.Format("{0}",
-            auraGiven.GetComponent<Aura>().toDesc()
+            auraGiven.GetComponent<Aura>().toDesc(true)
             );
 
         return desc + " " + targetingDesc(sayTarget, plural,"on");

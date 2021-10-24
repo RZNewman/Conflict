@@ -86,17 +86,25 @@ public class Aura : Buff
 		}
 	}
 	
-	public override string toDesc()
+	public override string toDesc(bool isPrefab)
 	{
 		string desc;
-
+		int durr;
+		if (isPrefab)
+		{
+			durr = maxDuration;
+		}
+		else
+		{
+			durr = currentDuration;
+		}
 		desc = string.Format("aura: {0}",
-			buffGiven.GetComponent<Buff>().toDesc()
+			buffGiven.GetComponent<Buff>().toDesc(isPrefab)
 			);
 		desc += " " + buffGiven.GetComponent<Targeting>().targetingDesc(false, true);
 		if (maxDuration > 0)
 		{
-			desc += " for " + maxDuration + " round" + (maxDuration > 1 ? "s" : "");
+			desc += " for " + durr + " round" + (durr > 1 ? "s" : "");
 		}
 
 

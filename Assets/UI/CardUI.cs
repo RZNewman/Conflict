@@ -203,17 +203,34 @@ public abstract class CardUI : MonoBehaviour
 		{
             foreach(Ability ab in abils)
 			{
-                string desc = ab.toDesc();
+                
+                
+                AbilityRoot root = ab.GetComponent<AbilityRoot>();
+                string prefix;
+                string desc = ab.toDesc(root.trigger == AbilityRoot.TriggerType.none);
                 desc = Operations.Capatialize(desc);
+                switch (root.trigger)
+				{
+                    case AbilityRoot.TriggerType.onBuffTick:
+                        prefix = "On Tick";
+                        break;
+                    case AbilityRoot.TriggerType.onDeath:
+                        prefix = "On Death";
+                        break;
+                    default:
+                        prefix = root.resourceCost.ToString();
+                        break;
+				}
 
-                text += ab.GetComponent<AbilityRoot>().resourceCost + ": " + desc + "\n";
+                text += prefix + ": " + desc + "\n";
 			}
 		}
         if (auras != null)
 		{
             foreach (Aura au in auras)
             {
-                string desc = au.toDesc();
+                //TODO tell if aura is prefab
+                string desc = au.toDesc(true);
                 desc = Operations.Capatialize(desc);
 
                 text += desc + "\n";

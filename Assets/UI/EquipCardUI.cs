@@ -49,38 +49,20 @@ public class EquipCardUI : CardUI
 		{
 			populateArt(maker.gameObject);
 		}
-        Dictionary<StatType, float> sts;
         if (isPrefab)
         {
-            StatHandler st = maker.GetComponent<StatHandler>();
-            
-            if (st)
-            {
-                sts = st.prefabStats();
-            }
-			else
-			{
-                sts = new Dictionary<StatType, float>();
-			}
 
             populateTitle(maker.name);
 
-            populateBody(sts, false, maker.GetComponent<BuffAbil>()?.abilitiesPre.Select(x => x.GetComponent<Ability>()).ToArray());
+
         }
         else
         {
-            StatHandler st = maker.GetComponent<StatHandler>();
-            if (st)
-            {
-                sts = st.export();
-            }
-            else
-            {
-                sts = new Dictionary<StatType, float>();
-            }
+
             populateTitle(maker.originalName);
-            populateBody(sts, false, e.GetComponent<BuffAbil>()?.abilities.Select(x => x.GetComponent<Ability>()).ToArray());
+            
         }
+        populateBody(e, isPrefab);
 
 
         setBackground();
@@ -91,4 +73,12 @@ public class EquipCardUI : CardUI
 		
 
 	}
+
+    public void populateBody(Buff bu, bool isPrefab)
+    {
+        string desc = bu.toDesc(isPrefab);
+        //desc = Operations.Capatialize(desc);
+        desc.Replace("  ", " ");
+        cardBody.text = desc;
+    }
 }

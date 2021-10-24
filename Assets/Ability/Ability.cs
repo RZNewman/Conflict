@@ -7,6 +7,7 @@ public abstract class Ability : MonoBehaviour
 {
 	protected GameManager gm;
 
+	
 	//protected StatHandler st;
 	// Start is called before the first frame update
 	public void initialize()

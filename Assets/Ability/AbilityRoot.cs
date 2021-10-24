@@ -10,6 +10,13 @@ public class AbilityRoot : Cardmaker, TeamOwnership, PseudoDestroy
 	#region unitAbility
 	public Unit caster;
 
+    public enum TriggerType
+    {
+        none,
+        onDeath,
+        onBuffTick,
+    }
+    public TriggerType trigger = TriggerType.none;
     public int getTeam()
     {
         return caster.teamIndex;
@@ -25,6 +32,12 @@ public class AbilityRoot : Cardmaker, TeamOwnership, PseudoDestroy
         return false;
         
         
+
+    }
+
+    public void eventAbil(Tile target, int team, Tile source)
+    {
+        GetComponent<Ability>().cast(target, team, source);
 
     }
     [Client]

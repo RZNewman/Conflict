@@ -10,7 +10,7 @@ public abstract class Buff : Cardmaker, PseudoDestroy, TeamOwnership
     // Start is called before the first frame update
 
     public int maxDuration = 0;
-    int currentDuration;
+    protected int currentDuration;
 
     public bool isEquipment;
 
@@ -20,6 +20,9 @@ public abstract class Buff : Cardmaker, PseudoDestroy, TeamOwnership
 
     public GameObject visualsPre;
     protected GameObject visuals;
+
+    //is null for area auras
+    protected Unit carrier;
 
     [ClientRpc]
     public void RpcAssignParent(uint parentID)
@@ -73,12 +76,13 @@ public abstract class Buff : Cardmaker, PseudoDestroy, TeamOwnership
 	}
     public virtual void initailize(Unit u = null)
 	{
-        
+        carrier = u;
         currentDuration = maxDuration;
     }
 
     public void tick()
 	{
+        CallbackTick();
         if (maxDuration > 0)
 		{
             currentDuration--;
@@ -89,7 +93,7 @@ public abstract class Buff : Cardmaker, PseudoDestroy, TeamOwnership
 		}
 	}
 
-    public abstract string toDesc();
+    public abstract string toDesc(bool isPrefab);
 	
 
 	public virtual void PDestroy(bool isSev)
@@ -114,6 +118,10 @@ public abstract class Buff : Cardmaker, PseudoDestroy, TeamOwnership
 	{
         //do nothing
 	}
+    protected virtual void CallbackTick()
+    {
+        //do nothing
+    }
 
     [Client]
     public override void register() //prefab

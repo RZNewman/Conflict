@@ -20,6 +20,8 @@ public class ViewPipeline : NetworkBehaviour
 	GameObject inspection = null;
 	CardInspector ins;
 
+
+
 	[Serializable]
     public enum ViewType : byte
 	{
@@ -49,10 +51,35 @@ public class ViewPipeline : NetworkBehaviour
 		}
 	}
 	List<ViewEvent> incomingViews = new List<ViewEvent>();
-	[ClientRpc]
-	public void RpcAddViewEvent(ViewEvent v)
+
+	List<ViewEvent> outgoingViews = new List<ViewEvent>();
+
+	public void QueueViewEvent(ViewEvent v, bool prefix = false)
 	{
-		addViewEvent(v);
+		if (prefix)
+		{
+			outgoingViews.Insert(0,v);
+		}
+		else
+		{
+			outgoingViews.Add(v);
+		}
+		
+	}
+	public void dispatchEvents()
+	{
+		RpcDispatchEvents(outgoingViews.ToArray());
+		outgoingViews = new List<ViewEvent>();
+	}
+
+	[ClientRpc]
+	public void RpcDispatchEvents(ViewEvent[] vs)
+	{
+		foreach(ViewEvent v in vs)
+		{
+			addViewEvent(v);
+		}
+
 	}
 	[TargetRpc]
 	public void TargetAddViewEvent(NetworkConnection conn, ViewEvent v)
@@ -62,6 +89,7 @@ public class ViewPipeline : NetworkBehaviour
 
 	void addViewEvent(ViewEvent v)
 	{
+
 		//Debug.Log("add");
 		int index = 0;
 		while (index < incomingViews.Count)
@@ -157,7 +185,6 @@ public class ViewPipeline : NetworkBehaviour
 		Unit actor;
 		Cardmaker effector;
 		GameObject obj;
-		//Debug.Log("Enter");
 		switch (incomingViews[0].type)
 		{
 			case ViewType.unitMove:
@@ -208,6 +235,7 @@ public class ViewPipeline : NetworkBehaviour
 					pd.PDestroy(false);
 				}
 				obj.SetActive(false);
+				gm.clientPlayer.checkUnitSelectionDeath(obj);
 				break;
 
 		}
