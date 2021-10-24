@@ -112,7 +112,7 @@ public abstract class CardUI : MonoBehaviour
                     line = "{0} Starting Movement";
                     break;
                 case StatType.supplyMax:
-                    line = "{0} Max Supply";
+                    line = "{0}<sprite index= 5> Max Supply";
                     break;
                 case StatType.supplyIncome:
                     line = "{0}<sprite index= 1> Supply Income";
@@ -129,9 +129,9 @@ public abstract class CardUI : MonoBehaviour
                 case StatType.agile:
                     line = "Agile";
                     break;
-                case StatType.overwhelm:
-                    line = "Overwhelm {0}";
-                    break;
+                //case StatType.overwhelm://benched
+                //    line = "Overwhelm {0}";
+                //    break;
                 case StatType.charge:
                     line = "Charge";                 
                     break;
@@ -153,14 +153,14 @@ public abstract class CardUI : MonoBehaviour
 				//case StatType.collateral://benched
 				//    line = "Collateral {0}";
 				//    break;
-				case StatType.cleave://benched
+				case StatType.cleave:
 					line = "Cleave {0}";
 					break;
 				case StatType.cardShardIncome:
                     line = "{0}<sprite index= 3> Card Shard Income";
                     break;
                 case StatType.structureFragmentIncome:
-                    line = "{0}<sprite index= 2> Material Fragemnt Income";
+                    line = "{0}<sprite index= 2> Material Fragment Income";
                     break;
                 case StatType.addOn:
                     line = "Add-On";
@@ -219,6 +219,10 @@ public abstract class CardUI : MonoBehaviour
                 text += desc + "\n";
             }
         }
+        if(text != "")
+		{
+            text = text.Remove(text.Length - 1);
+		}
         return text;
 	}
 }

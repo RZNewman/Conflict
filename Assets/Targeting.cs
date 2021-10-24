@@ -309,6 +309,10 @@ public class Targeting : MonoBehaviour
                     break;
             }
         }
+        if(targets.Count == 0)
+		{
+            targets = new List<Tile>(FindObjectOfType<GameGrid>().allTiles);
+        }
         return targets;
     }
 
