@@ -21,11 +21,6 @@ public abstract class CardUI : MonoBehaviour
         
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
     public abstract void populateSelf(Cardmaker maker, bool isPrefab);
     protected void populateArt(Sprite art)
 	{

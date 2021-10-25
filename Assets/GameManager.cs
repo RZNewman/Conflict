@@ -239,6 +239,7 @@ public class GameManager : NetworkBehaviour
         true, true,
         true, true,
         true, true,
+        true, true,
     };
     public static bool[] maxSpendLimit = new bool[]    
     {   
@@ -250,15 +251,29 @@ public class GameManager : NetworkBehaviour
         false, false, true,
         false, false, true,
     };
+    public static bool[] maxFragmentIncome = new bool[]
+    {
+        false, false,
+        false, false, false,
+        false, false, true,
+        false, false, true,
+        false, false, true,
+        false, false, true,
+        //false, false, true,
+    };
     void roundEndActions(PlayerGhost p)
 	{
         int roundInd = roundCounter - 1;
-  //      if((roundCounter+1) % card_rate == 0)
-		//{
-  //          p.drawCardsOnTurn();
-  //      }
-		//if ((roundCounter - 1) % max_cap_rate == 0)
-        if(roundInd < maxCapacity.Length && maxCapacity[roundInd])
+        //      if((roundCounter+1) % card_rate == 0)
+        //{
+        //          p.drawCardsOnTurn();
+        //      }
+        //if ((roundCounter - 1) % max_cap_rate == 0)
+        if (roundInd < maxFragmentIncome.Length && maxFragmentIncome[roundInd])
+        {
+            p.increaseIncomeMaterial();
+        }
+        if (roundInd < maxCapacity.Length && maxCapacity[roundInd])
 		{
 			p.increaseMaxResources();
 		}
@@ -470,11 +485,7 @@ public class GameManager : NetworkBehaviour
 
     }
     #endregion
-    // Update is called once per frame
-    void Update()
-    {
 
-    }
 	#region client messages
 	[Server]
     bool messageCheck(uint ownerID, uint selectedID, uint tileID)

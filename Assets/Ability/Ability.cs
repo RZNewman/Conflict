@@ -15,11 +15,6 @@ public abstract class Ability : MonoBehaviour
 		gm = FindObjectOfType<GameManager>();
 	}
 
-	// Update is called once per frame
-	void Update()
-	{
-
-	}
 
 	protected string targetingDesc(bool sayTarget, bool plural, string specifier = "to", descMode mode = descMode.normal)
 	{

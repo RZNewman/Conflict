@@ -33,9 +33,5 @@ public class DealDamage : Ability
         
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+
 }

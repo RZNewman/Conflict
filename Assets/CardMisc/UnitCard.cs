@@ -52,10 +52,6 @@ public class UnitCard : Card
 	// Start is called before the first frame update
 
 
-    protected override void Update()
-    {
-        base.Update();
-    }
 
 
 }

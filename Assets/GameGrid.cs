@@ -80,13 +80,5 @@ public class GameGrid : NetworkBehaviour
 	}
 
 	//bool initial = false;
-	//// Update is called once per frame
-	//void Update()
-	//{
-	//    if (!initial && isServer)
-	//    {
-	//        getUnits();
-	//        initial = true;
-	//    }
-	//}
+
 }

@@ -385,10 +385,7 @@ public class Tile : NetworkBehaviour
         }
     }
     #endregion
-    // Update is called once per frame
-    void Update()
-    {
-    }
+
     public Unit getOccupant()
 	{
         return occupant;

@@ -22,11 +22,6 @@ public class UnitCardUI : CardUI
         range.color = GameColors.range;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
     public void populateValues(Dictionary<StatType, float> sts)
 	{
         

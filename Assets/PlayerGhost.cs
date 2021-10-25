@@ -352,6 +352,10 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
 	{
         st.modifyStat(StatType.resourceSpend, 1);
     }
+    public void increaseIncomeMaterial()
+    {
+        st.modifyStat(StatType.structureFragmentIncome, 1);
+    }
     public int getCurrentResources()
 	{
         return currentResources;

@@ -31,9 +31,5 @@ public class DeckExport : MonoBehaviour
             Debug.Log(i.Key + " - " + i.Value);
         }
     }
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+
 }

@@ -24,11 +24,6 @@ public class DeckUI : MonoBehaviour, IPointerClickHandler
         selector.SetActive(s);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
 	public void OnPointerClick(PointerEventData eventData)
 	{

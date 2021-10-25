@@ -189,11 +189,7 @@ public class StatHandler : NetworkBehaviour, PseudoDestroy
         }
     }
 	#endregion
-	// Update is called once per frame
-	void Update()
-    {
-        
-    }
+
 	public void PDestroy(bool isSev)
 	{
 		if (isSev)
