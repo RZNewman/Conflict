@@ -9,6 +9,7 @@ TagManager:
   - Mulligan
   - DeckExport
   - TileVis
+  - TileFound
   layers:
   - Default
   - TransparentFX

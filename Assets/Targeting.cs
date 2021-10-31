@@ -318,54 +318,7 @@ public class Targeting : MonoBehaviour
 
     static bool FoundationCheck(Tile t, int team, bool addOn)
 	{
-        bool teamPresent = false;
-        bool structureExists = false;
-        List<Tile> alreadyChecked = new List<Tile>();
-        bool FoundationCheckRecurse(Tile t)
-        {
-            if (!t.isFoundation)
-            {
-                return true;
-            }
-			if (alreadyChecked.Contains(t))
-			{
-                return true;
-			}
-			if (t.getOccupant())
-			{
-                int occTeam = t.getOccupant().teamIndex;
-                if(team == occTeam)
-				{
-                    teamPresent = true;
-					if (t.getOccupant().isStructure && !t.getOccupant().stat.getBool(StatType.addOn)) 
-                    {
-                        structureExists = true;
-						//Debug.Log("Structure Exists - " + t);
-						if (!addOn)
-						{
-                            return false;
-                        }
-                        
-                    }
-				}
-				else
-				{
-                    //Debug.Log("Enemy Exists - " + t);
-                    return false;
-				}
-			}
-            alreadyChecked.Add(t);
-            bool result = true;
-
-            foreach(Tile neigh in t.getNeightbors())
-			{
-                result = result && FoundationCheckRecurse(neigh);
-
-            }
-            return result;
-        }
-        //Debug.Log("team PResent - " + teamPresent); 
-        return FoundationCheckRecurse(t) && teamPresent && (!addOn || structureExists);
+        return t.found != null && t.found.getTeam() == team && (!t.found.hasBuilding() ^ addOn);
     }
 
     public enum descMode

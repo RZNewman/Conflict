@@ -60,6 +60,17 @@ public class Tile : NetworkBehaviour
         }
         return ns;
     }
+    public Tile firstFoundation()
+	{
+        foreach (Tile n in neigh)
+        {
+            if (n && n.isFoundation)
+            {
+                return n;
+            }
+        }
+        return null;
+    }
     
     int dirIndex(Tile other)
 	{
@@ -144,6 +155,12 @@ public class Tile : NetworkBehaviour
     TileUI unitUI;
     public int teamDeploy = -1;
     public bool isFoundation = false;
+
+    
+    [HideInInspector]
+    public Foundation found = null;
+
+
     
     // Start is called before the first frame update
     void Start()
@@ -208,7 +225,7 @@ public class Tile : NetworkBehaviour
     [SyncVar]
     public terrainType type;
     terrainType instancedType= terrainType.normal;
-    GameObject terrrainObj;
+    bool instancedFoundation = false;
 	
 
 
@@ -221,6 +238,7 @@ public class Tile : NetworkBehaviour
     public GameObject hillPre;
     public GameObject forestPre;
     public GameObject launchpadPre;
+    public GameObject foundationPre;
 
 
     public void checkTypeVis(bool callEditor =false)
@@ -228,44 +246,27 @@ public class Tile : NetworkBehaviour
 		if (type != instancedType)
 		{
             instancedType = type;
-            List<GameObject> tObjs = getVisuals();
-            if (tObjs.Count > 0)
-			{
-                foreach(GameObject o in tObjs)
-				{
-                    if (callEditor)
-                    {
-                        DestroyImmediate(o);
-                    }
-                    else
-                    {
-                        Destroy(o);
-                    }
-                }
-                
-                
-			}
+            cleanVisuals("Vis", callEditor);
+
             GameObject pre = getTypePre();
 			if (pre)
 			{
-                //if (callEditor)
-                //{
-                //    tileObj = Instantiate(pre,transform.position,Quaternion.identity);
-                //}
-                //else
-                //{
-                //    tileObj = Instantiate(pre, gameObject.transform);
-                //}
-                terrrainObj = Instantiate(pre, gameObject.transform);
+                
+               Instantiate(pre, gameObject.transform);
 
 
             }
-			else
-			{
-                terrrainObj = null;
 
-            }
             
+		}
+        if(instancedFoundation != isFoundation)
+		{
+            instancedFoundation = isFoundation;
+            cleanVisuals("Found", callEditor);
+            if (isFoundation)
+			{
+                Instantiate(foundationPre, gameObject.transform);
+            }
 		}
 	}
 
@@ -274,19 +275,43 @@ public class Tile : NetworkBehaviour
         instancedType = terrainType.normal;
 	}
     
-    List<GameObject> getVisuals()
+    void cleanVisuals(string suffix, bool callEditor)
 	{
         List<GameObject> children = new List<GameObject>();
         foreach (Transform t in transform)
 		{
-            if (t.tag == "TileVis"){
+            if (t.tag == "Tile" +suffix){
                 children.Add(t.gameObject);
 			}
 		}
-        return children;
-	}
+        foreach (GameObject o in children)
+        {
+            if (callEditor)
+            {
+                DestroyImmediate(o);
+            }
+            else
+            {
+                Destroy(o);
+            }
+        }
+
+    }
 
 
+    public void setFoundColor(bool isAlly)
+	{
+
+
+        foreach (Transform t in transform)
+        {
+            if (t.tag == "TileFound")
+            {
+                t.GetComponent<SpriteRenderer>().color = isAlly ? GameColors.ally : GameColors.enemy;
+                break;
+            }
+        }
+    }
 
 	GameObject getTypePre()
 	{
@@ -395,9 +420,15 @@ public class Tile : NetworkBehaviour
 	{
         occupant = null;
         unitUI.deactivate();
+        if (isServer)
+        {
+            if (isFoundation)
+            {
+                foundationRefresh();
+            }
+        }
 
-        
-	}
+    }
     public void occEnter(Unit o)
 	{
         
@@ -412,10 +443,27 @@ public class Tile : NetworkBehaviour
 		{
             o.moveAuras();
             checkAuras();
+			if (isFoundation)
+			{
+                foundationRefresh();
+			}
         }
         
         
     }
+    void foundationRefresh()
+	{
+		if (found.serverChangeCurrentOwner())
+		{
+            RpcFoundationRefresh(found.getTeam());
+
+        }
+	}
+    [ClientRpc]
+    void RpcFoundationRefresh(int newTeam)
+	{
+        found.clientChangeCurrentOwner(newTeam);
+	}
     
     public void refeshUI()
 	{

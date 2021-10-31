@@ -7,6 +7,8 @@ public class GameGrid : NetworkBehaviour
     Tile[] tiles = new Tile[0];
     Quaternion uiRot;
     bool rotSet = false;
+
+    List<Foundation> foundations = new List<Foundation>();
     //SyncDictionary<uint, uint> tileOcc = new SyncDictionary<uint, uint>();
     //SyncDictionary<uint, uint> unitLoc = new SyncDictionary<uint, uint>();
 
@@ -22,13 +24,17 @@ public class GameGrid : NetworkBehaviour
 	{
         findTiles();
         linkTiles();
+        buildFoundations();
         alignUIDir();
     }
 
     [ClientRpc]
     void RpcGridAlign()
     {
-
+		if (isServer)
+		{
+            return;
+		}
         buildGrid();
 
 
@@ -78,6 +84,46 @@ public class GameGrid : NetworkBehaviour
 			t.findUnit();
 		}
 	}
+
+    void buildFoundations()
+	{
+        Dictionary<Tile, List<Tile>> groupings = new Dictionary<Tile, List<Tile>>();
+        Dictionary<Tile, Tile> ownership = new Dictionary<Tile, Tile>();
+        List<Tile> search = new List<Tile>();
+        foreach (Tile t in tiles)
+        {
+            if (t.isFoundation) {
+                groupings[t] = new List<Tile>() { t };
+                ownership[t] = t;
+                search.Add(t);
+			}
+        }
+        foreach(Tile t in search)
+		{
+            Tile n = t.firstFoundation();
+			if (n)
+			{
+
+                Tile master = ownership[n];
+                Tile fallen = ownership[t];
+
+                if(master != fallen)
+				{
+                    foreach (Tile f in groupings[fallen])
+                    {
+                        ownership[f] = master;
+                    }
+                    groupings[master].AddRange(groupings[fallen]);
+                    groupings.Remove(fallen);
+                }
+			}
+		}
+        foreach(List<Tile> foundation in groupings.Values)
+		{
+            foundations.Add(new Foundation(foundation));
+		}
+
+    }
 
 	//bool initial = false;
 
