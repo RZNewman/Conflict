@@ -716,7 +716,7 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
 
         Vector3 camForward = transform.GetChild(0).forward;
 
-
+        //TODO Error Here (Client is prolly still loading the GM, doesnt have its pipe yet)
         if (gm.viewPipe.isFixating)
 		{
 			if (!isFixating)

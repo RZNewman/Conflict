@@ -827,6 +827,7 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
         }
 		if (!isServer)
 		{
+            //TODO error here (When the unit dies in the same action it is created, such as placing it in a choking cloud)
             st.removeRefresh(reUI);
 		}
         visibility(visType.on, visType.off);
