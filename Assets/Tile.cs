@@ -418,6 +418,7 @@ public class Tile : NetworkBehaviour
 
     public void occExit()
 	{
+        occupant.loc = null;
         occupant = null;
         unitUI.deactivate();
         if (isServer)

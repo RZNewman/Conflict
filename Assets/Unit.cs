@@ -825,7 +825,7 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
 		{
             loc.occExit();
         }
-		if (!isServer)
+		if (!isSev)
 		{
             //TODO error here (When the unit dies in the same action it is created, such as placing it in a choking cloud)
             st.removeRefresh(reUI);

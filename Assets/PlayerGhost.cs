@@ -807,7 +807,12 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
         abilityCurrent = sq;
         if(abilityCurrent == null)
 		{
-            tilesSelectedTarget = unitCurrent.loc.select(false);
+			if (unitCurrent)
+			{
+                tilesSelectedTarget = unitCurrent.loc.select(false);
+                state = targetState.Free;
+            }
+            
         }
 		else
 		{

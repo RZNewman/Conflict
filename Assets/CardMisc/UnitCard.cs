@@ -43,8 +43,9 @@ public class UnitCard : Card
         u.initialize(team);
         u.provideName(sourceCardmaker.name);                     
         NetworkServer.Spawn(pawn);
-        target.assignUnit(u);
         gm.viewPipe.QueueViewEvent(new ViewPipeline.ViewEvent(ViewPipeline.ViewType.unitPlay, u.netId, target.netId, Time.time));
+        target.assignUnit(u);
+        
         //target.RpcAssignUnit(u.netId, false);
         //Destroy(gameObject);
 	}
