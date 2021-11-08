@@ -17,7 +17,7 @@ public class UnitCard : Card
 
 	protected override void inspect()
 	{
-        gm.clientPlayer.cardInspect(cardBody, CardInspector.inspectType.card, sourceCardmaker.GetComponent<StatHandler>().prefabStats());
+        gm.clientPlayer.cardInspect(sourceCardmaker.gameObject, CardInspector.inspectType.cardmakerPre, sourceCardmaker.GetComponent<StatHandler>().prefabStats());
     }
 	[Server]
     public override void setCardmaker(Cardmaker c)

@@ -36,8 +36,12 @@ public abstract class Buff : Cardmaker, PseudoDestroy, TeamOwnership
 		if (visualsPre)
 		{
             Vector3 scaleOG = visualsPre.transform.localScale;
-            visuals = Instantiate(visualsPre, u.transform);
-            visuals.transform.localScale = Operations.VectorDiv( scaleOG, u.transform.lossyScale);
+            visuals = new GameObject("Scaler");
+            visuals.transform.SetParent(u.transform);
+            visuals.transform.localPosition = Vector3.zero;
+            visuals.transform.localScale = Operations.VectorDiv( Vector3.one, u.transform.lossyScale);
+            
+            Instantiate(visualsPre, visuals.transform);
         }
 
 

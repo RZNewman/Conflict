@@ -45,7 +45,7 @@ public class EquipCard : Card
 
 	protected override void inspect()
 	{
-		gm.clientPlayer.cardInspect(cardBody, CardInspector.inspectType.card, sourceCardmaker.GetComponent<StatHandler>().prefabStats());
+		gm.clientPlayer.cardInspect(sourceCardmaker.gameObject, CardInspector.inspectType.cardmakerPre);
 	}
 	// Start is called before the first frame update
 

@@ -109,7 +109,7 @@ public abstract class Card : NetworkBehaviour, IPointerEnterHandler, IPointerExi
 
 			if (inspecting)
 			{
-                gm.clientPlayer.cardUnInspect(cardBody);
+                gm.clientPlayer.cardUnInspect(sourceCardmaker.gameObject);
                 inspecting = false;
             }
 
@@ -121,7 +121,7 @@ public abstract class Card : NetworkBehaviour, IPointerEnterHandler, IPointerExi
 
     protected virtual void inspect()
 	{
-        gm.clientPlayer.cardInspect(cardBody, CardInspector.inspectType.card);
+        gm.clientPlayer.cardInspect(sourceCardmaker.gameObject, CardInspector.inspectType.cardmakerPre);
     }
 	public void OnPointerEnter(PointerEventData eventData)
 	{
