@@ -32,6 +32,7 @@ public class ViewPipeline : NetworkBehaviour
 		beginTurn,
 		playEffect,
 		objDeath,
+		playEffectTrigger,
 
 
 	}
@@ -173,7 +174,15 @@ public class ViewPipeline : NetworkBehaviour
 					}
 					else
 					{
-						currentViewTime = clientViewpiplelineTime;
+						if(incomingViews[0].type == ViewType.playEffectTrigger)
+						{
+							currentViewTime = clientViewpiplelineTriggerTime;
+						}
+						else
+						{
+							currentViewTime = clientViewpiplelineTime;
+						}
+						
 					}
 					break;
 			}
@@ -209,6 +218,7 @@ public class ViewPipeline : NetworkBehaviour
 				inspect(actor);
 				break;
 			case ViewType.playEffect:
+			case ViewType.playEffectTrigger:
 				effector = NetworkIdentity.spawned[incomingViews[0].sourceID].GetComponent<Cardmaker>();
 				target = NetworkIdentity.spawned[incomingViews[0].tileID].GetComponent<Tile>();
 				if (effector.playEffectPre)

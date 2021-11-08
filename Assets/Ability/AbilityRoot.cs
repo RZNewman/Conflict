@@ -39,7 +39,7 @@ public class AbilityRoot : Cardmaker, TeamOwnership, PseudoDestroy
 
     public void eventAbil(Tile target, int team, Tile source)
     {
-        FindObjectOfType<GameManager>().viewPipe.QueueViewEvent(new ViewEvent(ViewType.playEffect, netId, target.netId, Time.time));
+        FindObjectOfType<GameManager>().viewPipe.QueueViewEvent(new ViewEvent(ViewType.playEffectTrigger, netId, target.netId, Time.time));
         GetComponent<Ability>().cast(target, team, source);
 
 

@@ -56,7 +56,7 @@ public class TileUI : MonoBehaviour
 	public void refresh()
 	{
 		//Debug.Log("Refresh");
-		attack.text = occ.stat.getStat(StatType.attack).ToString();
+		attack.text = Mathf.Max(occ.stat.getStat(StatType.attack),0).ToString();
 		defense.text = (occ.getHeath()+ occ.stat.getStat(StatType.armor)).ToString();
 		movement.text = occ.getMove().ToString();
 		range.text = occ.stat.getStat(StatType.range).ToString();
