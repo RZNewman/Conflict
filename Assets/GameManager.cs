@@ -692,7 +692,7 @@ public class GameManager : NetworkBehaviour
             if(castAbility.castAbil(target, castAbility.getTeam(), castAbility.caster.loc))
 			{
                 player.spendResources(castAbility.resourceCost);
-                pipe.QueueViewEvent(new ViewEvent(ViewType.playEffect, abilID, tileID, Time.time), true);
+                
                 pipe.dispatchEvents();
             }
             

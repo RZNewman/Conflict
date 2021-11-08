@@ -39,7 +39,7 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
     [SyncVar(hook = nameof(hookRefreshUI))]
     int currentCasts;
     [SyncVar(hook = nameof(hookRefreshUIEffects))]
-    Status.Effects status = new Status.Effects();
+    Status.Effects status = new Status.Effects(true);
 
 
     bool hasMoved = false;
@@ -54,10 +54,6 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
 		{
             spawnAbilitites();
             spawnAuras();
-            status.movement = true;
-            status.attacking = true;
-            status.casting = true;
-            status.damage = true;
         }
         if (isClient)
 		{

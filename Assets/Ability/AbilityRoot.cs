@@ -2,6 +2,7 @@ using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static ViewPipeline;
 
 public class AbilityRoot : Cardmaker, TeamOwnership, PseudoDestroy
 {
@@ -26,6 +27,7 @@ public class AbilityRoot : Cardmaker, TeamOwnership, PseudoDestroy
 	{
         if(GetComponent<Ability>().cast(target, team, source))
 		{
+            FindObjectOfType<GameManager>().viewPipe.QueueViewEvent(new ViewEvent(ViewType.playEffect, netId, target.netId, Time.time), true);
             caster.cast();
             return true;
         }
@@ -37,7 +39,9 @@ public class AbilityRoot : Cardmaker, TeamOwnership, PseudoDestroy
 
     public void eventAbil(Tile target, int team, Tile source)
     {
+        FindObjectOfType<GameManager>().viewPipe.QueueViewEvent(new ViewEvent(ViewType.playEffect, netId, target.netId, Time.time));
         GetComponent<Ability>().cast(target, team, source);
+
 
     }
     [Client]

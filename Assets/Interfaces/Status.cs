@@ -12,6 +12,14 @@ public static class Status
 		public bool attacking;
 		public bool casting;
 		public bool damage;
+		
+		public Effects(bool normal)
+		{
+			movement = true;
+			attacking = true;
+			casting = true;
+			damage = true;
+		}
 
 		public string toString()
 		{
