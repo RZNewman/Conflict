@@ -781,8 +781,9 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
 		if (alive)
 		{
             alive = false;
-            gm.delayedDestroy(gameObject);
             eventAbilitites(AbilityRoot.TriggerType.onDeath, loc);
+            gm.delayedDestroy(gameObject);
+            
             
             
         }

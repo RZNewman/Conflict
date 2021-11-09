@@ -807,9 +807,13 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
         abilityCurrent = sq;
         if(abilityCurrent == null)
 		{
-			if (unitCurrent)
+			if (unitCurrent && unitCurrent.isAlive)
 			{
                 tilesSelectedTarget = unitCurrent.loc.select(false);
+                
+            }
+			else
+			{
                 state = targetState.Free;
             }
             
@@ -831,6 +835,7 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
     }
     public void checkUnitSelectionDeath(GameObject o)
 	{
+        //Debug.Log(o);
         if(unitCurrent?.gameObject == o)
 		{
             setTargetUnit(null);

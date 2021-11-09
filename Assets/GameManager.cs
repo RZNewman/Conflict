@@ -122,12 +122,6 @@ public class GameManager : NetworkBehaviour
         }
         
 	}
-    IEnumerator sendDestroyLater(float t, uint id)
-    {
-        // suspend execution for 5 seconds
-        yield return new WaitForSeconds(t);
-        pipe.QueueViewEvent(new ViewEvent(ViewType.objDeath, id, 0, Time.time));
-    }
     #region turn control
     void firstTurn()
 	{
@@ -411,10 +405,12 @@ public class GameManager : NetworkBehaviour
             u.refreshUI();
 
         }
+        showLimitIncreace(0, roundCounter);
     }
     void showLimitIncreace(int lastRound, int thisRound)
 	{
-        int roundInd = thisRound - 1;
+        int roundDiff = (clientPlayer && clientPlayer.teamIndex>currentTurn) ? 0 : 1;
+        int roundInd = Mathf.Max(thisRound - roundDiff, 0);
         ResourceUI rui = FindObjectOfType<ResourceUI>();
         rui.setLimitIncrease(roundInd < maxSpendLimit.Length ? maxSpendLimit[roundInd] : false);
         rui.setMaxIncrease(roundInd < maxCapacity.Length ? maxCapacity[roundInd] : false);

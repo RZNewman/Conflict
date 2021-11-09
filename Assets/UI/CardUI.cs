@@ -26,13 +26,29 @@ public abstract class CardUI : MonoBehaviour
 	{
         cardArt.sprite = art;
     }
-    protected void populateArt(GameObject prefab/*, int retry =0*/)
+    protected void populateArt(GameObject model/*, int retry =0*/)
     {
-		//if (retry > 3)
-		//{
-  //          return;
-		//}
-        Texture2D art = RuntimePreviewGenerator.GenerateModelPreview(prefab.transform,120,80);
+        //if (retry > 3)
+        //{
+        //          return;
+        //}
+
+        List<GameObject> dontRender = new List<GameObject>();
+        foreach(Transform c in model.transform)
+		{
+            if (c.tag == "BuffScaler")
+			{
+                dontRender.Add(c.gameObject);
+                c.gameObject.SetActive(false);
+			}
+
+        }
+        Texture2D art = RuntimePreviewGenerator.GenerateModelPreview(model.transform,120,80);
+        foreach(GameObject o in dontRender)
+		{
+            o.SetActive(true);
+		}
+
         //Texture2D art = AssetPreview.GetAssetPreview(prefab);
 		try
 		{
