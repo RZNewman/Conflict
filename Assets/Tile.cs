@@ -485,71 +485,20 @@ public class Tile : NetworkBehaviour
 	}
 
     #region tile Searching
-    public List<GameObject> select(bool isHover)
-    {
-        List<GameObject> selected = new List<GameObject>();
-        List<Tile> searched = new List<Tile>();
-		if (!isHover)
-		{
-            selected.Add(unitUI.select(SelectType.active,isHover));
-            
-        }
-        searched.Add(this);
-        
 
-		if (occupant)
-		{
-            List<Tile> moveSelect = tilesInMove(occupant.getMoveActionable(), occupant.type , occupant.teamIndex,occupant.stat.getBool(StatBlock.StatType.ghost));
-            foreach (Tile t in moveSelect)
-            {
-                selected.Add(t.unitUI.select(SelectType.move,isHover));
-            }
-            searched.AddRange(moveSelect);
-
-			if (occupant.canAttack)
-			{
-                List<Tile> attackSelect = tilesInAttack(occupant.stat.getStat(StatBlock.StatType.range), occupant.stat.getBool(StatBlock.StatType.bypass), occupant.teamIndex);
-                foreach (Tile t in attackSelect)
-                {
-                    selected.Add(t.unitUI.select(SelectType.attack, isHover));
-                }
-                searched.AddRange(attackSelect);
-
-                void threatFind(Tile t)
-				{
-                    List<Tile> threat = t.tilesInRange(occupant.stat.getStat(StatBlock.StatType.range), occupant.stat.getBool(StatBlock.StatType.bypass));
-
-                    foreach (Tile t2 in threat)
-                    {
-                        if (!searched.Contains(t2))
-                        {
-                            
-                            selected.Add(t2.unitUI.select(SelectType.threat,isHover));
-                            searched.Add(t2);
-                        }
-                    }
-                }
-
-                threatFind(this);
-                foreach (Tile t in moveSelect)
-                {
-                    threatFind(t);
-                }
-
-            }
-
-		}
-        return selected;
-    }
     public GameObject selectAbility()
 	{
         return unitUI.select(SelectType.ability, false);
 	}
- //   public void deselect()
-	//{
- //       unitUI.deselect();
-	//}
-    List<Tile> tilesInMove(int dist, unitType uType, int team, bool ghost)
+    public GameObject select(SelectorUI.SelectType type, bool isHover)
+	{
+        return unitUI.select(type, isHover);
+    }
+    //   public void deselect()
+    //{
+    //       unitUI.deselect();
+    //}
+    public List<Tile> tilesInMove(int dist, unitType uType, int team, bool ghost)
 	{
         List<Tile> selected = new List<Tile>();
         Queue<Tile> search = new Queue<Tile>();
@@ -692,7 +641,7 @@ public class Tile : NetworkBehaviour
 
         return -1;
 	}
-    List<Tile> tilesInAttack(int range, bool bypass, int team)
+    public List<Tile> tilesInAttack(int range, bool bypass, int team)
 	{
         List<Tile> selected = new List<Tile>();
         foreach(Tile currentTile in tilesInRange(range, bypass))

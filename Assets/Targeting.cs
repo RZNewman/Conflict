@@ -82,17 +82,6 @@ public class Targeting : MonoBehaviour
                     }
                     break;
                 case TargetRule.foundation:
-                    if (!t.isFoundation)
-                    {
-                        result = false;
-                        break;
-                    }
-                    if (t.getTerrainWalkCost(Unit.unitType.structure) == -1)
-                    {
-                        result = false;
-                        break;
-                    }
-
                     result = FoundationCheck(t, team, r.value > 1);
 
                     break;
@@ -234,7 +223,20 @@ public class Targeting : MonoBehaviour
                         ruleHit = true;
                         subset = FindObjectsOfType<Unit>().Select(u => u.loc).ToList();
                         break;
-                }
+					case TargetRule.foundation:
+						ruleHit = true;
+                        subset = FindObjectOfType<GameGrid>()
+                            .GetFoundations()
+                            .Where((fou) => fou.getTeam() == team)
+                            .Where((fou) => (!fou.hasBuilding() ^ r.value > 1))
+                            .Select((fou) => fou.getTiles())
+                            .Aggregate ( new List<Tile>(),(a, b) => { a.AddRange(b); return a; })
+                            .Where((fou) => fou.isFoundation)
+                            .Where((fou) => fou.getTerrainWalkCost(Unit.unitType.structure) != -1)
+                            .ToList();
+
+                            break;
+				}
 				if (ruleHit)
 				{
                     tempRules.Remove(r);
@@ -318,7 +320,7 @@ public class Targeting : MonoBehaviour
 
     static bool FoundationCheck(Tile t, int team, bool addOn)
 	{
-        return t.found != null && t.found.getTeam() == team && (!t.found.hasBuilding() ^ addOn);
+        return t.isFoundation && t.getTerrainWalkCost(Unit.unitType.structure) != -1 && t.found.getTeam() == team && (!t.found.hasBuilding() ^ addOn);
     }
 
     public enum descMode

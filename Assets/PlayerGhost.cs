@@ -21,8 +21,7 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
     StatHandler st;
     //selected unit for actions
     Unit unitCurrent;
-    List<GameObject> tilesSelectedTarget =  new List<GameObject>();
-    List<GameObject> tilesSelectedHover = new List<GameObject>();
+    TileSelector tselect;
 
     Card cardCurrent;
     OrdSqUI abilityCurrent;
@@ -468,6 +467,7 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
             inspect = FindObjectOfType<CardInspector>();
             UIturn = FindObjectOfType<TurnIndicatorUI>();
             abilPanel = FindObjectOfType<UnitAbilityUI>();
+            tselect = GetComponent<TileSelector>();
             findClientDeck();
             //Debug.Log("Refresh added");
         }
@@ -692,7 +692,8 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
                         {
                             inspecting = true;
                             inspect.inspect(hoverUnitCurrent.gameObject, CardInspector.inspectType.cardmaker,3);
-                            tilesSelectedHover = inp.target.select(true);
+                            //tilesSelectedHover = inp.target.select(true);
+                            tselect.select(inp.target, true);
                         }
 
                     }
@@ -745,29 +746,24 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
         {
             inspecting = false;
             inspect.uninspect(hoverUnitCurrent.gameObject);
+            tselect.deselect(true);
         }
 
         hoverUnitCurrent = newInspect;
         hoverUnitTime = 0;
-        foreach (GameObject s in tilesSelectedHover)
-        {
-            Destroy(s);
-        }
+        
 
     }
     void setTargetUnit(Unit u)
 	{
         if(unitCurrent != null)
 		{
-            foreach (GameObject s in tilesSelectedTarget)
-            {
-                Destroy(s);
-            }
+            tselect.deselect(false);
             abilPanel.clearAll();
 		}
         if(u != null)
 		{
-            tilesSelectedTarget = u.loc.select(false);
+            tselect.select(u.loc,false);
             foreach(AbilityRoot o in u.castable)
 			{
                 //Debug.Log(o);
@@ -780,11 +776,13 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
     {
         if (cardCurrent != null)
         {
+            tselect.deselect(false);
             updateCardSelection(cardCurrent);
 
         }
         if (c != null)
         {
+            tselect.select(null, false, c.GetComponent<Targeting>(),teamIndex);
             c.setSelection(selectType.active);
         }
         cardCurrent = c;
@@ -795,10 +793,7 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
         if (abilityCurrent != null)
         {
             abilityCurrent.setSelection(false);
-            foreach (GameObject s in tilesSelectedTarget)
-            {
-                Destroy(s);
-            }
+            tselect.deselect(false);
         }
         if (sq != null)
         {
@@ -809,8 +804,8 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
 		{
 			if (unitCurrent && unitCurrent.isAlive)
 			{
-                tilesSelectedTarget = unitCurrent.loc.select(false);
-                
+                tselect.select(unitCurrent.loc, false);
+
             }
 			else
 			{
@@ -820,16 +815,8 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
         }
 		else
 		{
-            foreach (GameObject s in tilesSelectedTarget)
-            {
-                Destroy(s);
-            }
-            List<Tile> abSelect = abilityCurrent.ability.GetComponent<Targeting>().evaluateTargets(teamIndex, unitCurrent.loc);
-            tilesSelectedTarget = new List<GameObject>();
-            foreach (Tile t in abSelect)
-            {
-                tilesSelectedTarget.Add(t.selectAbility());
-            }
+            tselect.deselect(false);
+            tselect.select(unitCurrent.loc, false, abilityCurrent.ability.GetComponent<Targeting>(), teamIndex);
 
         }
     }

@@ -23,6 +23,10 @@ public class Foundation {
 	{
 		return teamInd;
 	}
+	public List<Tile> getTiles()
+	{
+		return tiles;
+	}
 
 	public bool serverChangeCurrentOwner()
 	{

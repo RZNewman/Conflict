@@ -84,6 +84,10 @@ public class GameGrid : NetworkBehaviour
 			t.findUnit();
 		}
 	}
+    public List<Foundation> GetFoundations()
+	{
+        return foundations;
+	}
 
     void buildFoundations()
 	{

@@ -10,6 +10,7 @@ TagManager:
   - DeckExport
   - TileVis
   - TileFound
+  - BuffScaler
   layers:
   - Default
   - TransparentFX

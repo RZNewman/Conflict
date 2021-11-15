@@ -51,6 +51,10 @@ public class InputHandler : MonoBehaviour
             zoom -= 3 * zoomStrength;
         }
 
+        click = Input.GetMouseButtonDown(0) && ! EventSystem.current.IsPointerOverGameObject();
+        cancel = Input.GetMouseButtonDown(1);
+        endTurn = Input.GetKeyDown(KeyCode.Space);
+
 
         pan = Vector3.zero;
         
@@ -117,9 +121,7 @@ public class InputHandler : MonoBehaviour
 
         }
         
-        click = Input.GetMouseButtonDown(0) && ! EventSystem.current.IsPointerOverGameObject();
-        cancel = Input.GetMouseButtonDown(1);
-        endTurn = Input.GetKeyDown(KeyCode.Space);
+        
 
         
 
