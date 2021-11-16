@@ -99,7 +99,7 @@ public class Aura : Buff
 			durr = currentDuration;
 		}
 		desc = string.Format("aura: {0}",
-			buffGiven.GetComponent<Buff>().toDesc(isPrefab)
+			buffGiven.GetComponent<Buff>().toDesc(true)
 			);
 		desc += " " + buffGiven.GetComponent<Targeting>().targetingDesc(false, true);
 		if (maxDuration > 0)

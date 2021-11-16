@@ -11,6 +11,7 @@ TagManager:
   - TileVis
   - TileFound
   - BuffScaler
+  - Canvas
   layers:
   - Default
   - TransparentFX
