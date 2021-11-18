@@ -14,24 +14,12 @@ public class BuffStat : Buff
 
 	public override string toDesc(bool isPrefab)
 	{
-		Dictionary<StatType, float> sts;
-		int durr;
-		if (isPrefab)
-		{
-			sts = GetComponent<StatHandler>().prefabStats();
-			durr = maxDuration;
-		}
-		else
-		{
-			sts = GetComponent<StatHandler>().export();
-			durr = currentDuration;
-		}
-		string desc = CardUI.cardText(sts, Status.getDefault(), false);
-		
-		if (maxDuration > 0)
-		{
-			desc += " for " + durr + " round" + (durr > 1 ? "s" : "");
-		}
+
+
+		string desc = GetComponent<StatHandler>().toDesc(isPrefab,false);
+
+
+		desc += descSuffix(isPrefab);
 		return desc;
 
 	}

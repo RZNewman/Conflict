@@ -109,28 +109,65 @@ public class UnitCardUI : CardUI
             Dictionary<StatType, float> sts = st.prefabStats();
             populateTitle(maker.name);
             populateValues(sts);
-            populateBody(
-                sts,
-                true,
-                u.abilitiesPre.Select(x => x.GetComponent<Ability>()).ToArray(),
-                u.aurasPre.Select(x => x.GetComponent<Aura>()).ToArray()
-                );
+
         }
 		else
 		{
             populateTitle( maker.originalName);
             populateValues(u);
-            populateBody(
-                u.stat.export(),
-                u.getStatus(),
-                true, 
-                u.abilities.Select(x => x.GetComponent<Ability>()).ToArray(),
-                u.aurasEmitted.Select(x => x.GetComponent<Aura>()).ToArray()
-                );
+
         }
+        populateBody(u, isPrefab);
         
         populateType(u);      
         populateCost(maker);
         modifyForStructure(u.isStructure);
+    }
+    protected void populateBody(Unit u, bool isPrefab)
+    {
+        string text = "";
+        Ability[] abils;
+        Aura[] auras;
+        Status.Effects status;
+
+
+        
+		if (isPrefab)
+		{
+            abils = u.abilitiesPre.Select(x => x.GetComponent<Ability>()).ToArray();
+            auras = u.aurasPre.Select(x => x.GetComponent<Aura>()).ToArray();
+            status = Status.getDefault();
+        }
+		else
+		{
+            abils = u.abilities.Select(x => x.GetComponent<Ability>()).ToArray();
+            auras = u.aurasEmitted.Select(x => x.GetComponent<Aura>()).ToArray();
+            status = u.getStatus();
+        }
+
+
+        string effects = status.toString();
+        if (effects.Length > 1)
+        {
+            text += "<i>" + effects + "</i>\n";
+
+        }
+        text += u.stat.toDesc(isPrefab, true);
+        foreach (Ability ab in abils)
+        {
+
+
+            AbilityRoot root = ab.GetComponent<AbilityRoot>();
+            text += root.toDesc(isPrefab);
+        }
+        foreach (Aura au in auras)
+        {
+            string desc = au.toDesc(isPrefab);
+            //desc = Operations.Capatialize(desc);
+
+            text += desc + "\n";
+        }
+        
+        cardBody.text = text;
     }
 }

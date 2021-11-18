@@ -113,14 +113,138 @@ public class StatHandler : NetworkBehaviour, PseudoDestroy
         refreshDownstream();
 
     }
-	#endregion
-	// Start is called before the first frame update
-	void Start()
-    {
-        
+    #endregion
 
-        
+    public string toDesc(bool isPrefab, bool skipUnitValues)
+	{
+        Dictionary<StatType, float> desc_stats;
+        string text = "";
+        int[] valueText = new int[2];
+        string valueLines = "";
+
+        if (isPrefab)
+		{
+            desc_stats = prefabStats();
+		}
+		else
+		{
+            desc_stats = export();
+
+        }
+
+        foreach (StatType t in desc_stats.Keys)
+        {
+            string line = "";
+            switch (t)
+            {
+                case StatType.health:
+                    valueText[1] = (int)desc_stats[t];
+                    break;
+                case StatType.attack:
+                    valueText[0] = (int)desc_stats[t];
+                    break;
+                case StatType.range:
+                    line = "{0} Range";
+                    break;
+                case StatType.moveSpeed:
+                    line = "{0} Starting Movement";
+                    break;
+                case StatType.supplyMax:
+                    line = "{0}<sprite index= 5> Max Supply";
+                    break;
+                case StatType.supplyIncome:
+                    line = "{0}<sprite index= 1> Supply Income";
+                    break;
+                case StatType.armor:
+                    line = "Armor {0}";
+                    break;
+                case StatType.piercing:
+                    line = "Piercing";
+                    break;
+                case StatType.regen:
+                    line = "Regen {0}";
+                    break;
+                case StatType.agile:
+                    line = "Agile";
+                    break;
+                //case StatType.overwhelm://benched
+                //    line = "Overwhelm {0}";
+                //    break;
+                case StatType.charge:
+                    line = "Charge";
+                    break;
+                case StatType.bypass:
+                    line = "Bypass";
+                    break;
+                case StatType.frontline:
+                    line = "Frontline";
+                    break;
+                case StatType.ghost:
+                    line = "Ghost";
+                    break;
+                case StatType.slow:
+                    line = "Slow {0}";
+                    break;
+                case StatType.bloodlust:
+                    line = "Bloodlust";
+                    break;
+                //case StatType.collateral://benched
+                //    line = "Collateral {0}";
+                //    break;
+                case StatType.cleave:
+                    line = "Cleave {0}";
+                    break;
+                case StatType.cardShardIncome:
+                    line = "{0}<sprite index= 3> Card Shard Income";
+                    break;
+                case StatType.structureFragmentIncome:
+                    line = "{0}<sprite index= 2> Material Fragment Income";
+                    break;
+                case StatType.addOn:
+                    line = "Add-On";
+                    break;
+                case StatType.resourceSpend:
+                    line = "{0}<sprite index= 0> Power Limit";
+                    break;
+                default:
+                    line = "";
+                    break;
+            }
+            if (line != "")
+            {
+                if (t == StatType.range || t == StatType.moveSpeed)
+                {
+                    valueLines += string.Format(line + "\n", desc_stats[t]);
+                }
+                else
+                {
+                    text += string.Format(line + "\n", desc_stats[t]);
+                }
+
+            }
+
+        }
+        if (!skipUnitValues)
+        {
+            if (valueText[0] != 0 || valueText[1] != 0)
+            {
+                string atkcolor = ColorUtility.ToHtmlStringRGB(GameColors.attack);
+                string defcolor = ColorUtility.ToHtmlStringRGB(GameColors.defense);
+                string valueLine = "<color=#" + atkcolor + ">" + valueText[0] + "</color>/<color=#" + defcolor + ">" + valueText[1] + "</color>\n";
+                valueLines = valueLine + valueLines;
+            }
+
+            text = valueLines + text;
+
+        }
+        if (text != "")
+        {
+            text = text.Remove(text.Length - 1);
+        }
+        return text;
+
     }
+
     [Server]
     public void initialize()
 	{

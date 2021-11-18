@@ -45,23 +45,28 @@ public class BuffAbil : Buff
     }
     public override string toDesc(bool isPrefab)
     {
+        string desc = "";
         Ability[] abs;
-        int durr;
         if (isPrefab)
         {
             abs = abilitiesPre.Select(x => x.GetComponent<Ability>()).ToArray();
-            durr = maxDuration;
         }
         else
         {
             abs = abilities.Select(x => x.GetComponent<Ability>()).ToArray();
-            durr = currentDuration;
         }
-        string desc = CardUI.cardText(new Dictionary<StatBlock.StatType, float>(), Status.getDefault(), false, abs);
-        if (maxDuration > 0)
+        foreach (Ability ab in abs)
         {
-            desc += " for " + durr + " round" + (durr > 1 ? "s" : "");
+
+            AbilityRoot root = ab.GetComponent<AbilityRoot>();
+            desc += root.toDesc(isPrefab);
         }
+        if (desc != "")
+        {
+            desc = desc.Remove(desc.Length - 1);
+        }
+
+        desc += descSuffix(isPrefab);
         return desc;
 
     }

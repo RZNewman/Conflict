@@ -100,6 +100,24 @@ public abstract class Buff : Cardmaker, PseudoDestroy, TeamOwnership
     public abstract string toDesc(bool isPrefab);
 	
 
+    protected string descSuffix(bool isPrefab)
+	{
+        string desc = "";
+        int durr;
+        if (isPrefab)
+        {
+            durr = maxDuration;
+        }
+        else
+        {
+            durr = currentDuration;
+        }
+        if (maxDuration > 0)
+        {
+            desc += " for " + durr + " round" + (durr > 1 ? "s" : "");
+        }
+        return desc;
+    }
 	public virtual void PDestroy(bool isSev)
     {
 		if (isSev)

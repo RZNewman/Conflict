@@ -94,4 +94,26 @@ public class AbilityRoot : Cardmaker, TeamOwnership, PseudoDestroy
 
         tar.rules = GetComponent<Targeting>().rules;
     }
+    public string toDesc(bool isPrefab)
+    {
+
+        string prefix;
+        string desc = GetComponent<Ability>().toDesc(trigger == AbilityRoot.TriggerType.none);
+        desc = Operations.Capatialize(desc);
+        switch (trigger)
+        {
+            case AbilityRoot.TriggerType.onBuffTick:
+                prefix = "On Tick";
+                break;
+            case AbilityRoot.TriggerType.onDeath:
+                prefix = "On Death";
+                break;
+            default:
+                prefix = resourceCost.ToString();
+                break;
+        }
+
+        return prefix + ": " + desc + "\n";
+
+    }
 }

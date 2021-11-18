@@ -32,6 +32,10 @@ public static class Operations
                 return inp.Substring(0, i) + char.ToUpper(c) + inp.Substring(i + 1);
 
 			}
+			if (char.IsUpper(c))
+			{
+                break;
+			}
 		}
 
         return inp;
