@@ -70,6 +70,7 @@ MonoBehaviour:
   playEffectPre: {fileID: 4927487206556695495, guid: 7d45f22b211149743ac6e6ca4a34d3da, type: 3}
   originalName: 
   caster: {fileID: 0}
+  maxUses: 1
   trigger: 0
 --- !u!114 &8032148525386423945
 MonoBehaviour:

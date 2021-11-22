@@ -10,6 +10,7 @@ public class OrdSqUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler
 	public Image cardArt;
     public CostUI cardCost;
     public GameObject selection;
+    public GameObject chargeUI;
     void populateArt(Sprite art)
     {
         cardArt.sprite = art;
@@ -19,6 +20,19 @@ public class OrdSqUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler
         cardCost.setCost(cost, new CostUI.costTypes(false, true, false));
         //cardCost.transform.parent.GetComponent<Image>().color = GameColors.resources;
     }
+    public void tryPopulateCharges()
+	{
+        if (ability.maxUses > 0)
+        {
+            populateCharges(ability.getCharges().ToString());
+        }
+    }
+
+    void populateCharges(string charges)
+    {
+        chargeUI.SetActive(true);
+        chargeUI.GetComponentInChildren<Text>().text = charges;
+    }
     public void setSelection(bool isSelected)
     {
         selection.SetActive(isSelected);
@@ -27,8 +41,10 @@ public class OrdSqUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler
 	{
         populateArt(ability.cardArt);
         populateCost(ability.resourceCost.ToString());
-        
-	}
+        tryPopulateCharges();
+
+
+    }
 	#endregion
 
 	#region function part

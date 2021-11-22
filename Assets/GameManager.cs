@@ -681,6 +681,7 @@ public class GameManager : NetworkBehaviour
         if (
             castAbility
             && player.getCurrentResources() >= castAbility.resourceCost
+            && castAbility.hasCharges()
             && castAbility.caster.canCast
             //&& t.evaluate(target, teams[ownerID], castAbility.caster.loc) //Inside cast now
             )

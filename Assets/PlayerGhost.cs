@@ -418,7 +418,7 @@ public class PlayerGhost : NetworkBehaviour, TeamOwnership
 				state = targetState.Unit;
 				setTargetAbility(null);
 			}
-			else if (cost <= currentResources && o.ability.caster.canCast)
+			else if (cost <= currentResources && o.ability.hasCharges() && o.ability.caster.canCast)
 			{
 				state = targetState.Ability;
 				//setTargetUnit(null);

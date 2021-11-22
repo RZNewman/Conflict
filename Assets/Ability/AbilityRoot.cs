@@ -10,6 +10,10 @@ public class AbilityRoot : Cardmaker, TeamOwnership, PseudoDestroy
 
 	#region unitAbility
 	public Unit caster;
+    public int maxUses=0;
+
+    [SyncVar]
+    int currentUses;
 
     public enum TriggerType
     {
@@ -28,6 +32,10 @@ public class AbilityRoot : Cardmaker, TeamOwnership, PseudoDestroy
         if(GetComponent<Ability>().cast(target, team, source))
 		{
             FindObjectOfType<GameManager>().viewPipe.QueueViewEvent(new ViewEvent(ViewType.playEffect, netId, target.netId, Time.time), true);
+			if (maxUses > 0)
+			{
+                currentUses--;
+			}
             caster.cast();
             return true;
         }
@@ -36,6 +44,14 @@ public class AbilityRoot : Cardmaker, TeamOwnership, PseudoDestroy
         
 
     }
+    public bool hasCharges()
+	{
+        return maxUses == 0 || currentUses > 0;
+	}
+    public int getCharges()
+	{
+        return currentUses;
+	}
 
     public void eventAbil(Tile target, int team, Tile source)
     {
@@ -60,6 +76,18 @@ public class AbilityRoot : Cardmaker, TeamOwnership, PseudoDestroy
 		{
             caster.removeAbility(this);
 		}
+	}
+
+    void Start()
+	{
+		if (isServer)
+		{
+            if (maxUses > 0)
+            {
+                currentUses = maxUses;
+            }
+        }
+        
 	}
 	#endregion
 	public override GameObject findCardPrefab()
@@ -110,6 +138,20 @@ public class AbilityRoot : Cardmaker, TeamOwnership, PseudoDestroy
                 break;
             default:
                 prefix = resourceCost.ToString();
+				if (maxUses > 0)
+				{
+                    int charg;
+                    switch (isPrefab)
+					{
+                        case true:
+                            charg = maxUses;
+                            break;
+                        case false:
+                            charg = currentUses;
+                            break;
+					}
+                    prefix += ": charges, " + charg;
+				}
                 break;
         }
 
