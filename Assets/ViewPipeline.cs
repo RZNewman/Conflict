@@ -76,10 +76,9 @@ public class ViewPipeline : NetworkBehaviour
 	[ClientRpc]
 	public void RpcDispatchEvents(ViewEvent[] vs)
 	{
-		foreach(ViewEvent v in vs)
-		{
-			addViewEvent(v);
-		}
+
+		addViewEvent(vs);
+		
 
 	}
 	[TargetRpc]
@@ -106,6 +105,11 @@ public class ViewPipeline : NetworkBehaviour
 			index++;
 		}
 		incomingViews.Insert(index, v);
+	}
+	void addViewEvent(ViewEvent[] vs)
+	{
+
+		incomingViews.AddRange(vs);
 	}
 
 	float currentViewTime=0;
@@ -138,20 +142,20 @@ public class ViewPipeline : NetworkBehaviour
 	void fixate(Vector3 f)
 	{
 		//if(true)
-		if (!gm.clientPlayer.isTurn)		
-		{
+		//if (!gm.clientPlayer.isTurn)		
+		//{
 			isFixating = true;
 			fixation = f;
-		}
+		//}
 	}
 	[Client]
 	void inspect(Cardmaker c)
 	{
-		if (!gm.clientPlayer.isTurn)
-		{
+		//if (!gm.clientPlayer.isTurn)
+		//{
 			inspection = c.gameObject;
 			ins.inspect(c.gameObject, CardInspector.inspectType.cardmaker, 1);
-		}
+		//}
 	}
 	void nextView()
 	{
@@ -168,15 +172,15 @@ public class ViewPipeline : NetworkBehaviour
 					break;
 				default:
 					enterView();
-					if (gm.clientPlayer.isTurn)
+					if (incomingViews[0].type == ViewType.playEffectTrigger)
 					{
-						exitView();
+						currentViewTime = clientViewpiplelineTriggerTime;
 					}
 					else
 					{
-						if(incomingViews[0].type == ViewType.playEffectTrigger)
+						if (gm.clientPlayer.isTurn)
 						{
-							currentViewTime = clientViewpiplelineTriggerTime;
+							exitView();
 						}
 						else
 						{
@@ -184,6 +188,8 @@ public class ViewPipeline : NetworkBehaviour
 						}
 						
 					}
+
+					
 					break;
 			}
 		}

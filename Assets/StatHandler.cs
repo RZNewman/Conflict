@@ -150,10 +150,10 @@ public class StatHandler : NetworkBehaviour, PseudoDestroy
                     line = "{0} Starting Movement";
                     break;
                 case StatType.supplyMax:
-                    line = "{0}<sprite index= 5> Max Supply";
+                    line = "{0}"+GameConstants.iconSupplyMax+" Max Supply";
                     break;
                 case StatType.supplyIncome:
-                    line = "{0}<sprite index= 1> Supply Income";
+                    line = "{0}" + GameConstants.iconSupply + " Supply Income";
                     break;
                 case StatType.armor:
                     line = "Armor {0}";
@@ -195,16 +195,16 @@ public class StatHandler : NetworkBehaviour, PseudoDestroy
                     line = "Cleave {0}";
                     break;
                 case StatType.cardShardIncome:
-                    line = "{0}<sprite index= 3> Card Shard Income";
+                    line = "{0}" + GameConstants.iconCards + " Card Shard Income";
                     break;
                 case StatType.structureFragmentIncome:
-                    line = "{0}<sprite index= 2> Material Fragment Income";
+                    line = "{0}" + GameConstants.iconMaterial + " Material Fragment Income";
                     break;
                 case StatType.addOn:
                     line = "Add-On";
                     break;
                 case StatType.resourceSpend:
-                    line = "{0}<sprite index= 0> Power Limit";
+                    line = "{0}" + GameConstants.iconPower + " Power Limit";
                     break;
                 default:
                     line = "";

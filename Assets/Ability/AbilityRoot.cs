@@ -137,7 +137,7 @@ public class AbilityRoot : Cardmaker, TeamOwnership, PseudoDestroy
                 prefix = "On Death";
                 break;
             default:
-                prefix = resourceCost.ToString();
+                prefix = GameConstants.iconSupply + resourceCost.ToString();
 				if (maxUses > 0)
 				{
                     int charg;
@@ -150,7 +150,7 @@ public class AbilityRoot : Cardmaker, TeamOwnership, PseudoDestroy
                             charg = currentUses;
                             break;
 					}
-                    prefix += ": charges, " + charg;
+                    prefix += ":"+ GameConstants.iconCharges + + charg;
 				}
                 break;
         }
