@@ -29,7 +29,6 @@ public class HoverText : MonoBehaviour , IPointerEnterHandler, IPointerExitHandl
                     GameObject canv = GameObject.FindGameObjectWithTag("Canvas");
                     currentObj = Instantiate(hoverObjPre, canv.transform);
                     currentObj.GetComponentInChildren<Text>().text = description;
-                    Debug.Log("create");
                     inspecting = true;
 
                 }
@@ -53,7 +52,6 @@ public class HoverText : MonoBehaviour , IPointerEnterHandler, IPointerExitHandl
     public void OnPointerEnter(PointerEventData eventData)
     {
         hovered = true;
-        Debug.Log("hover");
     }
 
     public void OnPointerExit(PointerEventData eventData)

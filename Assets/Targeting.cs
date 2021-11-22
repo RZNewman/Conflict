@@ -56,8 +56,9 @@ public class Targeting : MonoBehaviour
     bool evaluateRules(Rule[] eRules,Tile t, int team, Tile source = null)
 	{
         //Debug.Log(t + " - " + team);
-        foreach(Rule r in eRules)
+        foreach (Rule r in eRules)
 		{
+            
             bool result =false;
             bool didBypass;
             //bool goal = r.value > 0;
@@ -128,7 +129,7 @@ public class Targeting : MonoBehaviour
                         break;
                     }
                     
-                    result = source.rangeToTile(t, false, out didBypass)<= Mathf.FloorToInt(r.value);
+                    result = source.rangeToTile(t, false, out didBypass)<= Mathf.FloorToInt(r.value) && !didBypass;
                     //result = source.tilesInRange(Mathf.FloorToInt(r.value),false, team).Contains(t);
                     break;
                 case TargetRule.inRangeBypass:

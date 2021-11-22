@@ -13,9 +13,10 @@ public class Tile : NetworkBehaviour
 	public enum neighDir
     {
         up,
-        down,
         right,
+        down,
         left,
+        error,
     }
     static Vector3[] neighVec = {
         new Vector3(0, 0, 1),
@@ -89,6 +90,29 @@ public class Tile : NetworkBehaviour
 
         return index;
     }
+    public neighDir directionToTile(Tile other)
+	{
+        int i = dirIndex(other);
+        if(i == -1)
+		{
+            return neighDir.error;
+		}
+        return fromindex(i);
+
+	}
+    static neighDir fromindex(int ind)
+	{
+        return (neighDir)ind;
+	}
+    public Tile getNeighbor(neighDir dir)
+	{
+        switch (dir){
+            case neighDir.error:
+                return null;
+            default:
+                return neigh[(int)dir];
+		}
+	}
     #endregion
     #region unitInit
     
@@ -722,7 +746,6 @@ public class Tile : NetworkBehaviour
 	{
         didBypass = false;
         int index = dirIndex(target);
-        //Debug.Log("Dir index" + index);
         if(index == -1)
 		{
             return -1;
