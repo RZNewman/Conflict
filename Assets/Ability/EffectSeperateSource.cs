@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class EffectSeperateSource : Ability
 {
+	public bool useSource = false;
 	public override bool cast(Tile target, int team, Tile source)
 	{
 		if (GetComponent<Targeting>().evaluate(target, team))
@@ -13,7 +14,8 @@ public class EffectSeperateSource : Ability
 			{
 				Ability ab = child.GetComponent<Ability>();
 
-				ab.cast(target, team, target);
+				Tile use = useSource ? source : target;
+				ab.cast(use, team, use);
 
 			}
 			return true;

@@ -676,6 +676,7 @@ public class Unit : Cardmaker, TeamOwnership, PseudoDestroy
 		{
             currentMovement= 0;
 		}
+        eventAbilitites(AbilityRoot.TriggerType.onAttack, tar.loc);
         int remainingHP = dealDamage(tar);
         if(remainingHP <= 0 && st.getBool(StatType.bloodlust))
 		{

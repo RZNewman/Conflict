@@ -20,6 +20,7 @@ public class AbilityRoot : Cardmaker, TeamOwnership, PseudoDestroy
         none,
         onDeath,
         onBuffTick,
+        onAttack,
     }
     public TriggerType trigger = TriggerType.none;
     public int getTeam()
@@ -135,6 +136,9 @@ public class AbilityRoot : Cardmaker, TeamOwnership, PseudoDestroy
                 break;
             case AbilityRoot.TriggerType.onDeath:
                 prefix = "On Death";
+                break;
+            case AbilityRoot.TriggerType.onAttack:
+                prefix = "On Attack";
                 break;
             default:
                 prefix = GameConstants.iconSupply + resourceCost.ToString();
